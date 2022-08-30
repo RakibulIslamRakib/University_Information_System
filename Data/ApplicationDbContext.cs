@@ -15,7 +15,8 @@ namespace University_Information_System.Data
         public DbSet<Teacher> Teacher { get; set; }
         public DbSet<Student> Student { get; set; }
         public DbSet<Subject> Subject { get; set; }
-
+        public DbSet<Enrollment> Enrollments { get; set; }
+        public DbSet<Course>Course { get; set; }
        
 
 

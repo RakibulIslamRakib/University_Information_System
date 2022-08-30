@@ -1,0 +1,37 @@
+﻿.cards {
+    max-width: 1200px;
+    margin: 0 0px;
+    display: grid;
+    gap: 5px;
+}
+
+@media (min-width: 600px) {
+    .cards {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (min-width: 900px) {
+    .cards {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+.card {
+    background-color: aliceblue;
+    margin: 2px;
+    border: 1px solid rgb(241, 242, 240 );
+    box-shadow: 2px;
+    width: 280px;
+    height: 220px;
+    border-radius: 5px;
+    text-align: center;
+    font-size: 30px;
+}
+
+
+.projectTitle {
+    padding: 0px;
+    height: 30px;
+    font-size: 18px;
+}

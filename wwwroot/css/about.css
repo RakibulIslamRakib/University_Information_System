@@ -1,0 +1,77 @@
+﻿.aboutDiv {
+    height: 400px;
+    width: 100%;
+    padding: 5px;
+    margin: 0px;
+    display: flex;
+    background-color: rgb(245, 249, 251);
+}
+
+.leftDiv {
+    height: 100%;
+    width: 60%;
+   
+    box-shadow: 5px;
+    padding: 10px;
+    border-right:1px solid black;
+}
+
+.rightDiv {
+    height: 100%;
+    width: 39%;
+    box-shadow: 5px;
+}
+
+
+.imageHome {
+    border-radius: 10px;
+    height: 80%;
+    width: 100%;
+    margin: 5px;
+    padding: 5px;
+}
+
+.codeforcesDiv {
+    height: 100px;
+    width: 100px;
+    margin: 20px;
+    display: flex;
+    background-image: url('codeforces_logo.jpg');
+    background-size: cover;
+    background-position: center;
+}
+
+
+
+.leetcodeDiv {
+    height: 80px;
+    width: 100px;
+    margin: 20px;
+    display: flex;
+    background-image: url('leetcode_logo.png');
+    background-size: cover;
+    background-position: center;
+}
+
+
+
+.githubDiv {
+    height: 100px;
+    width: 100px;
+    margin: 20px;
+    display: flex;
+    background-image: url('github_logo.png');
+    background-size: cover;
+    background-position: center;
+}
+
+
+
+.profileDetails {
+    display: flex;
+    text-decoration: none;
+    border-radius: 10px;
+    width: 33%;
+    background-color: ghostwhite;
+    margin: 10px;
+}
