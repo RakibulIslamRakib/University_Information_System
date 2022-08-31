@@ -1,0 +1,22 @@
+﻿@model Teacher
+
+<link rel="stylesheet" href="~/css/projects.css"/>
+<link rel="stylesheet" href="~/css/contact.css" />
+
+@{
+    <div class="container">
+            <h3 style="text-align:center">Delete Teacher: </h3>
+            <form asp-controller = "Teacher" asp-action="DeleteTeacher">
+                <label for="fname">First Name</label>
+                <input type="text" id="fname" disabled asp-for="FirstName" placeholder="subject name..">
+            <label for="fname">Last Name</label>
+            <input type="text" id="lname" disabled asp-for="LastName" placeholder="subject name..">
+                
+                <label for="subject">Details</label>
+                <textarea id="subject" disabled asp-for="Descryption" placeholder="Write something.." style="height:200px"></textarea>
+
+                    <input type="submit" style="background-color:red; color:white;" value="Confirm Delete">
+            </form>
+    </div>
+             
+}
