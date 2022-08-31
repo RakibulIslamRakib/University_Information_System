@@ -11,10 +11,10 @@ namespace University_Information_System.Models
         public string LastName { get; set; }
         public string Descryption { get; set; }
 
-        public virtual Depertment Depertment { get; set; }
-
 
         [NotMapped]
-        public virtual List<Subject> Subjects { get; set; }
+        public  List<Subject> Subjects { get; set; }
+        [NotMapped]
+        public List<Depertment> Depertments { get; set; }
     }
 }

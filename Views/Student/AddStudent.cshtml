@@ -1,0 +1,30 @@
+﻿@model List<University_Information_System.Models.Depertment>
+
+<link rel="stylesheet" href="~/css/projects.css"/>
+<link rel="stylesheet" href="~/css/contact.css" />
+
+@{
+    <div class="container">
+            <h3 style="text-align:center">Add new Student</h3>
+            <form asp-controller = "Student" asp-action="AddStudent">
+                <label for="fname">First Name</label>
+                <input type="text" id="fname" name="FirstName" placeholder="first name..">
+                <label for="fname">Last Name</label>
+                <input type="text" id="fname" name="LastName" placeholder="last name..">
+                <label for="fname">Registration No </label>
+                <input type="text" id="fname" name="Reg" placeholder="Registration..">
+
+            <label for=" departmentId"> Department</label>
+            <select name="DepertmentId">
+            @foreach (var depertment in Model)
+            {
+                <option value=@(depertment.id)>@(depertment.DeptName)</option>
+            }
+
+             </select>
+
+            <input type="submit" value="Submit">
+            </form>
+    </div>
+             
+}

@@ -22,11 +22,13 @@
     margin: 2px;
     border: 1px solid rgb(241, 242, 240 );
     box-shadow: 2px;
-    width: 280px;
-    height: 220px;
+    width: 305px;
+    height: auto;
     border-radius: 5px;
     text-align: center;
     font-size: 30px;
+    padding:30px;
+    margin:5px;
 }
 
 

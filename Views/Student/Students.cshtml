@@ -1,0 +1,74 @@
+﻿@model List<University_Information_System.Models.Student>
+
+<link rel="stylesheet" href="~/css/projects.css" />
+
+@{
+    if (TempData["success"] != null)
+    {
+    <h3 class="headline" 
+    style="align-content:center;
+    background-color: #04AA6D;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 4px;
+    text-align:center; height:30px;">
+    Message :   @TempData["success"]
+    </h3>
+    }
+}
+
+<div>
+    <input style="align-content:center; 
+    background-color: #04AA6D;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer; 
+    margin-left:30%;
+    height:40px;width:200px;" 
+    type="button"
+    value="Add New Student" 
+    onclick="location.href='@Url.Action("AddStudent", "Student")'" />
+</div>
+
+<div class="cards">
+    @{
+
+
+        foreach (var student in Model)
+        {
+
+            <div class="card">
+                <div class="projectTitle">
+                    <h4>@(student.FirstName) @(student.LastName)</h4>
+                    <p>Registration : @(student.Reg)</p>
+                </div>
+                                                        @{
+                           /*
+                                <div>
+                                    <div>Subjects : @(dept.Subjects.Count)</div>
+                                    <div>Teachers : @(dept.Teachers.Count)</div>
+                                    <div>Students : @(dept.Students.Count)</div>
+                                </div>
+
+                            */}
+
+                <div>
+                        <a style="background-color:teal; color:white; font-size:14px; padding:2px;margin:2px;
+                            border: 1px solid red;border-radious:2px;"
+                    asp-conztroller="Student" asp-action="DetailsStudent" asp-route-id="@student.id"> See details..</a>
+                        <a style="background-color:teal; color:white; font-size:14px; padding:2px;margin:2px; 
+                            border: 1px solid red;border-radious:2px;"
+               asp-conztroller="Student" asp-action="UpdateStudent" asp-route-id="@student.id"> Update</a>
+                    <a style="background-color:red; color:white; font-size:14px; padding:2px;margin:2px; 
+                                border: 1px solid red;border-radious:2px;"
+               asp-conztroller="Student" asp-action="DeleteStudent" asp-route-id="@student.id"> Delete</a>
+                </div>
+            </div>
+
+        }
+
+    }
+</div>

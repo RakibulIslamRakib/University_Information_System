@@ -1,0 +1,65 @@
+﻿@model List<University_Information_System.Models.Depertment>
+<link rel="stylesheet" href="~/css/projects.css" />
+
+@{
+    if (TempData["success"] != null)
+    {
+    <h3 class="headline" style="align-content:center; background-color: #04AA6D;
+                                                        color: white;
+                                                        padding: 12px 20px;
+                                                        border: none;
+                                                        border-radius: 4px;
+                                                        text-align:center; height:30px;">
+                                                        Message :   @TempData["success"]
+    </h3>
+    }
+}
+
+<div>
+    <input style="align-content:center; background-color: #04AA6D;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer; margin-left:30%; height:40px;width:200px;" type="button"
+    value="Add New Depertment" onclick="location.href='@Url.Action("AddDepertment", "Depertment")'" />
+</div>
+
+<div class="cards">
+    @{
+
+
+        foreach (var dept in Model)
+        {
+
+                                                    <div class="card">
+                                                        <div class="projectTitle">
+                                                            <h4>@(dept.DeptName) </h4>
+                                                        </div>
+                                                        <span style="font-size:12px">Created : @(dept.CreatedDate)</span>
+                                                        @{
+                           /*
+                                <div>
+                                    <div>Subjects : @(dept.Subjects.Count)</div>
+                                    <div>Teachers : @(dept.Teachers.Count)</div>
+                                    <div>Students : @(dept.Students.Count)</div>
+                                </div>
+
+                            */}
+                                                        <div>
+                                                            <p style="font-size:14px">Descryption : @(dept.Descryption)</p>
+                                                        </div>
+                                                        <div>
+                                                                <a style="background-color:teal; color:white; font-size:14px; padding:2px;margin:2px; border: 1px solid red;border-radious:2px;"
+                                                           asp-conztroller="Depertment" asp-action="DetailsDepertment" asp-route-id="@dept.id"> See details..</a>
+                                                             <a style="background-color:teal; color:white; font-size:14px; padding:2px;margin:2px; border: 1px solid red;border-radious:2px;"
+                                                                  asp-conztroller="Depertment" asp-action="UpdateDepertment" asp-route-id="@dept.id"> Update</a>
+                                                            <a style="background-color:red; color:white; font-size:14px; padding:2px;margin:2px; border: 1px solid red;border-radious:2px;"
+                                                            asp-conztroller="Depertment" asp-action="DeleteDepertment" asp-route-id="@dept.id"> Delete</a>
+                                                        </div>
+                                                    </div>
+
+        }
+
+    }
+</div>

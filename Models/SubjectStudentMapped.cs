@@ -2,7 +2,7 @@
 
 namespace University_Information_System.Models
 {
-    public class Enrollment
+    public class SubjectStudentMapped
     {
         [Key]
         public int id { get; set; }

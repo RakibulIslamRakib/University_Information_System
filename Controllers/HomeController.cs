@@ -9,7 +9,8 @@ namespace University_Information_System.Controllers
         public IActionResult Index()
         {
             return View();
-        } 
+        }
+
 
     }
 }

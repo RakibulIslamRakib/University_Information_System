@@ -8,15 +8,15 @@ namespace University_Information_System.Models
        
             [Key]
             public int id { get; set; }
-            [Required]
             public int Reg{ get; set; }
             public string FirstName { get; set; }
             public string LastName { get; set; }
-            public Depertment Depertment{ get; set; }
+            public int DepertmentId{ get; set; }
 
             [NotMapped]
-            public virtual List<Subject> Subjects{ get; set; }
-    
+            public  List<Subject> Subjects{ get; set; }
 
+            [NotMapped]
+            public string DeptName { get; internal set; }
     }
 }

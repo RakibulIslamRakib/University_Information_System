@@ -5,22 +5,22 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace University_Information_System.Migrations
 {
-    public partial class createDB : Migration
+    public partial class dbcreated : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Course",
+                name: "DepartmentTeacherMapped",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    TeacherId = table.Column<int>(type: "int", nullable: false),
-                    SubjectId = table.Column<int>(type: "int", nullable: false)
+                    teacherId = table.Column<int>(type: "int", nullable: false),
+                    departmentId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Course", x => x.Id);
+                    table.PrimaryKey("PK_DepartmentTeacherMapped", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
@@ -34,7 +34,7 @@ namespace University_Information_System.Migrations
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     CreatedBy = table.Column<int>(type: "int", nullable: false),
-                    UpdatedBy = table.Column<int>(type: "int", nullable: true)
+                    UpdatedBy = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -42,7 +42,39 @@ namespace University_Information_System.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Enrollments",
+                name: "Subject",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    SubjectName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Descryption = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CreatedBy = table.Column<int>(type: "int", nullable: false),
+                    UpdatedBy = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Subject", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SubjectDepartmentMapped",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    departmentId = table.Column<int>(type: "int", nullable: false),
+                    subjectId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SubjectDepartmentMapped", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SubjectStudentMapped",
                 columns: table => new
                 {
                     id = table.Column<int>(type: "int", nullable: false)
@@ -52,7 +84,36 @@ namespace University_Information_System.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Enrollments", x => x.id);
+                    table.PrimaryKey("PK_SubjectStudentMapped", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SubjectTeacherMapped",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    TeacherId = table.Column<int>(type: "int", nullable: false),
+                    SubjectId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SubjectTeacherMapped", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Teacher",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Descryption = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Teacher", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -77,82 +138,31 @@ namespace University_Information_System.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "Subject",
-                columns: table => new
-                {
-                    id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    SubjectName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Descryption = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Depertmentid = table.Column<int>(type: "int", nullable: false),
-                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    CreatedBy = table.Column<int>(type: "int", nullable: false),
-                    UpdatedBy = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Subject", x => x.id);
-                    table.ForeignKey(
-                        name: "FK_Subject_Depertment_Depertmentid",
-                        column: x => x.Depertmentid,
-                        principalTable: "Depertment",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Teacher",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Descryption = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Depertmentid = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Teacher", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Teacher_Depertment_Depertmentid",
-                        column: x => x.Depertmentid,
-                        principalTable: "Depertment",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
             migrationBuilder.CreateIndex(
                 name: "IX_Student_Depertmentid",
                 table: "Student",
-                column: "Depertmentid");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Subject_Depertmentid",
-                table: "Subject",
-                column: "Depertmentid");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Teacher_Depertmentid",
-                table: "Teacher",
                 column: "Depertmentid");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Course");
-
-            migrationBuilder.DropTable(
-                name: "Enrollments");
+                name: "DepartmentTeacherMapped");
 
             migrationBuilder.DropTable(
                 name: "Student");
 
             migrationBuilder.DropTable(
                 name: "Subject");
+
+            migrationBuilder.DropTable(
+                name: "SubjectDepartmentMapped");
+
+            migrationBuilder.DropTable(
+                name: "SubjectStudentMapped");
+
+            migrationBuilder.DropTable(
+                name: "SubjectTeacherMapped");
 
             migrationBuilder.DropTable(
                 name: "Teacher");

@@ -43,36 +43,15 @@ namespace University_Information_System.Services
 
         //Delete:
 
-        public void RemoveAllSubjectOfTheDepertment(Depertment depertment)
-        {
-            var subjects = db.Subject.ToList();
-            var subjectDept = from subject in db.Subject
-                              where subject.Depertment == depertment
-                              select subject;
-
-            db.Subject.RemoveRange(subjectDept);
-            db.SaveChanges();
-        }
 
         public void RemoveAllStudentOfTheDepertment(Depertment depertment)
         {
             var students = db.Student.ToList();
             var studentDept = from student in db.Student
-                              where student.Depertment == depertment
+                              where student.DepertmentId == depertment.id
                               select student;
 
             db.Student.RemoveRange(studentDept);
-            db.SaveChanges();
-        }
-
-        public void RemoveAllTeacherOfTheDepertment(Depertment depertment)
-        {
-            var teachers = db.Teacher.ToList();
-            var teacherDept = from teacher in db.Teacher
-                              where teacher.Depertment == depertment
-                              select teacher;
-
-            db.Teacher.RemoveRange(teacherDept);
             db.SaveChanges();
         }
 
@@ -80,8 +59,6 @@ namespace University_Information_System.Services
         public void DeleteDepertment(Depertment depertment)
         {
             RemoveAllStudentOfTheDepertment(depertment);
-            RemoveAllSubjectOfTheDepertment(depertment);
-            RemoveAllTeacherOfTheDepertment(depertment);
             db.Depertment.Remove(depertment);
             db.SaveChanges ();
         }
@@ -186,5 +163,7 @@ namespace University_Information_System.Services
             db.Teacher.Update(teacher);
             db.SaveChanges();
         }
+
+       
     }
 }

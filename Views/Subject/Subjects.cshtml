@@ -1,0 +1,76 @@
+﻿@model List<University_Information_System.Models.Subject>
+
+<link rel="stylesheet" href="~/css/projects.css" />
+
+@{
+    if (TempData["success"] != null)
+    {
+    <h3 class="headline" 
+    style="align-content:center;
+    background-color: #04AA6D;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 4px;
+    text-align:center; height:30px;">
+    Message :   @TempData["success"]
+    </h3>
+    }
+}
+
+<div>
+    <input style="align-content:center; 
+    background-color: #04AA6D;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer; 
+    margin-left:30%;
+    height:40px;width:200px;" 
+    type="button"
+    value="Add New Depertment" 
+    onclick="location.href='@Url.Action("AddSubject", "Subject")'" />
+</div>
+
+<div class="cards">
+    @{
+
+
+        foreach (var subject in Model)
+        {
+
+            <div class="card">
+                <div class="projectTitle">
+                    <h4>@(subject.SubjectName) </h4>
+                </div>
+                <span style="font-size:12px">Created : @(subject.CreatedDate)</span>
+                                                        @{
+                           /*
+                                <div>
+                                    <div>Subjects : @(dept.Subjects.Count)</div>
+                                    <div>Teachers : @(dept.Teachers.Count)</div>
+                                    <div>Students : @(dept.Students.Count)</div>
+                                </div>
+
+                            */}
+                <div>
+                    <p style="font-size:14px">Descryption : @(subject.Descryption)</p>
+                </div>
+                <div>
+                        <a style="background-color:teal; color:white; font-size:14px; padding:2px;margin:2px;
+                            border: 1px solid red;border-radious:2px;"
+                    asp-conztroller="Subject" asp-action="DetailsSubject" asp-route-id="@subject.id"> See details..</a>
+                        <a style="background-color:teal; color:white; font-size:14px; padding:2px;margin:2px; 
+                            border: 1px solid red;border-radious:2px;"
+                            asp-conztroller="Subject" asp-action="UpdateSubject" asp-route-id="@subject.id"> Update</a>
+                    <a style="background-color:red; color:white; font-size:14px; padding:2px;margin:2px; 
+                                border: 1px solid red;border-radious:2px;"
+                    asp-conztroller="Subject" asp-action="DeleteSubject" asp-route-id="@subject.id"> Delete</a>
+                </div>
+            </div>
+
+        }
+
+    }
+</div>

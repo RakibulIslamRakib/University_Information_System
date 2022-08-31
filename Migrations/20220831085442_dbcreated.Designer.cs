@@ -12,8 +12,8 @@ using University_Information_System.Data;
 namespace University_Information_System.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220830072124_createDB")]
-    partial class createDB
+    [Migration("20220831085442_dbcreated")]
+    partial class dbcreated
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -24,23 +24,23 @@ namespace University_Information_System.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("University_Information_System.Models.Course", b =>
+            modelBuilder.Entity("University_Information_System.Models.DepartmentTeacherMapped", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"), 1L, 1);
 
-                    b.Property<int>("SubjectId")
+                    b.Property<int>("departmentId")
                         .HasColumnType("int");
 
-                    b.Property<int>("TeacherId")
+                    b.Property<int>("teacherId")
                         .HasColumnType("int");
 
-                    b.HasKey("Id");
+                    b.HasKey("id");
 
-                    b.ToTable("Course");
+                    b.ToTable("DepartmentTeacherMapped");
                 });
 
             modelBuilder.Entity("University_Information_System.Models.Depertment", b =>
@@ -65,7 +65,7 @@ namespace University_Information_System.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("UpdatedBy")
+                    b.Property<int>("UpdatedBy")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedDate")
@@ -74,25 +74,6 @@ namespace University_Information_System.Migrations
                     b.HasKey("id");
 
                     b.ToTable("Depertment");
-                });
-
-            modelBuilder.Entity("University_Information_System.Models.Enrollment", b =>
-                {
-                    b.Property<int>("id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"), 1L, 1);
-
-                    b.Property<int>("studentId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("subjectId")
-                        .HasColumnType("int");
-
-                    b.HasKey("id");
-
-                    b.ToTable("Enrollments");
                 });
 
             modelBuilder.Entity("University_Information_System.Models.Student", b =>
@@ -138,9 +119,6 @@ namespace University_Information_System.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("Depertmentid")
-                        .HasColumnType("int");
-
                     b.Property<string>("Descryption")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -157,9 +135,64 @@ namespace University_Information_System.Migrations
 
                     b.HasKey("id");
 
-                    b.HasIndex("Depertmentid");
-
                     b.ToTable("Subject");
+                });
+
+            modelBuilder.Entity("University_Information_System.Models.SubjectDepartmentMapped", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"), 1L, 1);
+
+                    b.Property<int>("departmentId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("subjectId")
+                        .HasColumnType("int");
+
+                    b.HasKey("id");
+
+                    b.ToTable("SubjectDepartmentMapped");
+                });
+
+            modelBuilder.Entity("University_Information_System.Models.SubjectStudentMapped", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"), 1L, 1);
+
+                    b.Property<int>("studentId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("subjectId")
+                        .HasColumnType("int");
+
+                    b.HasKey("id");
+
+                    b.ToTable("SubjectStudentMapped");
+                });
+
+            modelBuilder.Entity("University_Information_System.Models.SubjectTeacherMapped", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("SubjectId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TeacherId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SubjectTeacherMapped");
                 });
 
             modelBuilder.Entity("University_Information_System.Models.Teacher", b =>
@@ -169,9 +202,6 @@ namespace University_Information_System.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int>("Depertmentid")
-                        .HasColumnType("int");
 
                     b.Property<string>("Descryption")
                         .IsRequired()
@@ -187,51 +217,18 @@ namespace University_Information_System.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Depertmentid");
-
                     b.ToTable("Teacher");
                 });
 
             modelBuilder.Entity("University_Information_System.Models.Student", b =>
                 {
                     b.HasOne("University_Information_System.Models.Depertment", "Depertment")
-                        .WithMany("Students")
+                        .WithMany()
                         .HasForeignKey("Depertmentid")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Depertment");
-                });
-
-            modelBuilder.Entity("University_Information_System.Models.Subject", b =>
-                {
-                    b.HasOne("University_Information_System.Models.Depertment", "Depertment")
-                        .WithMany("Subjects")
-                        .HasForeignKey("Depertmentid")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Depertment");
-                });
-
-            modelBuilder.Entity("University_Information_System.Models.Teacher", b =>
-                {
-                    b.HasOne("University_Information_System.Models.Depertment", "Depertment")
-                        .WithMany("Teachers")
-                        .HasForeignKey("Depertmentid")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Depertment");
-                });
-
-            modelBuilder.Entity("University_Information_System.Models.Depertment", b =>
-                {
-                    b.Navigation("Students");
-
-                    b.Navigation("Subjects");
-
-                    b.Navigation("Teachers");
                 });
 #pragma warning restore 612, 618
         }
