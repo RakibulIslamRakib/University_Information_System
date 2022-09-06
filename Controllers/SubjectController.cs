@@ -1,22 +1,22 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using University_Information_System.Models;
-using University_Information_System.Services;
+using University_Information_System.Services.ServiceInterfaces;
 
 namespace University_Information_System.Controllers
 {
     public class SubjectController : Controller
     {
-        private readonly IMainService mainServiceSubject;
+        private readonly ISubjectService subjectService;
 
-        public SubjectController(IMainService mainServices)
+        public SubjectController(ISubjectService subjectService)
         {
-            this.mainServiceSubject = mainServices;
+            this.subjectService = subjectService;
         }
 
 
         public IActionResult Subjects()
         {
-            var subjects = mainServiceSubject.getAllSubject();
+            var subjects = subjectService.getAllSubject();
             if(subjects == null)
             {
                 subjects = new List<Subject>();
@@ -35,9 +35,8 @@ namespace University_Information_System.Controllers
         [HttpPost]
         public IActionResult AddSubject(Subject subject)
         {
-             subject.CreatedDate = DateTime.Now;
-            mainServiceSubject.AddSubject(subject);
-                //TempData["success"] = "Successfully Added!";
+            subject.CreatedDate = DateTime.Now;
+            subjectService.AddSubject(subject);
             
             return RedirectToAction(actionName:"Subjects", controllerName:"Subject");
 
@@ -46,7 +45,7 @@ namespace University_Information_System.Controllers
 
         public IActionResult DeleteSubject(int id)
         {
-            var subject = mainServiceSubject.GetSubjectById(id);
+            var subject = subjectService.GetSubjectById(id);
 
             return View(subject);
         }
@@ -54,15 +53,14 @@ namespace University_Information_System.Controllers
         [HttpPost]
         public IActionResult DeleteSubject(Subject subject)
         {
-            //mainService.AddProject(project);
-            mainServiceSubject.DeleteSubject(subject);
+            subjectService.DeleteSubject(subject);
             
             return RedirectToAction(actionName: "Subjects", controllerName: "Subject");
         }
 
         public IActionResult UpdateSubject(int id)
         {
-            var subject = mainServiceSubject.GetSubjectById(id);
+            var subject = subjectService.GetSubjectById(id);
 
             return View(subject);
         }
@@ -70,15 +68,14 @@ namespace University_Information_System.Controllers
         [HttpPost]
         public IActionResult UpdateSubject(Subject subject)
         {
-            //mainService.AddProject(project);
-            mainServiceSubject.UpdateSubject(subject);
+            subjectService.UpdateSubject(subject);
             
             return RedirectToAction(actionName: "Subjects", controllerName: "Subject");
         }
 
         public IActionResult DetailsSubject(int id)
         {
-            var subject = mainServiceSubject.GetSubjectDetailsById(id);
+            var subject = subjectService.GetSubjectDetailsById(id);
 
             return View(subject);
         }

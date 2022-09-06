@@ -7,7 +7,23 @@
     <div class="container">
         <h3 style="text-align:center">@(Model.FirstName) @(Model.LastName)</h3>
         <div class="search-list">
+            <div class="name">
+                <input style="align-content:center;
+                    background-color: #04AA6D;
+                    color: white;
+                    padding: 12px 20px;
+                    border: none;
+                    border-radius: 4px;
+                    cursor: pointer;
+                    margin-left:30%;
+                    height:40px;width:200px;"
+                       type="button"
+                       value="Details..."
+                       @{/*
+                   onclick="location.href='@Url.Action("DetailsDepertment", "Depertment",new { @id = subject.id})'" 
+                       */} />
             <h4>Department : @(Model.DeptName)</h4>
+            </div>
 
 
         <div class="search-list">

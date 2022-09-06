@@ -1,12 +1,17 @@
 using Microsoft.EntityFrameworkCore;
 using University_Information_System.Data;
+using University_Information_System.Services.ServiceInterfaces;
+using University_Information_System.Services.ServiceClasses;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
-builder.Services.AddScoped<University_Information_System.Services.IMainService, University_Information_System.Services.MainServices> ();
+builder.Services.AddScoped<IDepartmentService, DepartmentService>();
+builder.Services.AddScoped<ISubjectService, SubjectService>();
+builder.Services.AddScoped<IStudentService, StudentService>();
+builder.Services.AddScoped<ITeacherService, TeacherService>();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(
     builder.Configuration.GetConnectionString("DefaultConnection")));

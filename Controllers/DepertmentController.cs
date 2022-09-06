@@ -1,22 +1,23 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using University_Information_System.Models;
 using University_Information_System.Services;
+using University_Information_System.Services.ServiceInterfaces;
 
 namespace University_Information_System.Controllers
 {
     public class DepertmentController : Controller
     {
-        private readonly IMainService mainServicesDept;
+        private readonly IDepartmentService departmentService;
 
-        public DepertmentController(IMainService mainServices)
+        public DepertmentController(IDepartmentService departmentService)
         {
-            this.mainServicesDept = mainServices;
+            this.departmentService = departmentService;
         }
 
 
         public IActionResult Depertments()
         {
-            var depertments = mainServicesDept.getAllDepertment();
+            var depertments = departmentService.getAllDepertment();
             if (depertments == null)
             {
                 depertments = new List<Depertment>();
@@ -34,8 +35,7 @@ namespace University_Information_System.Controllers
         public IActionResult AddDepertment(Depertment depertment)
         {
             depertment.CreatedDate = DateTime.Now;
-            mainServicesDept.AddDepertment(depertment);
-            //TempData["success"] = "Successfully Added!";
+            departmentService.AddDepertment(depertment);
             return RedirectToAction(actionName: "Depertments", controllerName: "Depertment");
 
         }
@@ -43,7 +43,7 @@ namespace University_Information_System.Controllers
 
         public IActionResult DeleteDepertment(int id)
         {
-            var department = mainServicesDept.GetDepertmentById(id);
+            var department = departmentService.GetDepertmentById(id);
 
 
             return View(department);
@@ -52,41 +52,38 @@ namespace University_Information_System.Controllers
         [HttpPost]
         public IActionResult DeleteDepertment(Depertment depertment)
         {
-            //mainService.AddProject(project);
-
-            mainServicesDept.DeleteDepertment(depertment);
+             departmentService.DeleteDepertment(depertment);
 
             return RedirectToAction(actionName: "Depertments", controllerName: "Depertment");
         }
 
         public IActionResult UpdateDepertment(int id)
         {
-            var project = mainServicesDept.GetDepertmentById(id);
+            var updatedDept = departmentService.GetDepertmentById(id);
 
-            return View(project);
+            return View(updatedDept);
         }
 
         [HttpPost]
         public IActionResult UpdateDepertment(Depertment depertment)
         {
-            //mainService.AddProject(project);
-            mainServicesDept.UpdateDepertment(depertment);
+            departmentService.UpdateDepertment(depertment);
+
             return RedirectToAction(actionName: "Depertments", controllerName: "Depertment");
         }
 
         public IActionResult DetailsDepertment(int id)
         {
-            var depertment = mainServicesDept.GetDepertmentDetailsById(id);
+            var depertment = departmentService.GetDepertmentDetailsById(id);
 
             return View(depertment);
         }
 
         public IActionResult AddSubjectToTheDepertment(int id)
         {
-
             TempData["departmentId"] = id;
-            var subjects = new List<Subject>(mainServicesDept.getAllSubject());
-            var subjectOftheDept = new List<Subject>(mainServicesDept.GetSubjectByDepertmentId(id));
+            var subjects = new List<Subject>(departmentService.getAllSubject());
+            var subjectOftheDept = new List<Subject>(departmentService.GetSubjectByDepertmentId(id));
             var subjectOutOftheDept = subjects.Except(subjectOftheDept).ToList();
 
             return View(subjectOutOftheDept);
@@ -98,28 +95,27 @@ namespace University_Information_System.Controllers
             var subDept = new SubjectDepartmentMapped();
             subDept.departmentId = id;
             subDept.subjectId = subjectId;
-            //int departmentId = subjectDepartmentMapped.departmentId;
-            //subjectDepartmentMapped.id = 0;
-            //subjectDepartmentMapped.departmentId = departmentId;
-            mainServicesDept.AddSubjectDapertmentMapped(subDept);
+            departmentService.AddSubjectDapertmentMapped(subDept);
+            
             return RedirectToAction(actionName: "DetailsDepertment" , controllerName:"Depertment" , new { @id = id });
     
         }
 
         public IActionResult DeleteSubjectFromDept(int subjectId,int deptId)
         {
-           mainServicesDept.DeleteSubjectFromSubjectDepartmentMapped(subjectId, deptId);
+            departmentService.DeleteSubjectFromSubjectDepartmentMapped(subjectId, deptId);
+            
             return RedirectToAction(actionName: "Depertments", controllerName: "Depertment");
         }
 
 
         public IActionResult DeleteStudentFromDept(int studentId, int deptId)
         {
-            var student = mainServicesDept.GetStudentById(studentId);
-            mainServicesDept.DeleteStudent(student);
+            var student = departmentService.GetStudentById(studentId);
+            departmentService.DeleteStudent(student);
+            
             return RedirectToAction(actionName: "DetailsDepertment", controllerName: "Depertment", new {@id = deptId});
         }
-
 
     }
 }

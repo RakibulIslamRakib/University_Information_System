@@ -1,22 +1,22 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using University_Information_System.Models;
-using University_Information_System.Services;
+using University_Information_System.Services.ServiceInterfaces;
 
 namespace University_Information_System.Controllers
 {
     public class StudentController : Controller
     {
-        private readonly IMainService mainServiceStudent;
+        private readonly IStudentService studentService;
 
-        public StudentController(IMainService mainServices)
+        public StudentController(IStudentService studentService)
         {
-            this.mainServiceStudent = mainServices;
+            this.studentService = studentService;
         }
 
 
         public IActionResult Students()
         {
-            var students = mainServiceStudent.getAllStudent();
+            var students = studentService.getAllStudent();
             if (students == null)
             {
                 students = new List<Student>();
@@ -28,17 +28,15 @@ namespace University_Information_System.Controllers
 
         public IActionResult AddStudent()
         {
-            var depertments = mainServiceStudent.getAllDepertment();
+            var depertments = studentService.getAllDepertment();
             return View(depertments);
         }
 
         [HttpPost]
         public IActionResult AddStudent(Student student)
         {
-
-            mainServiceStudent.AddStudent(student);
-            //TempData["success"] = "Successfully Added!";
-
+            studentService.AddStudent(student);
+         
             return RedirectToAction(actionName: "Students", controllerName: "Student");
 
         }
@@ -46,8 +44,8 @@ namespace University_Information_System.Controllers
 
         public IActionResult DeleteStudent(int id)
         {
-            var student = mainServiceStudent.GetStudentById(id);
-            student.DeptName = mainServiceStudent.GetDepertmentById(student.DepertmentId).DeptName;
+            var student = studentService.GetStudentById(id);
+            student.DeptName = studentService.GetDepertmentById(student.DepertmentId).DeptName;
 
             return View(student);
         }
@@ -56,15 +54,14 @@ namespace University_Information_System.Controllers
         [HttpPost]
         public IActionResult DeleteStudent(Student student)
         {
-            //mainService.AddProject(project);
-            mainServiceStudent.DeleteStudent(student);
+            studentService.DeleteStudent(student);
 
             return RedirectToAction(actionName: "Students", controllerName: "Student");
         }
 
         public IActionResult UpdateStudent(int id)
         {
-            var student = mainServiceStudent.GetStudentById(id);
+            var student = studentService.GetStudentById(id);
 
             return View(student);
         }
@@ -72,12 +69,11 @@ namespace University_Information_System.Controllers
         [HttpPost]
         public IActionResult UpdateStudent(Student student)
         {
-            var updatedStudent = mainServiceStudent.GetStudentById(student.id);
+            var updatedStudent = studentService.GetStudentById(student.id);
             updatedStudent.FirstName = student.FirstName;
             updatedStudent.LastName = student.LastName;
             updatedStudent.Reg = student.Reg;
-            //mainService.AddProject(project);
-            mainServiceStudent.UpdateStudent(updatedStudent);
+            studentService.UpdateStudent(updatedStudent);
 
             return RedirectToAction(actionName: "Students", controllerName: "Student");
         }
@@ -86,7 +82,7 @@ namespace University_Information_System.Controllers
         //Incomplete
         public IActionResult DetailsStudent(int id)
         {
-            var student = mainServiceStudent.GetStudentDetailsById(id);
+            var student = studentService.GetStudentDetailsById(id);
 
             return View(student);
         }
@@ -95,9 +91,9 @@ namespace University_Information_System.Controllers
         public IActionResult EnroleSubject(int id)
         {
             TempData["StudentId"] = id;
-            var student = mainServiceStudent.GetStudentById(id);
-            var subjectOftheDept = new List<Subject>(mainServiceStudent.GetSubjectByDepertmentId(student.DepertmentId));
-            var subjectOfTheStudent = mainServiceStudent.GetSubjectByStudentId(id);
+            var student = studentService.GetStudentById(id);
+            var subjectOftheDept = new List<Subject>(studentService.GetSubjectByDepertmentId(student.DepertmentId));
+            var subjectOfTheStudent = studentService.GetSubjectByStudentId(id);
             var subjectOutOfTheStudent = subjectOftheDept.Except(subjectOfTheStudent).ToList();
 
             return View(subjectOutOfTheStudent);
@@ -113,7 +109,7 @@ namespace University_Information_System.Controllers
             //int departmentId = subjectDepartmentMapped.departmentId;
             //subjectDepartmentMapped.id = 0;
             //subjectDepartmentMapped.departmentId = departmentId;
-            mainServiceStudent.AddSubjectStudentMapped(enrollment);
+            studentService.AddSubjectStudentMapped(enrollment);
             return RedirectToAction(actionName: "DetailsStudent", controllerName: "Student", new { @id = id });
 
             return View();
@@ -123,7 +119,7 @@ namespace University_Information_System.Controllers
         
             public IActionResult DeleteEnrolment(int subjectId, int studentId)
         {
-            mainServiceStudent.DeleteEnrolmentFromSubjectStudentMapped(subjectId, studentId);
+            studentService.DeleteEnrolmentFromSubjectStudentMapped(subjectId, studentId);
             return RedirectToAction(actionName: "DetailsStudent", controllerName: "Student", new { @id = studentId });
         }
     }
