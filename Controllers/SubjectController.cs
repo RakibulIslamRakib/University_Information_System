@@ -78,7 +78,7 @@ namespace University_Information_System.Controllers
 
         public IActionResult DetailsSubject(int id)
         {
-            var subject = mainServiceSubject.GetSubjectById(id);
+            var subject = mainServiceSubject.GetSubjectDetailsById(id);
 
             return View(subject);
         }

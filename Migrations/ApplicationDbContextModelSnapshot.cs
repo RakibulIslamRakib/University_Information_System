@@ -22,25 +22,6 @@ namespace University_Information_System.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("University_Information_System.Models.DepartmentTeacherMapped", b =>
-                {
-                    b.Property<int>("id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"), 1L, 1);
-
-                    b.Property<int>("departmentId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("teacherId")
-                        .HasColumnType("int");
-
-                    b.HasKey("id");
-
-                    b.ToTable("DepartmentTeacherMapped");
-                });
-
             modelBuilder.Entity("University_Information_System.Models.Depertment", b =>
                 {
                     b.Property<int>("id")
@@ -82,7 +63,7 @@ namespace University_Information_System.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"), 1L, 1);
 
-                    b.Property<int>("Depertmentid")
+                    b.Property<int>("DepertmentId")
                         .HasColumnType("int");
 
                     b.Property<string>("FirstName")
@@ -97,8 +78,6 @@ namespace University_Information_System.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("id");
-
-                    b.HasIndex("Depertmentid");
 
                     b.ToTable("Student");
                 });
@@ -216,17 +195,6 @@ namespace University_Information_System.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Teacher");
-                });
-
-            modelBuilder.Entity("University_Information_System.Models.Student", b =>
-                {
-                    b.HasOne("University_Information_System.Models.Depertment", "Depertment")
-                        .WithMany()
-                        .HasForeignKey("Depertmentid")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Depertment");
                 });
 #pragma warning restore 612, 618
         }

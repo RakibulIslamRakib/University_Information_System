@@ -1,0 +1,102 @@
+﻿@model Subject
+
+<link rel="stylesheet" href="~/css/projects.css" />
+
+@{
+    <div class="container">
+        <h3 style="text-align:center">@(Model.SubjectName)</h3>
+
+        <div class="search-list">
+        <h4>Depertment List</h4>
+        @foreach(var depertment in Model.Depertments){
+                <div class="search-item">
+                    <div class="info">
+                        <div class="item-header">
+                            <div class="type">@(depertment.DeptName)</div>
+                            <div class="name">
+                                <input style="align-content:center;
+                background-color: #04AA6D;
+                color: white;
+                padding: 12px 20px;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+                margin-left:30%;
+                height:40px;width:200px;"
+                                   type="button"
+                                   value="Details..."
+                                   onclick="location.href='@Url.Action("DetailsDepertment", "Depertment",new { @id = depertment.id})'" />
+                            </div>
+                        </div>                        
+                      
+                    </div>
+                </div>
+
+        }
+            
+        </div>
+      
+        <div class="search-list">
+            <h4>Teachers List</h4>
+            @foreach (var teacher in Model.Teachers)
+            {
+                <div class="search-item">
+                    <div class="info">
+                        <div class="item-header">
+                            <div class="type">@(teacher.FirstName) @(teacher.LastName)</div> 
+                            <div class="name">
+                                <input style="align-content:center;
+                    background-color: #04AA6D;
+                    color: white;
+                    padding: 12px 20px;
+                    border: none;
+                    border-radius: 4px;
+                    cursor: pointer;
+                    margin-left:30%;
+                    height:40px;width:200px;"
+                                   type="button"
+                                   value="Details..."
+                                   onclick="location.href='@Url.Action("DetailsTeacher", "Teacher",new { @id = teacher.Id})'" />
+                            </div>
+                        </div>
+                       
+                    </div>
+                </div>
+
+            }
+
+
+        </div>
+
+        <div class="search-list">
+            <h4>Enrolled Student List</h4>
+            @foreach (var student in Model.Students)
+            {
+                <div class="search-item">
+                    <div class="info">
+                        <div class="item-header">
+                            <div class="type">@(student.FirstName) @(student.LastName)</div>
+                        </div>
+                        <div class="name">
+                            <input style="align-content:center;
+                        background-color: #04AA6D;
+                        color: white;
+                        padding: 12px 20px;
+                        border: none;
+                        border-radius: 4px;
+                        cursor: pointer;
+                        margin-left:30%;
+                        height:40px;width:200px;"
+                               type="button"
+                               value="Details..."
+                               onclick="location.href='@Url.Action("DetailsStudent", "Student",new { @id = student.id})'" />
+                        </div>
+                    </div>
+                </div>
+
+            }
+
+        </div>
+    </div>
+
+}

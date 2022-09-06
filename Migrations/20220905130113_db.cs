@@ -5,24 +5,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace University_Information_System.Migrations
 {
-    public partial class dbcreated : Migration
+    public partial class db : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable(
-                name: "DepartmentTeacherMapped",
-                columns: table => new
-                {
-                    id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    teacherId = table.Column<int>(type: "int", nullable: false),
-                    departmentId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_DepartmentTeacherMapped", x => x.id);
-                });
-
             migrationBuilder.CreateTable(
                 name: "Depertment",
                 columns: table => new
@@ -39,6 +25,22 @@ namespace University_Information_System.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Depertment", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Student",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Reg = table.Column<int>(type: "int", nullable: false),
+                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DepertmentId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Student", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
@@ -115,39 +117,12 @@ namespace University_Information_System.Migrations
                 {
                     table.PrimaryKey("PK_Teacher", x => x.Id);
                 });
-
-            migrationBuilder.CreateTable(
-                name: "Student",
-                columns: table => new
-                {
-                    id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Reg = table.Column<int>(type: "int", nullable: false),
-                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Depertmentid = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Student", x => x.id);
-                    table.ForeignKey(
-                        name: "FK_Student_Depertment_Depertmentid",
-                        column: x => x.Depertmentid,
-                        principalTable: "Depertment",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Student_Depertmentid",
-                table: "Student",
-                column: "Depertmentid");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "DepartmentTeacherMapped");
+                name: "Depertment");
 
             migrationBuilder.DropTable(
                 name: "Student");
@@ -166,9 +141,6 @@ namespace University_Information_System.Migrations
 
             migrationBuilder.DropTable(
                 name: "Teacher");
-
-            migrationBuilder.DropTable(
-                name: "Depertment");
         }
     }
 }

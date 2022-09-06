@@ -37,3 +37,26 @@
     height: 30px;
     font-size: 18px;
 }
+
+
+.search-item {
+    display: flex;
+}
+
+.search-list {
+    margin-top: 5px;
+    background-color: #e4edf5;
+    padding: 5px 5px;
+    border-radius: 5px;
+}
+
+.info {
+    display: flex;
+    flex-direction: column;
+    width: 85%;
+}
+
+.item-header {
+    display: flex;
+    justify-content: space-between;
+}

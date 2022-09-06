@@ -1,0 +1,127 @@
+﻿@model Depertment
+
+
+<link rel="stylesheet" href="~/css/projects.css" />
+
+@{
+    <div class="container">
+            <h3 style="text-align:center">@(Model.DeptName)</h3>
+
+            <div class="search-list">
+            <div>
+                    <h4>Subject List</h4>
+                    <div>
+                    
+
+                        <a style="background-color:teal; color:white; font-size:14px; padding:2px;margin:2px; border: 1px solid red;border-radious:2px;"
+                   asp-conztroller="Depertment" asp-action="AddSubjectToTheDepertment" asp-route-id=@Model.id> Add Subject in The Department</a>
+                    </div>
+            
+            </div>
+           
+            @foreach(var subject in Model.Subjects){
+                    <div class="search-item">
+                        <div class="info">
+                            <div class="item-header">
+                                <div class="type">@(subject.SubjectName)</div>   
+                                <div class="name">
+                                    <input style="align-content:center;
+            background-color: #04AA6D;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-left:30%;
+            height:40px;width:200px;"
+                                       type="button"
+                                       value="Details..."
+                                   onclick="location.href='@Url.Action("DetailsSubject", "Subject",new { @id = subject.id})'" />
+
+                                    <input style="align-content:center;
+            background-color: #04AA6D;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-left:30%;
+            height:40px;width:200px;"
+                                       type="button"
+                                       value="Delete"
+                                   onclick="location.href='@Url.Action("DeleteSubjectFromDept", "Depertment", new { @subjectId = subject.id, @deptId = Model.id})'" />
+                                </div>
+                            </div>                        
+                          
+                        </div>
+                    </div>
+
+        }
+                
+            </div>
+          
+            <div class="search-list">
+                <h4>Teachers List</h4>
+                @foreach (var teacher in Model.Teachers)
+            {
+                    <div class="search-item">
+                        <div class="info">
+                            <div class="item-header">
+                                <div class="type">@(teacher.FirstName) @(teacher.LastName)</div> 
+                                <div class="name">
+                                    <button>details..</button> <button>delete</button>
+                                </div>
+                            </div>
+                           
+                        </div>
+                    </div>
+
+            }
+
+            </div>
+
+            <div class="search-list">
+                <h4>Student List</h4>
+                @foreach (var student in Model.Students)
+            {
+                    <div class="search-item">
+                        <div class="info">
+                            <div class="item-header">
+                                <div class="type">@(student.FirstName) @(student.LastName)</div>
+                            </div>
+                            <div class="name">
+                            <input style="align-content:center;
+                background-color: #04AA6D;
+                color: white;
+                padding: 12px 20px;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+                margin-left:30%;
+                height:40px;width:200px;"
+                               type="button"
+                               value="Details..."
+                               onclick="location.href='@Url.Action("DetailsStudent", "Student",new { @id = student.id})'" />
+
+                            <input style="align-content:center;
+                background-color: #04AA6D;
+                color: white;
+                padding: 12px 20px;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+                margin-left:30%;
+                height:40px;width:200px;"
+                               type="button"
+                               value="Delete"
+                               onclick="location.href='@Url.Action("DeleteStudentFromDept", "Depertment", new { @studentId = student.id, @deptId = Model.id})'" />
+                            </div>
+                        </div>
+                    </div>
+
+            }
+
+            </div>
+    </div>
+
+}

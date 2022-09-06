@@ -1,0 +1,61 @@
+﻿@model Student
+
+
+<link rel="stylesheet" href="~/css/projects.css" />
+
+@{
+    <div class="container">
+        <h3 style="text-align:center">@(Model.FirstName) @(Model.LastName)</h3>
+        <div class="search-list">
+            <h4>Department : @(Model.DeptName)</h4>
+
+
+        <div class="search-list">
+        <h4>Enrolments List</h4>
+                <a style="background-color:teal; color:white; font-size:14px; padding:2px;margin:2px; border: 1px solid red;border-radious:2px;"
+               asp-conztroller="Student" asp-action="EnroleSubject" asp-route-id=@Model.id> Enrole for a subjects</a>
+
+        @foreach(var subject in Model.Subjects){
+                <div class="search-item">
+                    <div class="info">
+                        <div class="item-header">
+                            <div class="type">@(subject.SubjectName)</div>   
+                            <div class="name">
+                               <input style="align-content:center;
+                background-color: #04AA6D;
+                color: white;
+                padding: 12px 20px;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+                margin-left:30%;
+                height:40px;width:200px;"
+                                   type="button"
+                                   value="Details..."
+                                   onclick="location.href='@Url.Action("DetailsSubject", "Subject",new { @id = subject.id})'" />
+
+                                <input style="align-content:center;
+                background-color: #04AA6D;
+                color: white;
+                padding: 12px 20px;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+                margin-left:30%;
+                height:40px;width:200px;"
+                                   type="button"
+                                   value="Delete"
+                                   onclick="location.href='@Url.Action("DeleteEnrolment", "Student", new { @subjectId = subject.id, @studentId = Model.id})'" />
+                            </div>
+                        </div>                        
+                      
+                    </div>
+                </div>
+
+        }
+           
+        </div>
+    </div>
+    </div>
+
+}

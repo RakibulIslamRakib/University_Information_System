@@ -30,5 +30,25 @@ namespace University_Information_System.Services
         public void UpdateStudent(Student student);
         public void DeleteStudent(Student student);
 
+        public List<Subject> GetSubjectByStudentId(int id);
+
+
+        public Depertment GetDepertmentDetailsById(int id);
+        public Subject GetSubjectDetailsById(int id);
+        public Teacher GetTeacherDetailsById(int id);
+        public Student GetStudentDetailsById(int id);
+        public List<Subject> GetSubjectByDepertmentId(int id);
+        public List<Subject> GetSubjectByTeacherId(int id);
+
+        public List<Student> GetStudentByDepertmentId(int id);
+
+
+        public void AddSubjectDapertmentMapped(SubjectDepartmentMapped subjectDapertmentMapped);
+        public void AddSubjectStudentMapped(SubjectStudentMapped subjectStudentMapped);
+        public void DeleteSubjectFromSubjectDepartmentMapped(int subjectId, int deptId);
+        public void AddSubjectTeacherMapped(SubjectTeacherMapped subjectTeacherMapped);
+
+        public void DeleteSubjectFromSubjectTeacherMapped(int subjectId, int teacherId);
+        public void DeleteEnrolmentFromSubjectStudentMapped(int subjectId, int studentId);
     }
 }

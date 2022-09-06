@@ -75,13 +75,50 @@ namespace University_Information_System.Controllers
             return RedirectToAction(actionName: "Teachers", controllerName: "Teacher");
         }
 
-        public IActionResult DetailsSubject(int id)
+        public IActionResult DetailsTeacher(int id)
         {
-            var subject = mainServiceTeacher.GetSubjectById(id);
+            var teacher = mainServiceTeacher.GetTeacherDetailsById(id);
 
-            return View(subject);
+            return View(teacher);
         }
 
-        
+
+        //AddSubjectToTheTeacher
+
+
+        public IActionResult AddSubjectToTheTeacher(int id)
+        {
+
+            TempData["teacherId"] = id;
+            var subjects = new List<Subject>(mainServiceTeacher.getAllSubject());
+
+            var subjectOftheTeacher = new List<Subject>(mainServiceTeacher.GetSubjectByTeacherId(id));
+
+            var subjectOutOftheTeacher = subjects.Except(subjectOftheTeacher).ToList();
+
+            return View(subjectOutOftheTeacher);
+        }
+
+        [HttpPost]
+        public IActionResult AddSubjectToTheTeacher(int id, int subjectId)
+        {
+            var subTeacher = new SubjectTeacherMapped();
+            subTeacher.TeacherId = id;
+            subTeacher.SubjectId = subjectId;
+            //int departmentId = subjectDepartmentMapped.departmentId;
+            //subjectDepartmentMapped.id = 0;
+            //subjectDepartmentMapped.departmentId = departmentId;
+            mainServiceTeacher.AddSubjectTeacherMapped(subTeacher);
+            return RedirectToAction(actionName: "DetailsTeacher", controllerName: "Teacher", new { @id = id });
+
+        }
+
+
+        public IActionResult DeleteSubjectFromTeacher(int subjectId, int TeacherId)
+        {
+            mainServiceTeacher.DeleteSubjectFromSubjectTeacherMapped(subjectId, TeacherId);
+            return RedirectToAction(actionName: "DetailsTeacher", controllerName: "Teacher", new {@id = TeacherId});
+        }
+
     }
 }

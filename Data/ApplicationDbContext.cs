@@ -18,7 +18,7 @@ namespace University_Information_System.Data
         public DbSet<SubjectStudentMapped> SubjectStudentMapped { get; set; }
         public DbSet<SubjectTeacherMapped> SubjectTeacherMapped { get; set; }
         public DbSet<SubjectDepartmentMapped> SubjectDepartmentMapped { get; set; }
-        public DbSet<DepartmentTeacherMapped> DepartmentTeacherMapped { get; set; }
+
 
 
 

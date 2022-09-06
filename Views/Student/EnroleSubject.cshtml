@@ -1,0 +1,22 @@
+﻿@model List<Subject>
+
+<link rel="stylesheet" href="~/css/projects.css"/>
+<link rel="stylesheet" href="~/css/contact.css" />
+
+@{
+    <div class="container">
+        <h3 style="text-align:center">Enroll: </h3>
+        <form asp-controller="Student" adp-rout-id=@( TempData["StudentId"]) asp-action="EnroleSubject">
+        <input>
+        <label for="subjectId"> Subjects</label>
+        <select name="subjectId">
+        @foreach (var subject in Model){
+               <option value=@(subject.id)>@(subject.SubjectName)</option>
+           }
+        </select>
+
+        <input type="submit" value="Submit">
+        </form>
+    </div>
+             
+}
