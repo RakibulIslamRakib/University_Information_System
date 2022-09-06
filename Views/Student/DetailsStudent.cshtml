@@ -8,6 +8,7 @@
         <h3 style="text-align:center">@(Model.FirstName) @(Model.LastName)</h3>
         <div class="search-list">
             <div class="name">
+                <h4>Department : @(Model.DeptName)</h4>
                 <input style="align-content:center;
                     background-color: #04AA6D;
                     color: white;
@@ -19,10 +20,8 @@
                     height:40px;width:200px;"
                        type="button"
                        value="Details..."
-                       @{/*
-                   onclick="location.href='@Url.Action("DetailsDepertment", "Depertment",new { @id = subject.id})'" 
-                       */} />
-            <h4>Department : @(Model.DeptName)</h4>
+                       onclick="location.href='@Url.Action("DetailsDepertment", "Depertment",new { @id =Model.DepertmentId})'" />
+           
             </div>
 
 
