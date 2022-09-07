@@ -4,10 +4,13 @@ using University_Information_System.Services.ServiceInterfaces;
 
 namespace University_Information_System.Services.ServiceClasses
 {
-    public class SubjectService: CommonUtilityClass,ISubjectService
+    public class SubjectService: ISubjectService
     {
+        public readonly ApplicationDbContext db;
 
-        public SubjectService(ApplicationDbContext db):base(db) {}
+        public SubjectService(ApplicationDbContext db) {
+            this.db = db;
+        }
 
 
         public void AddSubject(Subject subject)
@@ -16,10 +19,24 @@ namespace University_Information_System.Services.ServiceClasses
             db.SaveChanges();
         }
 
+
+        public List<Subject> getAllSubject()
+        {
+            var subjects = db.Subject.ToList();
+
+            return subjects;
+        }
+
         public void DeleteSubject(Subject subject)
         {
-            RemoveAllEnrolmentOfTheSubject(subject.id);
-            RemoveAllSubTeacherOfTheSubject(subject.id);
+            var enrolmentOfTheSubject = db.SubjectStudentMapped.Where(ss=>ss.subjectId==subject.id);
+            db.SubjectStudentMapped.RemoveRange(enrolmentOfTheSubject);
+            db.SaveChanges();
+
+            var subTeacherOfTheSubject = db.SubjectTeacherMapped.Where(st => st.SubjectId == subject.id);
+            db.SubjectTeacherMapped.RemoveRange(subTeacherOfTheSubject);
+            db.SaveChanges();
+
             db.Subject.Remove(subject);
             db.SaveChanges();
         }
@@ -38,52 +55,45 @@ namespace University_Information_System.Services.ServiceClasses
 
         public List<Student> GetStudentBySubjectId(int id)
         {
-            var subjectStudent = db.SubjectStudentMapped.ToList();
-            var studentIdOfTheSubject = from subStudent in subjectStudent
-                                        where subStudent.subjectId == id
-                                        orderby subStudent.studentId
-                                        select subStudent.studentId;
-            List<Student> allStudentList = db.Student.ToList();
-
+            var subStudentOfTheSubject = db.SubjectStudentMapped.Where(ss => ss.subjectId == id);
             var allStudentOfTheSubject = new List<Student>();
-            int index = 0;
-            foreach (var student in allStudentList)
-            {
-                if (studentIdOfTheSubject.Count() <= index) break;
-                if (student.id == studentIdOfTheSubject.ElementAt(index))
-                {
-                    allStudentOfTheSubject.Add(student);
-                    index++;
-                }
-            }
 
+            int index = 0;
+            foreach (var substudent in subStudentOfTheSubject)
+            {
+               allStudentOfTheSubject.Add(db.Student.FirstOrDefault(st=>st.id == substudent.studentId));
+                  
+            }
 
             return allStudentOfTheSubject;
         }
+
         public List<Teacher> GetTeacherBySubjectId(int id)
         {
-            var subjectTeacher = db.SubjectTeacherMapped.ToList();
-            var teacherIdOfTheSubject = from subTeacher in subjectTeacher
-                                        where subTeacher.SubjectId == id
-                                        orderby subTeacher.TeacherId
-                                        select subTeacher.TeacherId;
-            List<Teacher> allTeacherList = db.Teacher.ToList();
-
+            var subteacherOfTheSubject = db.SubjectTeacherMapped.Where(st => st.SubjectId == id);
             var allTeacherOfTheSubject = new List<Teacher>();
-            int index = 0;
-            foreach (var teacher in allTeacherList)
-            {
-                if (teacherIdOfTheSubject.Count() <= index) break;
-                if (teacher.Id == teacherIdOfTheSubject.ElementAt(index))
-                {
-                    allTeacherOfTheSubject.Add(teacher);
-                    index++;
-                }
-            }
 
+            foreach (var subTeacher in  subteacherOfTheSubject)
+            {
+                allTeacherOfTheSubject.Add(db.Teacher.FirstOrDefault(teacher => teacher.Id == subTeacher.TeacherId));
+            }
 
             return allTeacherOfTheSubject;
         }
+
+        public List<Depertment> GetDepertmentBySubjectId(int id)
+        {
+            var depertmentOfTheSubject = db.SubjectDepartmentMapped.Where(sd => sd.subjectId == id);           
+            var allDepertmentOfTheSubject = new List<Depertment>();
+
+            foreach (var subdept in depertmentOfTheSubject)
+            {             
+                allDepertmentOfTheSubject.Add(db.Depertment.FirstOrDefault(dept=>dept.id==subdept.departmentId));                
+            }
+
+            return allDepertmentOfTheSubject;
+        }
+
 
         public Subject GetSubjectDetailsById(int id)
         {
@@ -93,38 +103,6 @@ namespace University_Information_System.Services.ServiceClasses
             subject.Students = GetStudentBySubjectId(id);
 
             return subject;
-        }
-
-        public void DeleteSubjectFromSubjectTeacherMapped(int subjectId, int teacherId)
-        {
-            var subjectTeacherList = db.SubjectTeacherMapped.ToList();
-            var subTeacherVar = from sT in (from subTeacher in subjectTeacherList
-                                            where subTeacher.SubjectId == subjectId
-                                            select subTeacher)
-                                where sT.TeacherId == teacherId
-                                select sT;
-            if (subTeacherVar.Count() > 0)
-            {
-                db.SubjectTeacherMapped.Remove(subTeacherVar.ElementAt(0));
-                db.SaveChanges();
-            }
-        }
-
-        public void RemoveAllEnrolmentOfTheSubject(int subjectId)
-        {
-            var subStudent = db.SubjectStudentMapped;
-            var enrolmentOfTheSubject = from ss in subStudent where ss.subjectId == subjectId select ss;
-            db.SubjectStudentMapped.RemoveRange(enrolmentOfTheSubject);
-            db.SaveChanges();
-        }
-
-
-        public void RemoveAllSubTeacherOfTheSubject(int subjectId)
-        {
-            var subTeacher = db.SubjectTeacherMapped;
-            var subTeacherOfTheSubject = from st in subTeacher where st.SubjectId == subjectId select st;
-            db.SubjectTeacherMapped.RemoveRange(subTeacher);
-            db.SaveChanges();
         }
 
     }

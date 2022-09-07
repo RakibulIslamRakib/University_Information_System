@@ -2,7 +2,7 @@
 
 namespace University_Information_System.Services.ServiceInterfaces
 {
-    public interface ITeacherService: IMainCommonService
+    public interface ITeacherService 
     {
         public List<Teacher> getAllTeacher();
         public void AddTeacher(Teacher teacher);
@@ -11,6 +11,7 @@ namespace University_Information_System.Services.ServiceInterfaces
         public void DeleteTeacher(Teacher teacher);
         public Teacher GetTeacherDetailsById(int id);
         public List<Subject> GetSubjectByTeacherId(int id);
-        public void DeleteSubjectFromSubjectTeacherMapped(int subjectId, int teacherId);
+        public void AddSubjectTeacherMapped(SubjectTeacherMapped subjectTeacherMapped);
+        public void DeleteSubTeacherMapped(int subjectId, int teacherId);
     }
 }

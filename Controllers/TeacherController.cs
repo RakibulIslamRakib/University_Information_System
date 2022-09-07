@@ -8,10 +8,12 @@ namespace University_Information_System.Controllers
     public class TeacherController : Controller
     {
         private readonly ITeacherService teacherService;
+        private readonly ISubjectService subjectService;
 
-        public TeacherController(ITeacherService teacherService)
+        public TeacherController(ITeacherService teacherService, ISubjectService subjectService)
         {
             this.teacherService = teacherService;
+            this.subjectService = subjectService;
         }
 
 
@@ -87,9 +89,9 @@ namespace University_Information_System.Controllers
         {
 
             TempData["teacherId"] = id;
-            var subjects = new List<Subject>(teacherService.getAllSubject());
+            var subjects = subjectService.getAllSubject();
 
-            var subjectOftheTeacher = new List<Subject>(teacherService.GetSubjectByTeacherId(id));
+            var subjectOftheTeacher =  teacherService.GetSubjectByTeacherId(id);
 
             var subjectOutOftheTeacher = subjects.Except(subjectOftheTeacher).ToList();
 
@@ -111,7 +113,7 @@ namespace University_Information_System.Controllers
 
         public IActionResult DeleteSubjectFromTeacher(int subjectId, int TeacherId)
         {
-            teacherService.DeleteSubjectFromSubjectTeacherMapped(subjectId, TeacherId);
+            teacherService.DeleteSubTeacherMapped(subjectId, TeacherId);
             return RedirectToAction(actionName: "DetailsTeacher", controllerName: "Teacher", new {@id = TeacherId});
         }
 

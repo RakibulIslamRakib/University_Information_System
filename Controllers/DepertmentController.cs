@@ -36,6 +36,7 @@ namespace University_Information_System.Controllers
         {
             depertment.CreatedDate = DateTime.Now;
             departmentService.AddDepertment(depertment);
+
             return RedirectToAction(actionName: "Depertments", controllerName: "Depertment");
 
         }
@@ -52,7 +53,7 @@ namespace University_Information_System.Controllers
         [HttpPost]
         public IActionResult DeleteDepertment(Depertment depertment)
         {
-             departmentService.DeleteDepertment(depertment);
+            departmentService.DeleteDepertment(depertment);
 
             return RedirectToAction(actionName: "Depertments", controllerName: "Depertment");
         }
@@ -82,10 +83,8 @@ namespace University_Information_System.Controllers
         public IActionResult AddSubjectToTheDepertment(int id)
         {
             TempData["departmentId"] = id;
-            var subjects = new List<Subject>(departmentService.getAllSubject());
-            var subjectOftheDept = new List<Subject>(departmentService.GetSubjectByDepertmentId(id));
-            var subjectOutOftheDept = subjects.Except(subjectOftheDept).ToList();
-
+            var subjectOutOftheDept = departmentService.SubjectOutOfDept(id);
+            
             return View(subjectOutOftheDept);
         }
 
@@ -111,8 +110,7 @@ namespace University_Information_System.Controllers
 
         public IActionResult DeleteStudentFromDept(int studentId, int deptId)
         {
-            var student = departmentService.GetStudentById(studentId);
-            departmentService.DeleteStudent(student);
+            departmentService.DeleteStudentFromDept(studentId);
             
             return RedirectToAction(actionName: "DetailsDepertment", controllerName: "Depertment", new {@id = deptId});
         }

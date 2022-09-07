@@ -1,13 +1,19 @@
-﻿using University_Information_System.Data;
+﻿using NuGet.DependencyResolver;
+using University_Information_System.Data;
 using University_Information_System.Models;
 using University_Information_System.Services.ServiceInterfaces;
 
 namespace University_Information_System.Services.ServiceClasses
 {
-    public class TeacherService: CommonUtilityClass,ITeacherService
+    public class TeacherService: ITeacherService
     {
 
-        public TeacherService(ApplicationDbContext db):base(db) {}
+        public readonly ApplicationDbContext db;
+
+        public TeacherService(ApplicationDbContext db)
+        {
+            this.db = db;
+        }
 
 
         public void AddTeacher(Teacher teacher)
@@ -16,9 +22,19 @@ namespace University_Information_System.Services.ServiceClasses
             db.SaveChanges();
         }
 
+        public void DeleteSubTeacherMapped(int subjectId, int teacherId)
+        {
+            var subTeacher = db.SubjectTeacherMapped.FirstOrDefault(st => st.TeacherId == teacherId && st.SubjectId==subjectId);
+            db.SubjectTeacherMapped.Remove(subTeacher);
+            db.SaveChanges();
+        }
 
         public void DeleteTeacher(Teacher teacher)
         {
+            var subTeacherOfTheTeacher = db.SubjectTeacherMapped.Where(st => st.TeacherId == teacher.Id);
+            db.SubjectTeacherMapped.RemoveRange(subTeacherOfTheTeacher);
+            db.SaveChanges();
+
             db.Teacher.Remove(teacher);
             db.SaveChanges();
         }
@@ -81,25 +97,13 @@ namespace University_Information_System.Services.ServiceClasses
 
         public List<Subject> GetSubjectByTeacherId(int id)
         {
-            var subjectTeacher = db.SubjectTeacherMapped.ToList();
-            var subjectIdOfTheTeacher = from subTeacher in subjectTeacher
-                                        where subTeacher.TeacherId == id
-                                        orderby subTeacher.SubjectId
-                                        select subTeacher.SubjectId;
-            List<Subject> allSubjectList = db.Subject.ToList();
-
+            var subteacherOfTheTeacher = db.SubjectTeacherMapped.Where(st => st.SubjectId == id);
             var allSubjectOfTheTeacher = new List<Subject>();
-            int index = 0;
-            foreach (var subject in allSubjectList)
-            {
-                if (subjectIdOfTheTeacher.Count() <= index) break;
-                if (subject.id == subjectIdOfTheTeacher.ElementAt(index))
-                {
-                    allSubjectOfTheTeacher.Add(subject);
-                    index++;
-                }
-            }
 
+            foreach (var subTeacher in subteacherOfTheTeacher)
+            {
+                allSubjectOfTheTeacher.Add(db.Subject.FirstOrDefault(subject => subject.id == subTeacher.SubjectId));
+            }
 
             return allSubjectOfTheTeacher;
         }
@@ -132,23 +136,21 @@ namespace University_Information_System.Services.ServiceClasses
         }
         */
 
+        public void AddSubjectTeacherMapped(SubjectTeacherMapped subjectTeacherMapped)
+        {
+            db.SubjectTeacherMapped.Add(subjectTeacherMapped);
+            db.SaveChanges();
+        }
 
         public Teacher GetTeacherDetailsById(int id)
         {
             var teacher = GetTeacherById(id);
             teacher.Subjects = GetSubjectByTeacherId(id);
-            // teacher.Depertments = GetDepertmentByTeacherId(id);
             teacher.Depertments = new List<Depertment>();
 
 
             return teacher;
         }
 
-
-
-        public void DeleteSubjectFromSubjectTeacherMapped(int subjectId, int teacherId)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

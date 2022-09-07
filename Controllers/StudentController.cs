@@ -7,10 +7,12 @@ namespace University_Information_System.Controllers
     public class StudentController : Controller
     {
         private readonly IStudentService studentService;
+        private readonly IDepartmentService departmentService;
 
-        public StudentController(IStudentService studentService)
+        public StudentController(IStudentService studentService, IDepartmentService departmentService)
         {
             this.studentService = studentService;
+            this.departmentService = departmentService; 
         }
 
 
@@ -28,7 +30,7 @@ namespace University_Information_System.Controllers
 
         public IActionResult AddStudent()
         {
-            var depertments = studentService.getAllDepertment();
+            var depertments = departmentService.getAllDepertment();
             return View(depertments);
         }
 
@@ -45,7 +47,7 @@ namespace University_Information_System.Controllers
         public IActionResult DeleteStudent(int id)
         {
             var student = studentService.GetStudentById(id);
-            student.DeptName = studentService.GetDepertmentById(student.DepertmentId).DeptName;
+            student.DeptName = departmentService.GetDepertmentById(student.DepertmentId).DeptName;
 
             return View(student);
         }
@@ -92,7 +94,7 @@ namespace University_Information_System.Controllers
         {
             TempData["StudentId"] = id;
             var student = studentService.GetStudentById(id);
-            var subjectOftheDept = new List<Subject>(studentService.GetSubjectByDepertmentId(student.DepertmentId));
+            var subjectOftheDept = new List<Subject>(departmentService.GetSubjectByDepertmentId(student.DepertmentId));
             var subjectOfTheStudent = studentService.GetSubjectByStudentId(id);
             var subjectOutOfTheStudent = subjectOftheDept.Except(subjectOfTheStudent).ToList();
 
@@ -106,20 +108,17 @@ namespace University_Information_System.Controllers
             var enrollment = new SubjectStudentMapped();
             enrollment.subjectId = subjectId;
             enrollment.studentId= id;
-            //int departmentId = subjectDepartmentMapped.departmentId;
-            //subjectDepartmentMapped.id = 0;
-            //subjectDepartmentMapped.departmentId = departmentId;
             studentService.AddSubjectStudentMapped(enrollment);
+            
             return RedirectToAction(actionName: "DetailsStudent", controllerName: "Student", new { @id = id });
-
-            return View();
 
         }
 
         
-            public IActionResult DeleteEnrolment(int subjectId, int studentId)
+        public IActionResult DeleteEnrolment(int subjectId, int studentId)
         {
             studentService.DeleteEnrolmentFromSubjectStudentMapped(subjectId, studentId);
+            
             return RedirectToAction(actionName: "DetailsStudent", controllerName: "Student", new { @id = studentId });
         }
     }

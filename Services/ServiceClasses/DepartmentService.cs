@@ -1,19 +1,23 @@
-﻿using University_Information_System.Data;
+﻿using System.Collections.Generic;
+using University_Information_System.Data;
 using University_Information_System.Models;
 using University_Information_System.Services.ServiceInterfaces;
 
 namespace University_Information_System.Services.ServiceClasses
 {
-    public class DepartmentService: CommonUtilityClass,IDepartmentService
+    public class DepartmentService: IDepartmentService
     {
 
-         
-        public DepartmentService(ApplicationDbContext db):base(db) {  }
+        public readonly ApplicationDbContext db;
+        private readonly ISubjectService subjectService;
+        private readonly IStudentService studentService;
 
-
-   
-
-        
+        public DepartmentService(ApplicationDbContext db , ISubjectService subjectService, IStudentService studentService)
+        {
+            this.db = db;
+            this.subjectService = subjectService;
+            this.studentService = studentService;
+        }
 
         public void AddDepertment(Depertment depertment)
         {
@@ -21,6 +25,18 @@ namespace University_Information_System.Services.ServiceClasses
             db.SaveChanges();
         }
 
+        public List<Depertment> getAllDepertment()
+        {
+            var depertments = db.Depertment.ToList();
+
+            return depertments;
+        }
+
+        public Depertment GetDepertmentById(int id)
+        {
+
+            return db.Depertment.Find(id);
+        }
 
         public void UpdateDepertment(Depertment depertment)
         {
@@ -30,8 +46,22 @@ namespace University_Information_System.Services.ServiceClasses
 
         public void DeleteDepertment(Depertment depertment)
         {
-            RemoveAllStudentOfTheDepertment(depertment);
-            RemoveAllSubDeptOfTheDept(depertment.id);
+            var studentOdTheDept = GetStudentByDepertmentId(depertment.id);
+            var enrolMentsOfTheStudentsOfTheDept = new List<SubjectStudentMapped>();
+            var enrolments = db.SubjectStudentMapped;
+            foreach (var student in studentOdTheDept)
+            {
+                enrolMentsOfTheStudentsOfTheDept.Add(enrolments.FirstOrDefault(x => x.id == student.id));
+            }
+            enrolments.RemoveRange(enrolMentsOfTheStudentsOfTheDept);
+            db.SaveChanges();
+
+            db.Student.RemoveRange(studentOdTheDept);
+            db.SaveChanges();
+
+            var subDeptOfTheDept = db.SubjectDepartmentMapped.Where(sd=>sd.departmentId==depertment.id).ToList();
+            db.SubjectDepartmentMapped.RemoveRange(subDeptOfTheDept);
+            db.SaveChanges();
 
             db.Depertment.Remove(depertment);
             db.SaveChanges();
@@ -49,50 +79,31 @@ namespace University_Information_System.Services.ServiceClasses
         }
 
 
+        public List<Subject> GetSubjectByDepertmentId(int id)
+        {
+            var subjectIdOfTheDepertment = db.SubjectDepartmentMapped.Where(sd => sd.departmentId == id ).Select(sd=>sd.subjectId).ToList();
+            
+            
+            var allSubjectList = db.Subject;
+            var allSubjectOfTheDepertment =new  List<Subject>();
+            foreach (var subjectId in subjectIdOfTheDepertment)
+            {
+                allSubjectOfTheDepertment.Add(allSubjectList.FirstOrDefault(sb=>sb.id==subjectId));               
+            }
+
+            return allSubjectOfTheDepertment;
+        }
+        
 
         public List<Student> GetStudentByDepertmentId(int id)
         {
 
-            List<Student> allStudentList = db.Student.ToList();
-
-            var allStudentOfTheDepertment = new List<Student>();
-
-            foreach (var student in allStudentList)
-            {
-                if (student.DepertmentId == id) allStudentOfTheDepertment.Add(student);
-            }
-
-            return (List<Student>)allStudentOfTheDepertment;
+            return db.Student.Where(st => st.DepertmentId == id).ToList();
         }
 
-        public void RemoveAllStudentOfTheDepertment(Depertment depertment)
+        public void DeleteStudentFromDept(int studentId)
         {
-            var students = db.Student.ToList();
-            var studentOdTheDept = from student in db.Student
-                                   where student.DepertmentId == depertment.id
-                                   select student;
-
-            var enrolMentsOfTheStudentsOfTheDept = new List<SubjectStudentMapped>();
-            var enrolments = db.SubjectStudentMapped;
-
-            foreach (var student in studentOdTheDept)
-            {
-                foreach (var enrol in enrolments)
-                {
-                    if (enrol.studentId == student.id)
-                    {
-                        enrolMentsOfTheStudentsOfTheDept.Add(enrol);
-                    }
-                }
-            }
-
-            db.SaveChanges();
-
-            enrolments.RemoveRange(enrolMentsOfTheStudentsOfTheDept);
-            db.SaveChanges();
-
-            db.Student.RemoveRange(studentOdTheDept);
-            db.SaveChanges();
+            studentService.DeleteStudent(studentService.GetStudentById(studentId));
         }
 
         public void AddSubjectDapertmentMapped(SubjectDepartmentMapped subjectDapertmentMapped)
@@ -103,27 +114,25 @@ namespace University_Information_System.Services.ServiceClasses
 
         public void DeleteSubjectFromSubjectDepartmentMapped(int subjectId, int deptId)
         {
-            var subjectDeptList = db.SubjectDepartmentMapped.ToList();
-            var subDeptVar = from sd in (from subDept in subjectDeptList
-                                         where subDept.subjectId == subjectId
-                                         select subDept)
-                             where sd.departmentId == deptId
-                             select sd;
+            var subDeptVar = db.SubjectDepartmentMapped.Where(sd => sd.departmentId == deptId && sd.subjectId==subjectId).ToList();
+            
             if (subDeptVar.Count() > 0)
             {
                 db.SubjectDepartmentMapped.Remove(subDeptVar.ElementAt(0));
                 db.SaveChanges();
             }
-
         }
 
-        public void RemoveAllSubDeptOfTheDept(int deptId)
+
+        public List<Subject> SubjectOutOfDept(int depertmentId)
         {
-            var subDept = db.SubjectDepartmentMapped;
-            var subDeptOfTheDept = from sd in subDept where sd.departmentId == deptId select sd;
-            db.SubjectDepartmentMapped.RemoveRange(subDeptOfTheDept);
-            db.SaveChanges();
+            var subjects = subjectService.getAllSubject();
+            var subjectOftheDept = GetSubjectByDepertmentId(depertmentId);
+            var subjectOutOftheDept = subjects.Except(subjectOftheDept).ToList();
+            
+            return subjectOutOftheDept;
         }
 
+        
     }
 }

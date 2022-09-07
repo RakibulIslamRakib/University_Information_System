@@ -5,9 +5,23 @@ using University_Information_System.Services.ServiceInterfaces;
 
 namespace University_Information_System.Services.ServiceClasses
 {
-    public class StudentService: CommonUtilityClass, IStudentService
+    public class StudentService:  IStudentService
     {
-        public StudentService(ApplicationDbContext db) : base(db){    }
+
+        public readonly ApplicationDbContext db;
+        private readonly IDepartmentService departmentService;
+
+        public StudentService(ApplicationDbContext db, IDepartmentService departmentService)
+        {
+            this.db = db;
+            this.departmentService = departmentService;
+        }
+
+        public void AddStudent(Student student)
+        {
+            db.Student.Add(student);
+            db.SaveChanges();
+        }
 
         public List<Student> getAllStudent()
         {
@@ -22,21 +36,39 @@ namespace University_Information_System.Services.ServiceClasses
             db.SaveChanges();
         }
 
+        public Student GetStudentById(int id)
+        {
+
+            return db.Student.Find(id);
+        }
+
+        public void DeleteStudent(Student student)
+        {
+            var subStudentVar = db.SubjectStudentMapped.Where(ss => ss.studentId == student.id );
+            
+            if (subStudentVar.Count() > 0)
+            {
+                db.SubjectStudentMapped.RemoveRange(subStudentVar);
+                db.SaveChanges();
+            }
+
+            db.Student.Remove(student);
+            db.SaveChanges();
+        }
+
+
+
         public Student GetStudentDetailsById(int id)
         {
             var student = db.Student.Find(id);
-            student.DeptName = GetDepertmentById(student.DepertmentId).DeptName;
+            student.DeptName = departmentService.GetDepertmentById(student.DepertmentId).DeptName;
             student.Subjects = GetSubjectByStudentId(id);
 
             return student;
         }
 
 
-        public void AddStudent(Student student)
-        {
-            db.Student.Add(student);
-            db.SaveChanges();
-        }
+ 
 
 
 
@@ -48,12 +80,7 @@ namespace University_Information_System.Services.ServiceClasses
 
         public void DeleteEnrolmentFromSubjectStudentMapped(int subjectId, int studentId)
         {
-            var enrolmentList = db.SubjectStudentMapped.ToList();
-            var subStudentVar = from ss in (from subStudent in enrolmentList
-                                            where subStudent.subjectId == subjectId
-                                            select subStudent)
-                                where ss.studentId == studentId
-                                select ss;
+            var subStudentVar = db.SubjectStudentMapped.Where(ss=>ss.studentId == studentId && ss.subjectId==subjectId);
             if (subStudentVar.Count() > 0)
             {
                 db.SubjectStudentMapped.Remove(subStudentVar.ElementAt(0));
@@ -65,27 +92,16 @@ namespace University_Information_System.Services.ServiceClasses
 
         public List<Subject> GetSubjectByStudentId(int id)
         {
-            var subjectStudent = db.SubjectStudentMapped.ToList();
-            var subjectIdOfTheStudent = from subStudent in subjectStudent
-                                        where subStudent.studentId == id
-                                        orderby subStudent.subjectId
-                                        select subStudent.subjectId;
+            var subjectIdOfTheStudent = db.SubjectStudentMapped.Where(ss => ss.studentId == id).Select(ss=>ss.subjectId).ToList();
             var deptId = db.Student.Find(id).DepertmentId;
-
-            List<Subject> allSubjectListOfTheDept = GetSubjectByDepertmentId(deptId);
-
+            var allSubjectListOfTheDept = departmentService.GetSubjectByDepertmentId(deptId);
             var allSubjectOfTheStudent = new List<Subject>();
-            int index = 0;
-            foreach (var subject in allSubjectListOfTheDept)
-            {
-                if (subjectIdOfTheStudent.Count() <= index) break;
-                if (subject.id == subjectIdOfTheStudent.ElementAt(index))
-                {
-                    allSubjectOfTheStudent.Add(subject);
-                    index++;
-                }
-            }
 
+            foreach (var subjectId in subjectIdOfTheStudent)
+            {
+                allSubjectOfTheStudent.Add(allSubjectListOfTheDept.FirstOrDefault(x => x.id == subjectId));
+                
+            }
 
             return allSubjectOfTheStudent;
         }
