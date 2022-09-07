@@ -97,13 +97,8 @@ namespace University_Information_System.Services.ServiceClasses
 
         public List<Subject> GetSubjectByTeacherId(int id)
         {
-            var subteacherOfTheTeacher = db.SubjectTeacherMapped.Where(st => st.SubjectId == id);
-            var allSubjectOfTheTeacher = new List<Subject>();
-
-            foreach (var subTeacher in subteacherOfTheTeacher)
-            {
-                allSubjectOfTheTeacher.Add(db.Subject.FirstOrDefault(subject => subject.id == subTeacher.SubjectId));
-            }
+            var subjectIdOfTheTeacher = db.SubjectTeacherMapped.Where(st => st.TeacherId == id).Select(st=>st.SubjectId);
+            var allSubjectOfTheTeacher = db.Subject.Where(sb=> subjectIdOfTheTeacher.Contains(sb.id)).ToList();
 
             return allSubjectOfTheTeacher;
         }

@@ -48,12 +48,11 @@ namespace University_Information_System.Services.ServiceClasses
         {
             var studentOdTheDept = GetStudentByDepertmentId(depertment.id);
             var enrolMentsOfTheStudentsOfTheDept = new List<SubjectStudentMapped>();
-            var enrolments = db.SubjectStudentMapped;
             foreach (var student in studentOdTheDept)
             {
-                enrolMentsOfTheStudentsOfTheDept.Add(enrolments.FirstOrDefault(x => x.id == student.id));
+                enrolMentsOfTheStudentsOfTheDept.AddRange(db.SubjectStudentMapped.Where(enrol => enrol.studentId == student.id).ToList());
             }
-            enrolments.RemoveRange(enrolMentsOfTheStudentsOfTheDept);
+            db.SubjectStudentMapped.RemoveRange(enrolMentsOfTheStudentsOfTheDept);
             db.SaveChanges();
 
             db.Student.RemoveRange(studentOdTheDept);
@@ -84,12 +83,7 @@ namespace University_Information_System.Services.ServiceClasses
             var subjectIdOfTheDepertment = db.SubjectDepartmentMapped.Where(sd => sd.departmentId == id ).Select(sd=>sd.subjectId).ToList();
             
             
-            var allSubjectList = db.Subject;
-            var allSubjectOfTheDepertment =new  List<Subject>();
-            foreach (var subjectId in subjectIdOfTheDepertment)
-            {
-                allSubjectOfTheDepertment.Add(allSubjectList.FirstOrDefault(sb=>sb.id==subjectId));               
-            }
+            var allSubjectOfTheDepertment = db.Subject.Where(subject=> subjectIdOfTheDepertment.Contains(subject.id)).ToList();
 
             return allSubjectOfTheDepertment;
         }
@@ -114,13 +108,10 @@ namespace University_Information_System.Services.ServiceClasses
 
         public void DeleteSubjectFromSubjectDepartmentMapped(int subjectId, int deptId)
         {
-            var subDeptVar = db.SubjectDepartmentMapped.Where(sd => sd.departmentId == deptId && sd.subjectId==subjectId).ToList();
+            var subDeptVar = db.SubjectDepartmentMapped.FirstOrDefault(sd => sd.departmentId == deptId && sd.subjectId==subjectId);
             
-            if (subDeptVar.Count() > 0)
-            {
-                db.SubjectDepartmentMapped.Remove(subDeptVar.ElementAt(0));
-                db.SaveChanges();
-            }
+            db.SubjectDepartmentMapped.Remove(subDeptVar);
+            db.SaveChanges();           
         }
 
 

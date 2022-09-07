@@ -55,41 +55,25 @@ namespace University_Information_System.Services.ServiceClasses
 
         public List<Student> GetStudentBySubjectId(int id)
         {
-            var subStudentOfTheSubject = db.SubjectStudentMapped.Where(ss => ss.subjectId == id);
-            var allStudentOfTheSubject = new List<Student>();
-
-            int index = 0;
-            foreach (var substudent in subStudentOfTheSubject)
-            {
-               allStudentOfTheSubject.Add(db.Student.FirstOrDefault(st=>st.id == substudent.studentId));
-                  
-            }
+            var studentIdOfTheSubject = db.SubjectStudentMapped.Where(ss => ss.subjectId == id).Select(ss=>ss.studentId);
+            var allStudentOfTheSubject = db.Student.Where(student => studentIdOfTheSubject.Contains(student.id)).ToList();
 
             return allStudentOfTheSubject;
         }
 
         public List<Teacher> GetTeacherBySubjectId(int id)
         {
-            var subteacherOfTheSubject = db.SubjectTeacherMapped.Where(st => st.SubjectId == id);
-            var allTeacherOfTheSubject = new List<Teacher>();
-
-            foreach (var subTeacher in  subteacherOfTheSubject)
-            {
-                allTeacherOfTheSubject.Add(db.Teacher.FirstOrDefault(teacher => teacher.Id == subTeacher.TeacherId));
-            }
+            var teacherIdOfTheSubject = db.SubjectTeacherMapped.Where(st => st.SubjectId == id).Select(st => st.TeacherId);
+            var allTeacherOfTheSubject = db.Teacher.Where(teacher => teacherIdOfTheSubject.Contains(teacher.Id)).ToList();
 
             return allTeacherOfTheSubject;
         }
 
+
         public List<Depertment> GetDepertmentBySubjectId(int id)
         {
-            var depertmentOfTheSubject = db.SubjectDepartmentMapped.Where(sd => sd.subjectId == id);           
-            var allDepertmentOfTheSubject = new List<Depertment>();
-
-            foreach (var subdept in depertmentOfTheSubject)
-            {             
-                allDepertmentOfTheSubject.Add(db.Depertment.FirstOrDefault(dept=>dept.id==subdept.departmentId));                
-            }
+            var depertmentIdOfTheSubject = db.SubjectDepartmentMapped.Where(sd => sd.subjectId == id).Select(sd => sd.departmentId);
+            var allDepertmentOfTheSubject = db.Depertment.Where(dept => depertmentIdOfTheSubject.Contains(dept.id)).ToList();
 
             return allDepertmentOfTheSubject;
         }

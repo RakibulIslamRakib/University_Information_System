@@ -1,4 +1,5 @@
-﻿using University_Information_System.Data;
+﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using University_Information_System.Data;
 using University_Information_System.Migrations;
 using University_Information_System.Models;
 using University_Information_System.Services.ServiceInterfaces;
@@ -9,12 +10,10 @@ namespace University_Information_System.Services.ServiceClasses
     {
 
         public readonly ApplicationDbContext db;
-        private readonly IDepartmentService departmentService;
 
-        public StudentService(ApplicationDbContext db, IDepartmentService departmentService)
+        public StudentService(ApplicationDbContext db)
         {
             this.db = db;
-            this.departmentService = departmentService;
         }
 
         public void AddStudent(Student student)
@@ -46,12 +45,8 @@ namespace University_Information_System.Services.ServiceClasses
         {
             var subStudentVar = db.SubjectStudentMapped.Where(ss => ss.studentId == student.id );
             
-            if (subStudentVar.Count() > 0)
-            {
-                db.SubjectStudentMapped.RemoveRange(subStudentVar);
-                db.SaveChanges();
-            }
-
+            db.SubjectStudentMapped.RemoveRange(subStudentVar);
+            db.SaveChanges();
             db.Student.Remove(student);
             db.SaveChanges();
         }
@@ -61,7 +56,7 @@ namespace University_Information_System.Services.ServiceClasses
         public Student GetStudentDetailsById(int id)
         {
             var student = db.Student.Find(id);
-            student.DeptName = departmentService.GetDepertmentById(student.DepertmentId).DeptName;
+            student.DeptName =db.Depertment.Find(student.DepertmentId).DeptName;
             student.Subjects = GetSubjectByStudentId(id);
 
             return student;
@@ -80,28 +75,18 @@ namespace University_Information_System.Services.ServiceClasses
 
         public void DeleteEnrolmentFromSubjectStudentMapped(int subjectId, int studentId)
         {
-            var subStudentVar = db.SubjectStudentMapped.Where(ss=>ss.studentId == studentId && ss.subjectId==subjectId);
-            if (subStudentVar.Count() > 0)
-            {
-                db.SubjectStudentMapped.Remove(subStudentVar.ElementAt(0));
-                db.SaveChanges();
-            }
+            var subStudentVar = db.SubjectStudentMapped.FirstOrDefault(ss=>ss.studentId == studentId && ss.subjectId==subjectId);
+
+            db.SubjectStudentMapped.Remove(subStudentVar);
+            db.SaveChanges();
         }
 
 
 
         public List<Subject> GetSubjectByStudentId(int id)
         {
-            var subjectIdOfTheStudent = db.SubjectStudentMapped.Where(ss => ss.studentId == id).Select(ss=>ss.subjectId).ToList();
-            var deptId = db.Student.Find(id).DepertmentId;
-            var allSubjectListOfTheDept = departmentService.GetSubjectByDepertmentId(deptId);
-            var allSubjectOfTheStudent = new List<Subject>();
-
-            foreach (var subjectId in subjectIdOfTheStudent)
-            {
-                allSubjectOfTheStudent.Add(allSubjectListOfTheDept.FirstOrDefault(x => x.id == subjectId));
-                
-            }
+            var subjectIdOfTheStudent = db.SubjectStudentMapped.Where(ss => ss.studentId == id).Select(ss=>ss.subjectId);
+            var allSubjectOfTheStudent = db.Subject.Where(subject => subjectIdOfTheStudent.Contains(subject.id)).ToList();
 
             return allSubjectOfTheStudent;
         }
