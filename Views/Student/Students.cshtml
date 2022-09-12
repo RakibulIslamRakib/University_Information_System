@@ -1,4 +1,4 @@
-﻿@model List<University_Information_System.Models.Student>
+﻿@model PaginatedList<University_Information_System.Models.Student>
 
 <link rel="stylesheet" href="~/css/projects.css" />
 
@@ -17,6 +17,17 @@
     </h3>
     }
 }
+
+<div class="container">
+<form asp-action="Students" method="get">
+    <div class="form-actions no-color">
+        <p>
+            Find by name: <input type="text" name="SearchString" value="@ViewData["CurrentFilter"]" />
+            <input type="submit" value="Search" class="btn btn-default" /> |
+            <a asp-action="Students">Back to Full List</a>
+        </p>
+    </div>
+</form>
 
 <div>
     <input style="align-content:center; 
@@ -63,4 +74,24 @@
         }
 
     }
+</div>
+
+
+@{
+    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+}
+
+<a asp-action="Students"
+   asp-route-pageNumber="@(Model.PageIndex - 1)"
+   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+   class="btn btn-default @prevDisabled">
+    Previous
+</a>
+<a asp-action="Students"
+   asp-route-pageNumber="@(Model.PageIndex + 1)"
+   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+   class="btn btn-default @nextDisabled">
+    Next
+</a>
 </div>

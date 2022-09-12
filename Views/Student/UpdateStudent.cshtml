@@ -8,10 +8,15 @@
     <form asp-controller = "Student" asp-action="UpdateStudent">
         <label for="fname">First Name</label>
         <input type="text" id="fname" asp-for="FirstName">
+            <span asp-validation-for="FirstName"></span>
+
         <label for="lname">Last Name</label>
         <input type="text" id="fname" asp-for="LastName">
+            <span asp-validation-for="LastName"></span>
+
         <label for="lname">Registration No</label>
         <input type="text" id="fname" asp-for="Reg">
+            <span asp-validation-for="Reg"></span>
 
             <input type="submit" value="Update">
     </form>

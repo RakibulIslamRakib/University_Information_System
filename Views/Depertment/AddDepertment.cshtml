@@ -9,10 +9,11 @@
     <form asp-controller = "Depertment" asp-action="AddDepertment">
         <label for="fname">Depertment Name</label>
         <input type="text" id="fname" asp-for="DeptName" placeholder="depertment name..">
+            <span asp-validation-for="DeptName"></span>
  
         <label for="subject">Descryption</label>
             <textarea id="subject" asp-for="Descryption" placeholder="Write something.." style="height:200px"></textarea>
-
+            <span asp-validation-for="Descryption"></span>
             <input type="submit" value="Submit">
     </form>
 </div>

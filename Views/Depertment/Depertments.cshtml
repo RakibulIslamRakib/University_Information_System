@@ -1,28 +1,45 @@
-﻿@model List<Depertment>
+﻿@model PaginatedList<University_Information_System.Models.Depertment>
+
 <link rel="stylesheet" href="~/css/projects.css" />
 
 @{
     if (TempData["success"] != null)
     {
-    <h3 class="headline" style="align-content:center; background-color: #04AA6D;
-                                                        color: white;
-                                                        padding: 12px 20px;
-                                                        border: none;
-                                                        border-radius: 4px;
-                                                        text-align:center; height:30px;">
-                                                        Message :   @TempData["success"]
-    </h3>
+    <h3 class="headline" style="align-content:center; 
+        background-color: #04AA6D;
+        color: white;
+        padding: 12px 20px;
+        border: none;
+        border-radius: 4px;
+        text-align:center; height:30px;">
+        Message :   @TempData["success"]
+</h3>
     }
 }
 
+<div >
+<form asp-action="Depertments" method="get">
+    <div class="form-actions no-color">
+        <p>
+            Find by name: <input type="text" name="SearchString" value="@ViewData["CurrentFilter"]" />
+            <input type="submit" value="Search" class="btn btn-default" /> |
+            <a asp-action="Depertments">Back to Full List</a>
+        </p>
+    </div>
+</form>
+
 <div>
-    <input style="align-content:center; background-color: #04AA6D;
+    <input
+        style="align-content:center; 
+    background-color: #04AA6D;
     color: white;
     padding: 12px 20px;
     border: none;
     border-radius: 4px;
-    cursor: pointer; margin-left:30%; height:40px;width:200px;" type="button"
-    value="Add New Depertment" onclick="location.href='@Url.Action("AddDepertment", "Depertment")'" />
+    cursor: pointer; margin-left:30%;
+    height:40px;width:200px;" type="button"
+    value="Add New Depertment"
+    onclick="location.href='@Url.Action("AddDepertment", "Depertment")'" />
 </div>
 
 <div class="cards">
@@ -54,4 +71,28 @@
         }
 
     }
+</div>
+
+@{
+    var prevDisabled = !Model.HasPreviousPage? "disabled" : "";
+    var nextDisabled = !Model.HasNextPage? "disabled" : "";
+}
+
+<a asp-action="Depertments"  
+   asp-route-pageNumber="@(Model.PageIndex - 1)"
+   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+   class="@prevDisabled">
+    Previous
+</a>
+
+<a asp-action="Depertments"
+   asp-route-pageNumber="@(Model.PageIndex + 1)"
+   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+   class="@nextDisabled">
+    Next
+</a>
+
+
+ 
+</div>
 </div>

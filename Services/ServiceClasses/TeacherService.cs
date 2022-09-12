@@ -41,11 +41,10 @@ namespace University_Information_System.Services.ServiceClasses
 
 
 
-        public List<Teacher> getAllTeacher()
+        public IQueryable<Teacher> getAllTeacher()
         {
-            var teachers = db.Teacher.ToList();
+            return db.Teacher;
 
-            return teachers;
         }
 
 

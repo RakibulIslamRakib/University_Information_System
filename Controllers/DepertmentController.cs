@@ -1,6 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Collections.Immutable;
 using University_Information_System.Models;
-using University_Information_System.Services;
+using University_Information_System.Services.ServiceClasses;
 using University_Information_System.Services.ServiceInterfaces;
 
 namespace University_Information_System.Controllers
@@ -15,15 +18,30 @@ namespace University_Information_System.Controllers
         }
 
 
-        public IActionResult Depertments()
-        {
+        public async Task<IActionResult> Depertments(string currentFilter,
+                    string searchString, int? pageNumber)
+        {      
             var depertments = departmentService.getAllDepertment();
-            if (depertments == null)
-            {
-                depertments = new List<Depertment>();
-            }
 
-            return View(depertments);
+            if (searchString != null)
+            {
+                pageNumber = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
+            ViewData["CurrentFilter"] = searchString;
+            searchString = !String.IsNullOrEmpty(searchString)? searchString.ToLower():"";
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                depertments =depertments.Where(dept => dept.DeptName.ToLower().Contains(searchString) 
+                || dept.Descryption.ToLower().Contains(searchString));
+            }
+            int pageSize = 3;
+
+            return View(await PaginatedList<Depertment>.CreateAsync(depertments, pageNumber ?? 1, pageSize));
         }
 
         public IActionResult AddDepertment()
@@ -35,17 +53,24 @@ namespace University_Information_System.Controllers
         public IActionResult AddDepertment(Depertment depertment)
         {
             depertment.CreatedDate = DateTime.Now;
-            departmentService.AddDepertment(depertment);
+            depertment.CreatedBy = 1;
 
-            return RedirectToAction(actionName: "Depertments", controllerName: "Depertment");
+            //var err = ModelState.Values.SelectMany(er => er.Errors);
 
+            if (ModelState.IsValid)
+            {
+                departmentService.AddDepertment(depertment);
+
+                return RedirectToAction(actionName: "Depertments", controllerName: "Depertment");
+            }
+            
+            return View(depertment);
         }
 
 
         public IActionResult DeleteDepertment(int id)
         {
             var department = departmentService.GetDepertmentById(id);
-
 
             return View(department);
         }
@@ -68,9 +93,19 @@ namespace University_Information_System.Controllers
         [HttpPost]
         public IActionResult UpdateDepertment(Depertment depertment)
         {
-            departmentService.UpdateDepertment(depertment);
+            //var updatedDeptVar = departmentService.GetDepertmentById(depertment.id);   
+            depertment.UpdatedDate= DateTime.Now;
+            depertment.UpdatedBy = 1;
+            //var err = ModelState.Values.SelectMany(er => er.Errors);
 
-            return RedirectToAction(actionName: "Depertments", controllerName: "Depertment");
+            if (ModelState.IsValid)
+            {
+                departmentService.UpdateDepertment(depertment);
+
+                return RedirectToAction(actionName: "Depertments", controllerName: "Depertment");
+            }
+
+            return View(depertment);
         }
 
         public IActionResult DetailsDepertment(int id)

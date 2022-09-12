@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using University_Information_System.Data;
-using University_Information_System.Migrations;
 using University_Information_System.Models;
 using University_Information_System.Services.ServiceInterfaces;
 
@@ -22,11 +21,9 @@ namespace University_Information_System.Services.ServiceClasses
             db.SaveChanges();
         }
 
-        public List<Student> getAllStudent()
+        public IQueryable<Student> getAllStudent()
         {
-            var students = db.Student.ToList();
-
-            return students;
+            return db.Student; 
         }
 
         public void UpdateStudent(Student student)

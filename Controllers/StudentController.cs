@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿ using Microsoft.AspNetCore.Mvc;
 using University_Information_System.Models;
 using University_Information_System.Services.ServiceInterfaces;
 
@@ -9,38 +9,64 @@ namespace University_Information_System.Controllers
         private readonly IStudentService studentService;
         private readonly IDepartmentService departmentService;
 
-        public StudentController(IStudentService studentService, IDepartmentService departmentService)
+        public StudentController(IStudentService studentService,
+            IDepartmentService departmentService)
         {
             this.studentService = studentService;
             this.departmentService = departmentService; 
         }
 
 
-        public IActionResult Students()
+        public async Task<IActionResult> Students(string currentFilter,
+                    string searchString, int? pageNumber)
         {
             var students = studentService.getAllStudent();
-            if (students == null)
+
+            if (searchString != null)
             {
-                students = new List<Student>();
+                pageNumber = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
+            ViewData["CurrentFilter"] = searchString;
+
+            searchString = !String.IsNullOrEmpty(searchString) ? searchString.ToLower() : "";
+           
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                students = students.Where(st => st.FirstName.ToLower().Contains(searchString)
+                || st.LastName.ToLower().Contains(searchString));
             }
 
+            int pageSize = 3;
 
-            return View(students);
+
+            return View(await PaginatedList<Student>.CreateAsync(students, pageNumber ?? 1, pageSize));
         }
+
 
         public IActionResult AddStudent()
         {
-            var depertments = departmentService.getAllDepertment();
-            return View(depertments);
+            ViewBag.depertments = departmentService.getAllDepertment();
+            return View();
         }
+
 
         [HttpPost]
         public IActionResult AddStudent(Student student)
         {
-            studentService.AddStudent(student);
-         
-            return RedirectToAction(actionName: "Students", controllerName: "Student");
+            if (ModelState.IsValid)
+            {
+                studentService.AddStudent(student);
 
+                return RedirectToAction(actionName: "Students", controllerName: "Student");
+
+            }
+
+            ViewBag.depertments = departmentService.getAllDepertment();
+            return View(student);
         }
 
 
@@ -71,13 +97,14 @@ namespace University_Information_System.Controllers
         [HttpPost]
         public IActionResult UpdateStudent(Student student)
         {
-            var updatedStudent = studentService.GetStudentById(student.id);
-            updatedStudent.FirstName = student.FirstName;
-            updatedStudent.LastName = student.LastName;
-            updatedStudent.Reg = student.Reg;
-            studentService.UpdateStudent(updatedStudent);
+            if (ModelState.IsValid)
+            {
+                studentService.UpdateStudent(student);
 
-            return RedirectToAction(actionName: "Students", controllerName: "Student");
+                return RedirectToAction(actionName: "Students", controllerName: "Student");
+
+            }
+            return View(student);
         }
 
 

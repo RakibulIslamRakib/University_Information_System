@@ -20,11 +20,10 @@ namespace University_Information_System.Services.ServiceClasses
         }
 
 
-        public List<Subject> getAllSubject()
+        public IQueryable<Subject> getAllSubject()
         {
-            var subjects = db.Subject.ToList();
+            return db.Subject;
 
-            return subjects;
         }
 
         public void DeleteSubject(Subject subject)

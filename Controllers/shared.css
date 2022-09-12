@@ -1,6 +1,18 @@
 ﻿@import url("https://fonts.googleapis.com/css?family=Inconsolata|Lato:300,400,700");
 
-html,body,h1,h2,h3,h4,h5,h6,p,li,ol,ul,pre {
+html,
+body,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+li,
+ol,
+ul,
+pre {
     margin: 0;
     padding: 0;
 }
@@ -11,8 +23,8 @@ body {
 }
 
 body {
-    background-color: #fff;
-        background-image: linear-gradient(to bottom, #0009, transparent);
+    background-color: #345;
+    background-image: linear-gradient(to bottom, #0009, transparent);
     color: #eee;
     font-family: "Lato", sans-serif;
     font-size: 62.5%;
@@ -20,6 +32,30 @@ body {
     box-sizing: border-box;
 }
 
+code {
+    background: #fff1;
+    font-family: "Inconsolata", monospace;
+    padding: 0.2em 0.4em;
+}
+
+.content {
+    background-color: #fff;
+    border-radius: 8px;
+    box-sizing: border-box;
+    color: #666;
+    font-size: 1.6em;
+    line-height: 1.4em;
+    margin: 20px auto;
+    margin-top: 80px;
+    padding: 20px;
+    width: 100%;
+    max-width: 800px;
+}
+
+    .content ul {
+        margin: 0.5em 2em;
+        padding: 0;
+    }
 
 #footer {
     background-color: #246c;
@@ -53,6 +89,7 @@ body {
             padding: 0 0.5em;
         }
 
+/* Appearance */
 .links {
     background-color: #123;
     background-image: linear-gradient(to bottom, #0003, transparent);
@@ -81,9 +118,7 @@ body {
         pointer-events: none;
     }
 
-
-
-
+/* The Magic */
 #header {
     position: fixed;
     top: 0;
@@ -154,94 +189,3 @@ body {
     .links > a:last-of-type:hover ~ .line {
         --index: var(--items);
     }
-
-
-h1 {
-    font-size: 24px;
-    font-weight: 400;
-    text-align: center;
-}
-
-img {
-    height: auto;
-    max-width: 100%;
-    vertical-align: middle;
-}
-
-.btn {
-    padding: 0.8rem;
-    font-size: 14px;
-    text-transform: uppercase;
-    border-radius: 4px;
-    font-weight: 400;
-    display: block;
-    width: 100%;
-    cursor: pointer;
-    border: 1px solid rgba(230, 155, 200, 0.2);
-    background: transparent;
-}
-
-    .btn:hover {
-        background-color: rgba(25, 25, 25, 0.12);
-    }
-
-.cards {
-    display: flex;
-    flex-wrap: wrap;
-    list-style: none;
-    margin: 0;
-    padding: 0;
-}
-
-.cards_item {
-    display: flex;
-    padding: 1rem;
-}
-
-@media (min-width: 40rem) {
-    .cards_item {
-        width: 50%;
-    }
-}
-
-@media (min-width: 56rem) {
-    .cards_item {
-        width: 33.3333%;
-    }
-}
-
-.card {
-    background-color: white;
-    border-radius: 0.25rem;
-    box-shadow: 0 20px 40px -14px rgba(0, 0, 0, 0.25);
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-}
-
-.card_content {
-    padding: 1rem;
-    background: white;
-}
-
-.card_title {
-    font-size: 1.1rem;
-    font-weight: 700;
-    letter-spacing: 1px;
-    text-transform: capitalize;
-    margin: 0px;
-}
-
-.card_text {
-    font-size: 0.875rem;
-    line-height: 1.5;
-    margin-bottom: 1.25rem;
-    font-weight: 400;
-}
-
-.made_by {
-    font-weight: 400;
-    font-size: 13px;
-    margin-top: 35px;
-    text-align: center;
-}

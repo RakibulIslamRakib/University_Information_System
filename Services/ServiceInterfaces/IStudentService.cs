@@ -1,11 +1,11 @@
-﻿using University_Information_System.Migrations;
+﻿
 using University_Information_System.Models;
 
 namespace University_Information_System.Services.ServiceInterfaces
 {
     public interface IStudentService
     {
-        public List<Student> getAllStudent();
+        public IQueryable<Student> getAllStudent();
         public void AddStudent(Student student);
  
         public void UpdateStudent(Student student);

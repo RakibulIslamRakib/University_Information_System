@@ -1,4 +1,4 @@
-﻿@model List<University_Information_System.Models.Depertment>
+﻿@model University_Information_System.Models.Student
 
 <link rel="stylesheet" href="~/css/projects.css"/>
 <link rel="stylesheet" href="~/css/contact.css" />
@@ -8,23 +8,26 @@
             <h3 style="text-align:center">Add new Student</h3>
             <form asp-controller = "Student" asp-action="AddStudent">
                 <label for="fname">First Name</label>
-                <input type="text" id="fname" name="FirstName" placeholder="first name..">
+                <input type="text" id="fname" asp-for="FirstName" placeholder="first name..">
+                <span asp-validation-for="FirstName"></span>
+
                 <label for="fname">Last Name</label>
-                <input type="text" id="fname" name="LastName" placeholder="last name..">
+                <input type="text" id="fname" asp-for="LastName" placeholder="last name..">
+                <span asp-validation-for="LastName"></span>
+
                 <label for="fname">Registration No </label>
-                <input type="text" id="fname" name="Reg" placeholder="Registration..">
+                <input type="text" id="fname" asp-for="Reg" placeholder="Registration..">
+                  <span asp-validation-for="Reg"></span>
 
-            <label for=" departmentId"> Department</label>
-            <select name="DepertmentId">
-            @foreach (var depertment in Model)
-            {
-                <option value=@(depertment.id)>@(depertment.DeptName)</option>
-            }
-
+            <label asp-for="DepertmentId"> Department</label>
+            <select  asp-for="DepertmentId" asp-items="@(new SelectList( ViewBag.depertments , "id", "DeptName"))"> 
+                <option>--Select--</option>
              </select>
+            <span asp-validation-for="DepertmentId"></span>
+
 
             <input type="submit" value="Submit">
             </form>
     </div>
              
-}
+} 

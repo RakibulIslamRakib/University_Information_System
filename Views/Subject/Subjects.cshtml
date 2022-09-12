@@ -1,4 +1,4 @@
-﻿@model List<University_Information_System.Models.Subject>
+﻿@model PaginatedList<University_Information_System.Models.Subject>
 
 <link rel="stylesheet" href="~/css/projects.css" />
 
@@ -18,6 +18,17 @@
     }
 }
 
+<div class="container">
+
+<form asp-action="Subjects" method="get">
+    <div class="form-actions no-color">
+        <p>
+            Find by name: <input type="text" name="SearchString" value="@ViewData["CurrentFilter"]" />
+            <input type="submit" value="Search" class="btn btn-default" /> |
+            <a asp-action="Subjects">Back to Full List</a>
+        </p>
+    </div>
+</form>
 <div>
     <input style="align-content:center; 
     background-color: #04AA6D;
@@ -29,7 +40,7 @@
     margin-left:30%;
     height:40px;width:200px;" 
     type="button"
-    value="Add New Depertment" 
+    value="Add New Subject" 
     onclick="location.href='@Url.Action("AddSubject", "Subject")'" />
 </div>
 
@@ -46,14 +57,7 @@
                 </div>
                 <span style="font-size:12px">Created : @(subject.CreatedDate)</span>
                                                         @{
-                           /*
-                                <div>
-                                    <div>Subjects : @(dept.Subjects.Count)</div>
-                                    <div>Teachers : @(dept.Teachers.Count)</div>
-                                    <div>Students : @(dept.Students.Count)</div>
-                                </div>
-
-                            */}
+                          }
                 <div>
                     <p style="font-size:14px">Descryption : @(subject.Descryption)</p>
                 </div>
@@ -74,3 +78,23 @@
 
     }
 </div>
+
+@{
+    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+}
+
+<a asp-action="Subjects"
+   asp-route-pageNumber="@(Model.PageIndex - 1)"
+   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+   class="btn btn-default @prevDisabled">
+    Previous
+</a>
+<a asp-action="Subjects"
+   asp-route-pageNumber="@(Model.PageIndex + 1)"
+   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+   class="btn btn-default @nextDisabled">
+    Next
+</a>
+
+    </div>

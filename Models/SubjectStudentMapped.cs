@@ -6,7 +6,9 @@ namespace University_Information_System.Models
     {
         [Key]
         public int id { get; set; }
+        [Required]
         public int studentId { get; set; }
+        [Required]
         public int subjectId { get; set; }
     }
 }

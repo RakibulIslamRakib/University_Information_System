@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using University_Information_System.Models;
-using University_Information_System.Services.ServiceClasses;
 using University_Information_System.Services.ServiceInterfaces;
 
 namespace University_Information_System.Controllers
@@ -17,15 +16,35 @@ namespace University_Information_System.Controllers
         }
 
 
-        public IActionResult Teachers()
+        public async Task<IActionResult> Teachers(string currentFilter,
+                    string searchString, int? pageNumber)
         {
             var teachers = teacherService.getAllTeacher();
-            if(teachers == null)
+
+            if (searchString != null)
             {
-                teachers = new List<Teacher>();
+                pageNumber = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
+            ViewData["CurrentFilter"] = searchString;
+
+            searchString = !String.IsNullOrEmpty(searchString) ? searchString.ToLower() : "";
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                teachers = teachers.Where(tr => tr.FirstName.ToLower().Contains(searchString)
+                || tr.LastName.ToLower().Contains(searchString) || tr.Descryption.ToLower().Contains(searchString));
             }
 
-            return View(teachers);
+
+
+            int pageSize = 3;
+
+
+            return View(await PaginatedList<Teacher>.CreateAsync(teachers, pageNumber ?? 1, pageSize));
+
         }
 
         public IActionResult AddTeacher()
@@ -37,10 +56,14 @@ namespace University_Information_System.Controllers
         [HttpPost]
         public IActionResult AddTeacher(Teacher teacher)
         {
-            teacherService.AddTeacher(teacher);
-            
-            return RedirectToAction(actionName: "Teachers", controllerName: "Teacher");
+            if (ModelState.IsValid)
+            {
 
+                teacherService.AddTeacher(teacher);
+
+                return RedirectToAction(actionName: "Teachers", controllerName: "Teacher");
+            }
+            return View(teacher);
         }
 
 
@@ -61,6 +84,7 @@ namespace University_Information_System.Controllers
 
         public IActionResult UpdateTeacher(int id)
         {
+
             var teacher = teacherService.GetTeacherById(id);
 
             return View(teacher);
@@ -69,9 +93,15 @@ namespace University_Information_System.Controllers
         [HttpPost]
         public IActionResult UpdateTeacher(Teacher teacher)
         {
-            teacherService.UpdateTeacher(teacher);
-            
-            return RedirectToAction(actionName: "Teachers", controllerName: "Teacher");
+            if (ModelState.IsValid)
+            {
+
+                teacherService.UpdateTeacher(teacher);
+
+                return RedirectToAction(actionName: "Teachers", controllerName: "Teacher");
+            }
+
+            return View(teacher);
         }
 
         public IActionResult DetailsTeacher(int id)

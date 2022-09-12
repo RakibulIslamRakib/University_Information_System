@@ -25,9 +25,9 @@ namespace University_Information_System.Services.ServiceClasses
             db.SaveChanges();
         }
 
-        public List<Depertment> getAllDepertment()
+        public IQueryable<Depertment> getAllDepertment()
         {
-            var depertments = db.Depertment.ToList();
+            var depertments = db.Depertment;
 
             return depertments;
         }
@@ -73,6 +73,12 @@ namespace University_Information_System.Services.ServiceClasses
             depertment.Teachers = new List<Teacher>();
             depertment.Students = GetStudentByDepertmentId(id);
             depertment.Subjects = GetSubjectByDepertmentId(id);
+            foreach(var subject in depertment.Subjects)
+            {
+                depertment.Teachers.AddRange(subjectService.GetTeacherBySubjectId(subject.id));
+            }
+            var teacher = new HashSet<Teacher>(depertment.Teachers);
+            depertment.Teachers = new List<Teacher>(teacher);
 
             return depertment;
         }

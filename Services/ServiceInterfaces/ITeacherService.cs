@@ -4,7 +4,7 @@ namespace University_Information_System.Services.ServiceInterfaces
 {
     public interface ITeacherService 
     {
-        public List<Teacher> getAllTeacher();
+        public IQueryable<Teacher> getAllTeacher();
         public void AddTeacher(Teacher teacher);
         public Teacher GetTeacherById(int id);
         public void UpdateTeacher(Teacher teacher);

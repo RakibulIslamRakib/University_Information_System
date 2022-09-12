@@ -1,0 +1,23 @@
+﻿@model University_Information_System.Models.Notice
+
+<link rel="stylesheet" href="~/css/projects.css"/>
+<link rel="stylesheet" href="~/css/contact.css" />
+
+@{
+    <div class="container">
+            <h3 style="text-align:center">Add new Student</h3>
+            <form asp-controller = "Home" asp-action="AddNotice">
+                <label for="fname">Title</label>
+            <input type="text" id="fname" asp-for="NoticeTitle" placeholder="first name..">
+            <span asp-validation-for="NoticeTitle"></span>
+
+            <label  >Descryption</label>
+            <textarea asp-for="Descryption" placeholder="Write something.." style="height:200px"></textarea>
+            <span asp-validation-for="Descryption"></span>
+
+
+            <input type="submit" value="Submit">
+            </form>
+    </div>
+             
+} 

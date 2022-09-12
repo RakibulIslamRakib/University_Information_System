@@ -14,17 +14,34 @@ namespace University_Information_System.Controllers
         }
 
 
-        public IActionResult Subjects()
+        public async Task<IActionResult> Subjects(string currentFilter,
+                    string searchString, int? pageNumber)
         {
             var subjects = subjectService.getAllSubject();
-            if(subjects == null)
+
+            if (searchString != null)
             {
-                subjects = new List<Subject>();
+                pageNumber = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
+            ViewData["CurrentFilter"] = searchString;
+
+            searchString = !String.IsNullOrEmpty(searchString) ? searchString.ToLower() : "";
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                subjects = subjects.Where(sub => sub.SubjectName.ToLower().Contains(searchString)
+                || sub.Descryption.ToLower().Contains(searchString));
             }
 
-            
-            return View(subjects);
+            int pageSize = 3;
+
+
+            return View(await PaginatedList<Subject>.CreateAsync(subjects, pageNumber ?? 1, pageSize));
         }
+
 
         public IActionResult AddSubject()
         {
@@ -36,9 +53,13 @@ namespace University_Information_System.Controllers
         public IActionResult AddSubject(Subject subject)
         {
             subject.CreatedDate = DateTime.Now;
-            subjectService.AddSubject(subject);
-            
-            return RedirectToAction(actionName:"Subjects", controllerName:"Subject");
+            subject.CreatedBy = 12;
+            if (ModelState.IsValid)
+            {
+                subjectService.AddSubject(subject);
+                return RedirectToAction(actionName: "Subjects", controllerName: "Subject");
+            }
+            return View(subject);
 
         }
 
@@ -68,9 +89,15 @@ namespace University_Information_System.Controllers
         [HttpPost]
         public IActionResult UpdateSubject(Subject subject)
         {
-            subjectService.UpdateSubject(subject);
-            
-            return RedirectToAction(actionName: "Subjects", controllerName: "Subject");
+            subject.UpdatedDate=DateTime.Now;
+            subject.UpdatedBy= 12;
+            if (ModelState.IsValid)
+            {
+                subjectService.UpdateSubject(subject);
+
+                return RedirectToAction(actionName: "Subjects", controllerName: "Subject");
+            }
+            return View(subject);
         }
 
         public IActionResult DetailsSubject(int id)

@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace University_Information_System.Migrations
 {
-    public partial class db : Migration
+    public partial class dbcreated : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -15,16 +15,34 @@ namespace University_Information_System.Migrations
                 {
                     id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    DeptName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Descryption = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DeptName = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: false),
+                    Descryption = table.Column<string>(type: "nvarchar(400)", maxLength: 400, nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     CreatedBy = table.Column<int>(type: "int", nullable: false),
-                    UpdatedBy = table.Column<int>(type: "int", nullable: false)
+                    UpdatedBy = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Depertment", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Notice",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    NoticeTitle = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: false),
+                    Descryption = table.Column<string>(type: "nvarchar(400)", maxLength: 400, nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CreatedBy = table.Column<int>(type: "int", nullable: false),
+                    UpdatedBy = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Notice", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
@@ -33,9 +51,9 @@ namespace University_Information_System.Migrations
                 {
                     id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Reg = table.Column<int>(type: "int", nullable: false),
-                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Reg = table.Column<int>(type: "int", maxLength: 10, nullable: false),
+                    FirstName = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    LastName = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     DepertmentId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -49,8 +67,8 @@ namespace University_Information_System.Migrations
                 {
                     id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    SubjectName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Descryption = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    SubjectName = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    Descryption = table.Column<string>(type: "nvarchar(400)", maxLength: 400, nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     CreatedBy = table.Column<int>(type: "int", nullable: false),
@@ -109,9 +127,9 @@ namespace University_Information_System.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Descryption = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    FirstName = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    LastName = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    Descryption = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -123,6 +141,9 @@ namespace University_Information_System.Migrations
         {
             migrationBuilder.DropTable(
                 name: "Depertment");
+
+            migrationBuilder.DropTable(
+                name: "Notice");
 
             migrationBuilder.DropTable(
                 name: "Student");

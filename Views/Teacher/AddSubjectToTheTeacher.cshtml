@@ -7,15 +7,30 @@
     <div class="container">
         <h3 style="text-align:center">Add Subject for Teaching </h3>
         <form asp-controller="Teacher" adp-rout-id=@(TempData["teacherId"]) asp-action="AddSubjectToTheTeacher">
-        <input>
         <label for="subjectId"> Subjects</label>
         <select name="subjectId">
+                @{
+                    if (Model.Count == 0)
+                    {
+                        <option value="">None</option>
+                    }
+                }
+
         @foreach (var subject in Model){
                <option value=@(subject.id)>@(subject.SubjectName)</option>
            }
         </select>
+            @{
+                if (Model.Count == 0)
+                {
+                    <input type="submit" disabled value="Submit">
+                }
+                else
+                {
+                    <input type="submit" value="Submit">
 
-        <input type="submit" value="Submit">
+                }
+            }
         </form>
     </div>
              

@@ -6,7 +6,7 @@ namespace University_Information_System.Services.ServiceInterfaces
     public interface IDepartmentService 
     {
         public void AddDepertment(Depertment depertment);
-        public List<Depertment> getAllDepertment();
+        public IQueryable<Depertment> getAllDepertment();
         public Depertment GetDepertmentById(int id);
         public void UpdateDepertment(Depertment depertment);
         public void DeleteDepertment(Depertment depertment);

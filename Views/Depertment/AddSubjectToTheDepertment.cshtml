@@ -5,18 +5,31 @@
 
 @{
     <div class="container">
-        <h3 style="text-align:center">Add Subject </h3>
-        <form asp-controller="Depertment" adp-rout-id=@(TempData["departmentId"]) asp-action="AddSubjectToTheDepertment">
-        <input>
-        <label for="subjectId"> Subjects</label>
-        <select name="subjectId">
-        @foreach (var subject in Model){
-               <option value=@(subject.id)>@(subject.SubjectName)</option>
-           }
-        </select>
+            <h3 style="text-align:center">Add Subject </h3>
+            <form asp-controller="Depertment" adp-rout-id=@(TempData["departmentId"]) 
+            asp-action="AddSubjectToTheDepertment">
+            <label for="subjectId"> Subjects</label>
+            <select name="subjectId">
+            @{
+            if(Model.Count==0){
+                        <option value="">None</option>
+            }
+            }
 
-        <input type="submit" value="Submit">
-        </form>
+            @foreach (var subject in Model){
+                   <option value=@(subject.id)>@(subject.SubjectName)</option>
+           }
+            </select>
+            @{
+            if(Model.Count==0){
+                <input type="submit" disabled value="Submit">
+            }
+            else{
+                    <input type="submit" value="Submit">
+
+            }
+           }
+            </form>
     </div>
              
 }
