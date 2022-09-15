@@ -5,13 +5,28 @@ using University_Information_System.Services.ServiceInterfaces;
 namespace University_Information_System.Controllers
 {
     public class SubjectController : Controller
+
     {
+        #region Fields
+
         private readonly ISubjectService subjectService;
+
+        #endregion Fields
+
+
+
+        #region ctor
 
         public SubjectController(ISubjectService subjectService)
         {
             this.subjectService = subjectService;
         }
+
+        #endregion ctor
+
+
+
+        #region Subjects
 
 
         public async Task<IActionResult> Subjects(string currentFilter,
@@ -42,7 +57,9 @@ namespace University_Information_System.Controllers
             return View(await PaginatedList<Subject>.CreateAsync(subjects, pageNumber ?? 1, pageSize));
         }
 
+        #endregion Subjects
 
+        #region AddSubject
         public IActionResult AddSubject()
         {
             
@@ -62,8 +79,9 @@ namespace University_Information_System.Controllers
             return View(subject);
 
         }
+        #endregion AddSubject
 
-
+        #region DeleteSubject
         public IActionResult DeleteSubject(int id)
         {
             var subject = subjectService.GetSubjectById(id);
@@ -78,7 +96,10 @@ namespace University_Information_System.Controllers
             
             return RedirectToAction(actionName: "Subjects", controllerName: "Subject");
         }
+        #endregion DeleteSubject
 
+
+        #region UpdateSubject
         public IActionResult UpdateSubject(int id)
         {
             var subject = subjectService.GetSubjectById(id);
@@ -99,7 +120,10 @@ namespace University_Information_System.Controllers
             }
             return View(subject);
         }
+        #endregion UpdateSubject
 
+
+        #region DetailsSubject
         public IActionResult DetailsSubject(int id)
         {
             var subject = subjectService.GetSubjectDetailsById(id);
@@ -107,6 +131,8 @@ namespace University_Information_System.Controllers
             return View(subject);
         }
 
-        
+
+        #endregion DetailsSubject
+
     }
 }

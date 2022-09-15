@@ -6,14 +6,28 @@ namespace University_Information_System.Controllers
 {
     public class TeacherController : Controller
     {
+
+
+    #region Fields
+
         private readonly ITeacherService teacherService;
         private readonly ISubjectService subjectService;
 
+        #endregion Fields
+
+
+        #region ctor
         public TeacherController(ITeacherService teacherService, ISubjectService subjectService)
         {
             this.teacherService = teacherService;
             this.subjectService = subjectService;
         }
+        #endregion ctor
+
+
+
+
+        #region Teachers
 
 
         public async Task<IActionResult> Teachers(string currentFilter,
@@ -46,7 +60,9 @@ namespace University_Information_System.Controllers
             return View(await PaginatedList<Teacher>.CreateAsync(teachers, pageNumber ?? 1, pageSize));
 
         }
+        #endregion Teachers
 
+        #region AddTeacher
         public IActionResult AddTeacher()
         {
             
@@ -66,7 +82,9 @@ namespace University_Information_System.Controllers
             return View(teacher);
         }
 
+        #endregion AddTeacher
 
+        #region DeleteTeacher
         public IActionResult DeleteTeacher(int id)
         {
             var teacher = teacherService.GetTeacherById(id);
@@ -81,7 +99,9 @@ namespace University_Information_System.Controllers
             
             return RedirectToAction(actionName: "Teachers", controllerName: "Teacher");
         }
+        #endregion DeleteTeacher
 
+        #region  UpdateTeacher
         public IActionResult UpdateTeacher(int id)
         {
 
@@ -103,7 +123,9 @@ namespace University_Information_System.Controllers
 
             return View(teacher);
         }
+        #endregion  UpdateTeacher
 
+        #region  DetailsTeacher
         public IActionResult DetailsTeacher(int id)
         {
             var teacher = teacherService.GetTeacherDetailsById(id);
@@ -111,22 +133,23 @@ namespace University_Information_System.Controllers
             return View(teacher);
         }
 
+        #endregion  DetailsTeacher
 
-        //AddSubjectToTheTeacher
 
-
+        #region  AddSubjectToTheTeacher
         public IActionResult AddSubjectToTheTeacher(int id)
         {
 
             TempData["teacherId"] = id;
-            var subjects = subjectService.getAllSubject();
+            var subjects = subjectService.getAllSubject().ToList();
 
             var subjectOftheTeacher =  teacherService.GetSubjectByTeacherId(id);
 
-            var subjectOutOftheTeacher = subjects.Except(subjectOftheTeacher).ToList();
+            var subjectOutOftheTeacher = subjects.Except(subjectOftheTeacher.ToList()).ToList();
 
             return View(subjectOutOftheTeacher);
         }
+       
 
         [HttpPost]
         public IActionResult AddSubjectToTheTeacher(int id, int subjectId)
@@ -139,13 +162,15 @@ namespace University_Information_System.Controllers
             return RedirectToAction(actionName: "DetailsTeacher", controllerName: "Teacher", new { @id = id });
 
         }
+        #endregion  AddSubjectToTheTeacher
 
-
+        #region  DeleteSubjectFromTeacher
         public IActionResult DeleteSubjectFromTeacher(int subjectId, int TeacherId)
         {
             teacherService.DeleteSubTeacherMapped(subjectId, TeacherId);
             return RedirectToAction(actionName: "DetailsTeacher", controllerName: "Teacher", new {@id = TeacherId});
         }
 
+        #endregion DeleteSubjectFromTeacher
     }
 }

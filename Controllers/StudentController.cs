@@ -6,8 +6,13 @@ namespace University_Information_System.Controllers
 {
     public class StudentController : Controller
     {
+        #region Fields
         private readonly IStudentService studentService;
         private readonly IDepartmentService departmentService;
+        #endregion Fields
+
+
+        #region ctor
 
         public StudentController(IStudentService studentService,
             IDepartmentService departmentService)
@@ -15,7 +20,10 @@ namespace University_Information_System.Controllers
             this.studentService = studentService;
             this.departmentService = departmentService; 
         }
+        #endregion ctor
 
+
+        #region Students
 
         public async Task<IActionResult> Students(string currentFilter,
                     string searchString, int? pageNumber)
@@ -46,7 +54,9 @@ namespace University_Information_System.Controllers
             return View(await PaginatedList<Student>.CreateAsync(students, pageNumber ?? 1, pageSize));
         }
 
+        #endregion Students
 
+        #region AddStudent
         public IActionResult AddStudent()
         {
             ViewBag.depertments = departmentService.getAllDepertment();
@@ -68,8 +78,9 @@ namespace University_Information_System.Controllers
             ViewBag.depertments = departmentService.getAllDepertment();
             return View(student);
         }
+        #endregion AddStudent
 
-
+        #region DeleteStudent
         public IActionResult DeleteStudent(int id)
         {
             var student = studentService.GetStudentById(id);
@@ -87,6 +98,9 @@ namespace University_Information_System.Controllers
             return RedirectToAction(actionName: "Students", controllerName: "Student");
         }
 
+        #endregion DeleteStudent
+
+        #region UpdateStudent
         public IActionResult UpdateStudent(int id)
         {
             var student = studentService.GetStudentById(id);
@@ -106,9 +120,10 @@ namespace University_Information_System.Controllers
             }
             return View(student);
         }
+        #endregion UpdateStudent
 
 
-        //Incomplete
+        #region DetailsStudent
         public IActionResult DetailsStudent(int id)
         {
             var student = studentService.GetStudentDetailsById(id);
@@ -116,7 +131,9 @@ namespace University_Information_System.Controllers
             return View(student);
         }
 
+        #endregion DetailsStudent
 
+        #region EnroleSubject
         public IActionResult EnroleSubject(int id)
         {
             TempData["StudentId"] = id;
@@ -140,13 +157,16 @@ namespace University_Information_System.Controllers
             return RedirectToAction(actionName: "DetailsStudent", controllerName: "Student", new { @id = id });
 
         }
+        #endregion EnroleSubject
 
-        
+
+        #region DeleteEnrolment
         public IActionResult DeleteEnrolment(int subjectId, int studentId)
         {
             studentService.DeleteEnrolmentFromSubjectStudentMapped(subjectId, studentId);
             
             return RedirectToAction(actionName: "DetailsStudent", controllerName: "Student", new { @id = studentId });
         }
+        #endregion DeleteEnrolment
     }
 }

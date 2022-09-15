@@ -1,7 +1,7 @@
 ﻿@model University_Information_System.Models.Notice
 
-<link rel="stylesheet" href="~/css/projects.css"/>
-<link rel="stylesheet" href="~/css/contact.css" />
+
+<link rel="stylesheet" href="~/css/addItems.css" />
 
 @{
     <div class="container">
@@ -9,11 +9,11 @@
             <form asp-controller = "Home" asp-action="AddNotice">
                 <label for="fname">Title</label>
             <input type="text" id="fname" asp-for="NoticeTitle" placeholder="first name..">
-            <span asp-validation-for="NoticeTitle"></span>
+            <span class="errorMessage" asp-validation-for="NoticeTitle"></span>
 
             <label  >Descryption</label>
             <textarea asp-for="Descryption" placeholder="Write something.." style="height:200px"></textarea>
-            <span asp-validation-for="Descryption"></span>
+            <span class="errorMessage" asp-validation-for="Descryption"></span>
 
 
             <input type="submit" value="Submit">

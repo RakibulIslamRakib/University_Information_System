@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using University_Information_System.Models;
 
 namespace University_Information_System
 {
@@ -10,11 +11,52 @@ namespace University_Information_System
     {
         public int PageIndex { get; private set; }
         public int TotalPages { get; private set; }
+        public List<int>? RangePageList { get; set; }
 
-        public PaginatedList(List<T> items, int count, int pageIndex, int pageSize)
+    //start
+ 
+
+public PaginatedList(List<T> items, int count, int pageIndex, int pageSize)
         {
             PageIndex = pageIndex;
             TotalPages = (int)Math.Ceiling(count / (double)pageSize);
+
+            var currentPage1 = PageIndex;
+            var currentPage2 = PageIndex;
+            var rangeBtn = new HashSet<int>();
+            int cnt1 = 3, cnt2 = 3;
+
+            while (currentPage2 <= TotalPages && cnt2 > 0)
+            {
+                rangeBtn.Add(currentPage2);
+                    currentPage2++;
+                    cnt2--;
+
+            }
+
+            while (currentPage1 >= 1 && cnt1 > 0)
+            {
+                    rangeBtn.Add(currentPage1);
+                    currentPage1--;
+                    cnt1--;              
+            }
+
+            while (cnt2 > 0 && currentPage1 >= 1)
+            {
+                rangeBtn.Add(currentPage1);
+                currentPage1--;
+                cnt2--;
+            }
+
+            while (cnt1 > 0 && currentPage2 <= TotalPages)
+            {
+                rangeBtn.Add(currentPage2);
+                currentPage2++;
+                cnt1--;
+            }
+
+            RangePageList = new List<int>(rangeBtn);
+            RangePageList.Sort();
 
             this.AddRange(items);
         }

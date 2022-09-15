@@ -1,102 +1,142 @@
 ﻿@model Subject
 
-<link rel="stylesheet" href="~/css/projects.css" />
+<link rel="stylesheet" href="~/css/details.css" />
 
 @{
     <div class="container">
-        <h3 style="text-align:center">@(Model.SubjectName)</h3>
+        <h3 style="text-align:center">Subject's Name : @(Model.SubjectName)</h3>
 
-        <div class="search-list">
-        <h4>Depertment List</h4>
-        @foreach(var depertment in Model.Depertments){
-                <div class="search-item">
-                    <div class="info">
-                        <div class="item-header">
-                            <div class="type">@(depertment.DeptName)</div>
-                            <div class="name">
-                                <input style="align-content:center;
-                background-color: #04AA6D;
-                color: white;
-                padding: 12px 20px;
-                border: none;
-                border-radius: 4px;
-                cursor: pointer;
-                margin-left:30%;
-                height:40px;width:200px;"
-                                   type="button"
-                                   value="Details..."
-                                   onclick="location.href='@Url.Action("DetailsDepertment", "Depertment",new { @id = depertment.id})'" />
-                            </div>
-                        </div>                        
-                      
-                    </div>
-                </div>
 
-        }
+<div id="myDIV" class="header">
+</div>
+
+<ul class="detailsMenu">
+            <li id="department"><a href="#" type="button" onclick="clickAction('department')">Department</a> </li>
+<li id="student"><a href="#" type="button" onclick="clickAction('student')">Students</a> </li>
+<li id="teacher"><a href="#" type="button" onclick="clickAction('teacher')">Teachers</a> </li>
+</ul>
+
+
+        <div class="detailsUl" id="departmentDiv">
+            <h3 style="margin-top:40px;">Departments Contain's @(Model.SubjectName) Subject:</h3>
+           
+            <hr>
+
+
+            @foreach (var depertment in Model.Depertments)
             
+            {
+                <div class="grid-containerList">
+                <p>Dept. Name:
+                        <a class="item1" asp-controller="Depertment" asp-action="DetailsDepertment"
+               asp-route-id=@depertment.id>
+                        @(depertment.DeptName)
+                    </a>
+                    </p>
+
+                </div>
+            }
+
         </div>
-      
-        <div class="search-list">
-            <h4>Teachers List</h4>
+
+
+        <div class="detailsUl" id="teacherDiv">
+            <h3 style="margin-top:40px;">Teachers of @(Model.SubjectName) Subject:</h3>
+            <hr>
+
+
             @foreach (var teacher in Model.Teachers)
             {
-                <div class="search-item">
-                    <div class="info">
-                        <div class="item-header">
-                            <div class="type">@(teacher.FirstName) @(teacher.LastName)</div> 
-                            <div class="name">
-                                <input style="align-content:center;
-                    background-color: #04AA6D;
-                    color: white;
-                    padding: 12px 20px;
-                    border: none;
-                    border-radius: 4px;
-                    cursor: pointer;
-                    margin-left:30%;
-                    height:40px;width:200px;"
-                                   type="button"
-                                   value="Details..."
-                                   onclick="location.href='@Url.Action("DetailsTeacher", "Teacher",new { @id = teacher.Id})'" />
-                            </div>
-                        </div>
-                       
-                    </div>
+                <div class="grid-containerList">
+                <p>Name : 
+                    <a class="item1" asp-controller="Teacher" asp-action="DetailsTeacher"
+               asp-route-id=@teacher.Id>
+                        @(teacher.FirstName) @(teacher.LastName)
+                        </a>
+                    </p>
+                    <div class="item2"></div>
                 </div>
-
             }
-
-
         </div>
 
-        <div class="search-list">
-            <h4>Enrolled Student List</h4>
+
+        <div class="detailsUl" id="studentDiv">
+            <h3 style="margin-top:40px;">Students of @(Model.SubjectName) Subject:</h3>
+
+
+
+            <hr>
             @foreach (var student in Model.Students)
             {
-                <div class="search-item">
-                    <div class="info">
-                        <div class="item-header">
-                            <div class="type">@(student.FirstName) @(student.LastName)</div>
-                        </div>
-                        <div class="name">
-                            <input style="align-content:center;
-                        background-color: #04AA6D;
-                        color: white;
-                        padding: 12px 20px;
-                        border: none;
-                        border-radius: 4px;
-                        cursor: pointer;
-                        margin-left:30%;
-                        height:40px;width:200px;"
-                               type="button"
-                               value="Details..."
-                               onclick="location.href='@Url.Action("DetailsStudent", "Student",new { @id = student.id})'" />
-                        </div>
-                    </div>
+                <div class="grid-containerList">
+                <p>Name : 
+                    <a class="item1" asp-controller="Student" asp-action="DetailsStudent"
+               asp-route-id=@student.id>
+                        @(student.FirstName) @(student.LastName)
+                    </a>
+                    </p>
                 </div>
-
             }
-
         </div>
     </div>
 
 }
+
+
+
+<script>
+
+    function clickAction(paramStr) {
+
+
+        var department = document.getElementById("department");
+        var student = document.getElementById("student");
+        var teacher = document.getElementById("teacher");
+
+        var departmentDiv = document.getElementById("departmentDiv");
+        var studentDiv = document.getElementById("studentDiv");
+        var teacherDiv = document.getElementById("teacherDiv");
+
+
+        if (paramStr === "department") {
+
+            department.style.backgroundColor = "#95B9C7";
+            student.style.backgroundColor = "whitesmoke";
+            teacher.style.backgroundColor = "whitesmoke";
+
+            studentDiv.style.display = "none";
+            teacherDiv.style.display = "none";
+            departmentDiv.style.display = "block";
+
+        }
+        else if (paramStr === "student") {
+            student.style.backgroundColor = "#95B9C7";
+            department.style.backgroundColor = "whitesmoke";
+            teacher.style.backgroundColor = "whitesmoke";
+
+            studentDiv.style.display = "block";
+            teacherDiv.style.display = "none";
+            departmentDiv.style.display = "none";
+
+        }
+
+        else {
+            teacher.style.backgroundColor = "#95B9C7";
+            student.style.backgroundColor = "whitesmoke";
+            department.style.backgroundColor = "whitesmoke";
+
+            studentDiv.style.display = "none";
+            teacherDiv.style.display = "block";
+            departmentDiv.style.display = "none";
+
+        }
+
+
+    };
+
+
+    window.addEventListener('DOMContentLoaded', (event) => {
+        clickAction("department");
+    });
+
+</script>

@@ -8,13 +8,25 @@ namespace University_Information_System.Controllers
 {
     public class HomeController : Controller
     {
+
+        #region Fields
+
         private readonly INoticeService noticeService;
 
+        #endregion Fields
+
+
+
+        #region ctor
         public HomeController(INoticeService noticeService)
         {
             this.noticeService = noticeService;
         }
 
+        #endregion ctor
+
+
+        #region Index
         public async Task<IActionResult> Index(string currentFilter,
                     string searchString, int? pageNumber)
         {
@@ -43,8 +55,10 @@ namespace University_Information_System.Controllers
 
             return View(await PaginatedList<Notice>.CreateAsync(notice, pageNumber ?? 1, pageSize));
         }
+        #endregion Index
 
 
+        #region AddNotice
         public IActionResult AddNotice()
         {
             return View();
@@ -68,8 +82,9 @@ namespace University_Information_System.Controllers
             return View(notice);
            
         }
+        #endregion AddNotice
 
-
+        #region DeleteNotice
         public IActionResult DeleteNotice(int id)
         {
             var notice = noticeService.GetNoticeById(id);
@@ -86,6 +101,10 @@ namespace University_Information_System.Controllers
             return RedirectToAction(actionName: "Index", controllerName: "Home");
         }
 
+        #endregion DeleteNotice
+
+
+        #region UpdateNotice
         public IActionResult UpdateNotice(int id)
         {
             var notice = noticeService.GetNoticeById(id);
@@ -111,6 +130,17 @@ namespace University_Information_System.Controllers
             return View(notice);
          
         }
+        #endregion UpdateNotice
+
+        #region DetailsNotice
+        public IActionResult DetailsNotice(int id)
+        {
+            var notice = noticeService.GetNoticeDetailsById(id);
+
+            return View(notice);
+        }
+
+        #endregion DetailsNotice
 
 
     }

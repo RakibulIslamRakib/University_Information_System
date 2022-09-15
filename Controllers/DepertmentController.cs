@@ -1,23 +1,35 @@
-﻿
+﻿using PagedList;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Immutable;
 using University_Information_System.Models;
 using University_Information_System.Services.ServiceClasses;
 using University_Information_System.Services.ServiceInterfaces;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace University_Information_System.Controllers
 {
     public class DepertmentController : Controller
     {
+        #region Fields
+
         private readonly IDepartmentService departmentService;
+
+        #endregion Fields
+
+
+
+        #region ctor
 
         public DepertmentController(IDepartmentService departmentService)
         {
             this.departmentService = departmentService;
         }
 
+        #endregion ctor
 
+
+        #region Depertments
         public async Task<IActionResult> Depertments(string currentFilter,
                     string searchString, int? pageNumber)
         {      
@@ -39,11 +51,15 @@ namespace University_Information_System.Controllers
                 depertments =depertments.Where(dept => dept.DeptName.ToLower().Contains(searchString) 
                 || dept.Descryption.ToLower().Contains(searchString));
             }
-            int pageSize = 3;
+            int pageSize = 1;
 
             return View(await PaginatedList<Depertment>.CreateAsync(depertments, pageNumber ?? 1, pageSize));
         }
 
+        #endregion Depertments
+
+
+        #region AddDepertment
         public IActionResult AddDepertment()
         {
             return View();
@@ -67,7 +83,10 @@ namespace University_Information_System.Controllers
             return View(depertment);
         }
 
+        #endregion AddDepertment
 
+
+        #region DeleteDepertment
         public IActionResult DeleteDepertment(int id)
         {
             var department = departmentService.GetDepertmentById(id);
@@ -82,7 +101,10 @@ namespace University_Information_System.Controllers
 
             return RedirectToAction(actionName: "Depertments", controllerName: "Depertment");
         }
+        #endregion DeleteDepertment
 
+
+        #region UpdateDepertment
         public IActionResult UpdateDepertment(int id)
         {
             var updatedDept = departmentService.GetDepertmentById(id);
@@ -108,13 +130,20 @@ namespace University_Information_System.Controllers
             return View(depertment);
         }
 
+        #endregion UpdateDepertment
+
+
+        #region DetailsDepertment
         public IActionResult DetailsDepertment(int id)
         {
             var depertment = departmentService.GetDepertmentDetailsById(id);
 
             return View(depertment);
         }
+        #endregion DetailsDepertment
 
+
+        #region AddSubjectToTheDepertment
         public IActionResult AddSubjectToTheDepertment(int id)
         {
             TempData["departmentId"] = id;
@@ -129,12 +158,17 @@ namespace University_Information_System.Controllers
             var subDept = new SubjectDepartmentMapped();
             subDept.departmentId = id;
             subDept.subjectId = subjectId;
+
             departmentService.AddSubjectDapertmentMapped(subDept);
             
             return RedirectToAction(actionName: "DetailsDepertment" , controllerName:"Depertment" , new { @id = id });
     
         }
 
+        #endregion AddSubjectToTheDepertment
+
+
+        #region DeleteSubjectFromDept
         public IActionResult DeleteSubjectFromDept(int subjectId,int deptId)
         {
             departmentService.DeleteSubjectFromSubjectDepartmentMapped(subjectId, deptId);
@@ -149,6 +183,8 @@ namespace University_Information_System.Controllers
             
             return RedirectToAction(actionName: "DetailsDepertment", controllerName: "Depertment", new {@id = deptId});
         }
+
+        #endregion DeleteSubjectFromDept
 
     }
 }

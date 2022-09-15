@@ -1,5 +1,4 @@
 ﻿@model Subject
-<link rel="stylesheet" href="~/css/projects.css"/>
 <link rel="stylesheet" href="~/css/contact.css" />
 
 @{
@@ -8,11 +7,11 @@
     <form asp-controller = "Subject" asp-action="UpdateSubject">
         <label for="fname">Dept Name</label>
         <input type="text" id="fname" asp-for="SubjectName" placeholder="Your name..">
-            <span asp-validation-for="SubjectName"></span>
+            <span class="errorMessage" asp-validation-for="SubjectName"></span>
         
         <label for="subject">Details</label>
         <textarea id="subject" asp-for="Descryption" placeholder="Write something.." style="height:200px"></textarea>
-            <span asp-validation-for="Descryption"></span>
+            <span class="errorMessage" asp-validation-for="Descryption"></span>
             <input type="submit" value="Update">
     </form>
 </div>

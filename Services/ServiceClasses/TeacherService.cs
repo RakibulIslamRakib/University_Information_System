@@ -10,9 +10,12 @@ namespace University_Information_System.Services.ServiceClasses
 
         public readonly ApplicationDbContext db;
 
-        public TeacherService(ApplicationDbContext db)
+        private readonly ISubjectService subjectService;
+
+        public TeacherService(ApplicationDbContext db, ISubjectService subjectService)
         {
             this.db = db;
+            this.subjectService = subjectService;
         }
 
 
@@ -141,7 +144,23 @@ namespace University_Information_System.Services.ServiceClasses
             var teacher = GetTeacherById(id);
             teacher.Subjects = GetSubjectByTeacherId(id);
             teacher.Depertments = new List<Depertment>();
+          
+            foreach (var subject in teacher.Subjects)
+            {
+                teacher.Depertments.AddRange(subjectService.GetDepertmentBySubjectId(subject.id));
+            }
+            var depertmentSet = new HashSet<Depertment>(teacher.Depertments);
+            teacher.Depertments = new List<Depertment>(depertmentSet);
 
+
+            teacher.Students = new List<Student>();
+
+            foreach (var subject in teacher.Subjects)
+            {
+                teacher.Students.AddRange(subjectService.GetStudentBySubjectId(subject.id));
+            }
+            var studenttSet = new HashSet<Student>(teacher.Students);
+            teacher.Students = new List<Student>(studenttSet);
 
             return teacher;
         }

@@ -1,7 +1,7 @@
 ﻿@model University_Information_System.Models.Student
 
-<link rel="stylesheet" href="~/css/projects.css"/>
-<link rel="stylesheet" href="~/css/contact.css" />
+
+<link rel="stylesheet" href="~/css/addItems.css" />
 
 @{
     <div class="container">
@@ -9,21 +9,21 @@
             <form asp-controller = "Student" asp-action="AddStudent">
                 <label for="fname">First Name</label>
                 <input type="text" id="fname" asp-for="FirstName" placeholder="first name..">
-                <span asp-validation-for="FirstName"></span>
+            <span class="errorMessage" asp-validation-for="FirstName"></span>
 
                 <label for="fname">Last Name</label>
                 <input type="text" id="fname" asp-for="LastName" placeholder="last name..">
-                <span asp-validation-for="LastName"></span>
+            <span class="errorMessage" asp-validation-for="LastName"></span>
 
                 <label for="fname">Registration No </label>
                 <input type="text" id="fname" asp-for="Reg" placeholder="Registration..">
-                  <span asp-validation-for="Reg"></span>
+            <span class="errorMessage" asp-validation-for="Reg"></span>
 
             <label asp-for="DepertmentId"> Department</label>
-            <select  asp-for="DepertmentId" asp-items="@(new SelectList( ViewBag.depertments , "id", "DeptName"))"> 
-                <option>--Select--</option>
+            <select asp-for="DepertmentId" asp-items="@(new SelectList( ViewBag.depertments , "id", "DeptName"))">
+                <option class="selectItem">--Select--</option>
              </select>
-            <span asp-validation-for="DepertmentId"></span>
+            <span class="errorMessage" asp-validation-for="DepertmentId"></span>
 
 
             <input type="submit" value="Submit">

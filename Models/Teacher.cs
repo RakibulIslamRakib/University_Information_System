@@ -28,5 +28,7 @@ namespace University_Information_System.Models
         public  List<Subject>? Subjects { get; set; }
         [NotMapped]
         public List<Depertment>? Depertments { get; set; }
+        [NotMapped]
+        public List<Student>? Students { get; set; }
     }
 }

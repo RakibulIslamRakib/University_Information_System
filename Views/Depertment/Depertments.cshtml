@@ -1,98 +1,145 @@
 ﻿@model PaginatedList<University_Information_System.Models.Depertment>
-
 <link rel="stylesheet" href="~/css/projects.css" />
+
+@{
+    ViewBag.Title = "Departments";
+}
 
 @{
     if (TempData["success"] != null)
     {
     <h3 class="headline" style="align-content:center; 
-        background-color: #04AA6D;
-        color: white;
-        padding: 12px 20px;
-        border: none;
-        border-radius: 4px;
-        text-align:center; height:30px;">
-        Message :   @TempData["success"]
-</h3>
+                        background-color: #04AA6D;
+                        color: white;
+                        padding: 12px 20px;
+                        border: none;
+                        border-radius: 4px;
+                        text-align:center; height:30px;">
+                        Message :   @TempData["success"]
+    </h3>
     }
 }
 
-<div >
-<form asp-action="Depertments" method="get">
+<div class="mainDiv">
+    <div class="grid-container">
+
+    <form asp-action="Depertments" method="get" class="grid-container">
     <div class="form-actions no-color">
         <p>
-            Find by name: <input type="text" name="SearchString" value="@ViewData["CurrentFilter"]" />
-            <input type="submit" value="Search" class="btn btn-default" /> |
-            <a asp-action="Depertments">Back to Full List</a>
+                    <input type="text" name="SearchString" placeholder="search depertment..." 
+                    class="searchBar" value="@ViewData["CurrentFilter"]" />
+                    <input type="submit"  value="Search" class="btn" />
+                <input type="button" class="btn"
+                       value="Add Department"
+                       onclick="location.href='@Url.Action("AddDepertment", "Depertment")'" />
         </p>
     </div>
 </form>
+ </div>
 
-<div>
-    <input
-        style="align-content:center; 
-    background-color: #04AA6D;
-    color: white;
-    padding: 12px 20px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer; margin-left:30%;
-    height:40px;width:200px;" type="button"
-    value="Add New Depertment"
-    onclick="location.href='@Url.Action("AddDepertment", "Depertment")'" />
-</div>
+    <h3 style="text-align:center; padding-top:10px;">Departments : </h3>
+  
+    <div class="cards">
+        @{
+            foreach (var dept in Model)
+            {
+                                <div class="card">
+                                    <div class="card__header">
+                                    <h4 class="card__title"> @(dept.DeptName) </h4>
+                                    </div>
+                            
+                            <div class="card__body">
+                                    <span class="tag">Created : @(dept.CreatedDate)</span>
+                                    <p>Descryption : <br>
+                                        @(dept.Descryption.Count() > 40 ? dept.Descryption.Substring(40) + "...." : dept.Descryption)
+                                    </p>
+                            </div>
+                            <div class="card__footer">
+                                <div class="button-group">
 
-<div class="cards">
-    @{
 
+                                        <a class="detailsBtn"
+                       asp-conztroller="Depertment" asp-action="DetailsDepertment"
+                       asp-route-id=@dept.id> See details..</a>
 
-        foreach (var dept in Model)
-        {
+                                        <a class="updateBtn"
+                       asp-conztroller="Depertment" asp-action="UpdateDepertment"
+                       asp-route-id=@dept.id> Update</a>
 
-            <div class="card">
-            <div class="projectTitle">
-                <h4>@(dept.DeptName) </h4>
-            </div>
-                <span style="font-size:12px">Created : @(dept.CreatedDate)</span>
-    
-            <div>
-                <p style="font-size:14px">Descryption : @(dept.Descryption)</p>
-            </div>
-            <div>
-                    <a style="background-color:teal; color:white; font-size:14px; padding:2px;margin:2px; border: 1px solid red;border-radious:2px;"
-               asp-conztroller="Depertment" asp-action="DetailsDepertment" asp-route-id=@dept.id> See details..</a>
-                    <a style="background-color:teal; color:white; font-size:14px; padding:2px;margin:2px; border: 1px solid red;border-radious:2px;"
-                        asp-conztroller="Depertment" asp-action="UpdateDepertment" asp-route-id=@dept.id> Update</a>
-                <a style="background-color:red; color:white; font-size:14px; padding:2px;margin:2px; border: 1px solid red;border-radious:2px;"
-                asp-conztroller="Depertment" asp-action="DeleteDepertment" asp-route-id=@dept.id> Delete</a>
-            </div>
-            </div>
+                                        <a class="deleteBtn"
+                       asp-conztroller="Depertment" asp-action="DeleteDepertment"
+                       asp-route-id=@dept.id> Delete</a>
 
+                                </div>
+                            </div>
+                            </div>
+            }
         }
+    </div>
 
-    }
-</div>
 
-@{
-    var prevDisabled = !Model.HasPreviousPage? "disabled" : "";
-    var nextDisabled = !Model.HasNextPage? "disabled" : "";
+    @{
+        var prevDisabled = !Model.HasPreviousPage? "disabled" : "";
+        var nextDisabled = !Model.HasNextPage? "disabled" : "";     
 }
 
-<a asp-action="Depertments"  
-   asp-route-pageNumber="@(Model.PageIndex - 1)"
-   asp-route-currentFilter="@ViewData["CurrentFilter"]"
-   class="@prevDisabled">
-    Previous
-</a>
 
-<a asp-action="Depertments"
-   asp-route-pageNumber="@(Model.PageIndex + 1)"
-   asp-route-currentFilter="@ViewData["CurrentFilter"]"
-   class="@nextDisabled">
-    Next
-</a>
+<div class="paginationDiv">
+    <div class="gridRow">
+        <h4>Page No @(Model.PageIndex) of @(Model.TotalPages)</h4>
+
+    <form asp-action="Depertments" method="get" class="grid-container">
+        <div class="form-actions no-color">
+                
+                <label for="PageNumber"> Goto Page</label>
+            <select name="PageNumber">
+                        <option class="selectItem" value=@(Model.PageIndex)>--select--</option>
+                @foreach (int index in Enumerable.Range(1, (Model.TotalPages)))
+                    {
+                            <option class="selectItem" value=@(index)>Page : @(index)</option>
+                    }
+                </select>
+                <input type="submit" value="Go" class="btn" />        
+        </div>
+    </form>
+        </div>
+
+    <a asp-action="Depertments"
+       asp-route-pageNumber="@(Model.PageIndex - 1)"
+       asp-route-currentFilter="@ViewData["CurrentFilter"]"
+       class="btn @prevDisabled">
+        Previous
+    </a>
 
 
- 
+    @foreach (int page in Model.RangePageList)
+    {
+            if (page == Model.PageIndex)
+            {
+                <a asp-action="Depertments" class="selected"
+           asp-route-pageNumber="@(page)"
+           asp-route-currentFilter="@ViewData["CurrentFilter"]">       
+                    @(page)
+                </a>
+        }
+        else{
+        <a asp-action="Depertments" class="btn"
+       asp-route-pageNumber="@(page)"
+       asp-route-currentFilter="@ViewData["CurrentFilter"]"
+       class="btn">
+            @(page)
+        </a>
+        }
+    }
+
+    <a asp-action="Depertments"
+       asp-route-pageNumber="@(Model.PageIndex + 1)"
+       asp-route-currentFilter="@ViewData["CurrentFilter"]"
+       class="btn @nextDisabled">
+        Next
+    </a>
+
 </div>
+
+
 </div>

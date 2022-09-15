@@ -1,83 +1,84 @@
 ﻿@model PaginatedList<University_Information_System.Models.Notice>
 
-@{
-    ViewData["Title"] = "Home Page";
-}
 
 <link rel="stylesheet" href="~/css/projects.css" />
 
 @{
+    ViewData["Title"] = "Home Page";
+}
+
+
+<div class="mainDiv">
+
+@{
     if (TempData["success"] != null)
     {
-        <h3 class="headline"
-        style="align-content:center;
-                    background-color: #04AA6D;
-                    color: white;
-                    padding: 12px 20px;
-                    border: none;
-                    border-radius: 4px;
-                    text-align:center; height:30px;">
-            Message :   @TempData["success"]
-        </h3>
+                    <h3 class="headline"
+                    style="align-content:center;
+                                background-color: #04AA6D;
+                                color: white;
+                                padding: 12px 20px;
+                                border: none;
+                                border-radius: 4px;
+                                text-align:center; height:30px;">
+                        Message :   @TempData["success"]
+                    </h3>
     }
 }
 
-<div class="container">
-<form asp-action="Index" method="get">
-    <div class="form-actions no-color">
-        <p>
-            Find by name: <input type="text" name="SearchString" value="@ViewData["CurrentFilter"]" />
-            <input type="submit" value="Search" class="btn btn-default" /> |
-            <a asp-action="Notice">Back to Full List</a>
-        </p>
-    </div>
-</form>
+<div class="grid-container">
+    <form asp-action="Index" method="get" class="item-1">
+        <div class="form-actions no-color">
+            <p>
+                <input class="searchBar" placeholder="Search notice..." type="text"
+                 name="SearchString" value="@ViewData["CurrentFilter"]" />
+                <input type="submit" value="Search" class="btn btn-default" />
+                    <input type="button" class="btn"
+                           value="Add New Notice"
+                           onclick="location.href='@Url.Action("AddNotice", "Home")'" />
+            </p>
+        </div>
+    </form>
 
-
-<div>
-    <input style="align-content:center;
-    background-color: #04AA6D;
-    color: white;
-    padding: 12px 20px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    margin-left:30%;
-    height:40px;width:200px;"
-           type="button"
-           value="Add New Notice"
-           onclick="location.href='@Url.Action("AddNotice", "Home")'" />
-</div>
+ </div>
+    <h3 style="text-align:center; padding-top:10px;">Notice Board : </h3>
 
 <div class="cards">
-    @{
-
-
-      foreach (var notice in Model)
+        
+        @if (Model.Count == 0)
+        {
+            <h3>Notice List Empty...</h3>
+        }
+        else
+        foreach (var notice in Model)
         {
 
-            <div class="card">
-                <div class="projectTitle">
-                    <h4>@(notice.NoticeTitle) </h4>
+                <div class="card">
+                        <div class="card__header">
+                            <h4 class="card__title">@(notice.NoticeTitle) </h4>
 
-                </div>
-                <span style="font-size:12px">Created : @(notice.CreatedDate)</span>
-                <span style="font-size:16px">Author : @(notice.Creator)</span>
-                <div>
-                    <p style="font-size:14px">Descryption : @(notice.Descryption)</p>
-                </div>
-                <div>
-                    <a style="background-color:teal; color:white; font-size:14px; padding:2px;margin:2px;
-                                                        border: 1px solid red;border-radious:2px;"
+                    </div>
+                  
+                        <div class="card__body">
+                            <span class="tag">Created : @(notice.CreatedDate)</span>
+                            <span class="tag">Author : @(notice.Creator)</span>
+                        <p style="font-size:14px">Descryption :<br> @(notice.Descryption.Count() > 40 ? notice.Descryption.Substring(40)+"...." : notice.Descryption)</p>
+                        </div>
+
+
+                            <div class="card__footer">
+                                <div class="button-group">
+                            <a class="detailsBtn"
+                       asp-conztroller="Home" asp-action="DetailsNotice"
+                       asp-route-id=@notice.id> See details..</a>
+                            <a class="updateBtn"
                asp-conztroller="Home" asp-action="UpdateNotice" asp-route-id="@notice.id"> Update</a>
-                    <a style="background-color:red; color:white; font-size:14px; padding:2px;margin:2px;
-                                                            border: 1px solid red;border-radious:2px;"
+                            <a class="deleteBtn"
                asp-conztroller="Home" asp-action="DeleteNotice" asp-route-id="@notice.id"> Delete</a>
+                    </div>
+                            </div>
                 </div>
-            </div>
 
-        
-        }
 
     }
 </div>
@@ -88,17 +89,64 @@
     var nextDisabled = !Model.HasNextPage ? "disabled" : "";
 }
 
-<a asp-action="Students"
-   asp-route-pageNumber="@(Model.PageIndex - 1)"
-   asp-route-currentFilter="@ViewData["CurrentFilter"]"
-   class="btn btn-default @prevDisabled">
-    Previous
-</a>
-<a asp-action="Students"
-   asp-route-pageNumber="@(Model.PageIndex + 1)"
-   asp-route-currentFilter="@ViewData["CurrentFilter"]"
-   class="btn btn-default @nextDisabled">
-    Next
-</a>
+    <div class="paginationDiv">
+        <div class="gridRow">
+            <h4>Page No @(Model.PageIndex) of @(Model.TotalPages)</h4>
+
+            <form asp-action="Index" method="get" class="grid-container">
+                <div class="form-actions no-color">
+
+                    <label for="PageNumber"> Goto Page</label>
+                    <select name="PageNumber">
+                        <option class="selectItem" value=@(Model.PageIndex)>--select--</option>
+                        @foreach (int index in Enumerable.Range(1, (Model.TotalPages)))
+                        {
+                            <option class="selectItem" value=@(index)>Page : @(index)</option>
+                        }
+                    </select>
+                    <input type="submit" value="Go" class="btn" />
+                </div>
+            </form>
+        </div>
+
+        <a asp-action="Index"
+           asp-route-pageNumber="@(Model.PageIndex - 1)"
+           asp-route-currentFilter="@ViewData["CurrentFilter"]"
+           class="btn @prevDisabled">
+            Previous
+        </a>
+
+
+        @foreach (int page in Model.RangePageList)
+        {
+            if (page == Model.PageIndex)
+            {
+                <a asp-action="Index" class="selected"
+           asp-route-pageNumber="@(page)"
+           asp-route-currentFilter="@ViewData["CurrentFilter"]">
+                    @(page)
+                </a>
+            }
+            else
+            {
+                <a asp-action="Index" class="btn"
+           asp-route-pageNumber="@(page)"
+           asp-route-currentFilter="@ViewData["CurrentFilter"]"
+           class="btn">
+                    @(page)
+                </a>
+            }
+        }
+
+        <a asp-action="Index"
+           asp-route-pageNumber="@(Model.PageIndex + 1)"
+           asp-route-currentFilter="@ViewData["CurrentFilter"]"
+           class="btn @nextDisabled">
+            Next
+        </a>
 
     </div>
+
+ 
+
+</div>

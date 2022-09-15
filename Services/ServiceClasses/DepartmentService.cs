@@ -123,13 +123,13 @@ namespace University_Information_System.Services.ServiceClasses
 
         public List<Subject> SubjectOutOfDept(int depertmentId)
         {
-            var subjects = subjectService.getAllSubject();
+            var subjects = subjectService.getAllSubject().ToList(); ;
             var subjectOftheDept = GetSubjectByDepertmentId(depertmentId);
             var subjectOutOftheDept = subjects.Except(subjectOftheDept).ToList();
             
             return subjectOutOftheDept;
         }
 
-        
+       
     }
 }

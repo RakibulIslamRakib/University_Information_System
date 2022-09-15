@@ -1,12 +1,35 @@
 ﻿
-<header id="header">
-    <nav class="links" style="--items: 6;">
-        <a href="/">Info-System</a> 
-        <a href="/">Home</a> 
-        <a href="/Depertment/depertments">Depertments</a> 
-        <a href="/Subject/subjects">Subjects</a> 
-        <a href="/Student/students">Students</a> 
-        <a href="/Teacher/teachers">Teachers</a>
-        <span class="line"></span>
-    </nav>
-</header>
+
+    <ul class="menu_bar">
+        <li><a  href="/">Info-System</a> </li>
+        <li  id="home"><a onclick="navAction('home')" href="/">Home</a> </li>
+        
+        <li  id="depertments"> <a onclick="navAction('depertments')" href="/Depertment/depertments">Depertments</a> </li>
+        <li  id="subjects"><a onclick="navAction('subjects')" href="/Subject/subjects">Subjects</a> </li>
+        <li  id="students"> <a onclick="navAction('students')" href="/Student/students">Students</a> </li>
+        <li  id="teachers"> <a onclick="navAction('teachers')" href="/Teacher/teachers">Teachers</a></li>
+        <li><span class="line"></span></li>
+    </ul>
+
+
+     <script>
+    var navLst = ['home', 'depertments', 'subjects', 'students', 'teachers'];
+    function navAction(paramStr) {
+    console.log(paramStr);
+    navLst.forEach(item=>{
+
+        var itemnav = document.getElementById(item);
+        if(item === paramStr){
+                itemnav.style.backgroundColor = "#95B9C7";;
+        }
+        else{
+           itemnav.style.backgroundColor = "#404d61";
+        }
+    });
+
+
+};
+
+
+
+     </script>
