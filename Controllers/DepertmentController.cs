@@ -1,11 +1,7 @@
-﻿using PagedList;
+﻿
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System.Collections.Immutable;
 using University_Information_System.Models;
-using University_Information_System.Services.ServiceClasses;
 using University_Information_System.Services.ServiceInterfaces;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace University_Information_System.Controllers
 {
