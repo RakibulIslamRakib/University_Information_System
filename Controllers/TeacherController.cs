@@ -31,7 +31,7 @@ namespace University_Information_System.Controllers
 
 
         public async Task<IActionResult> Teachers(string currentFilter,
-                    string searchString, int? pageNumber)
+                    string searchString, int? pageNumber, int? itemsPerPage)
         {
             var teachers = teacherService.getAllTeacher();
 
@@ -43,6 +43,8 @@ namespace University_Information_System.Controllers
             {
                 searchString = currentFilter;
             }
+            int pageSize = itemsPerPage ?? 5;
+            ViewData["ItemsPerPage"] = pageSize;
             ViewData["CurrentFilter"] = searchString;
 
             searchString = !String.IsNullOrEmpty(searchString) ? searchString.ToLower() : "";
@@ -52,10 +54,7 @@ namespace University_Information_System.Controllers
                 || tr.LastName.ToLower().Contains(searchString) || tr.Descryption.ToLower().Contains(searchString));
             }
 
-
-
-            int pageSize = 3;
-
+ 
 
             return View(await PaginatedList<Teacher>.CreateAsync(teachers, pageNumber ?? 1, pageSize));
 

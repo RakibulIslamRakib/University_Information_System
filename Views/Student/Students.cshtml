@@ -35,7 +35,19 @@
 
     
 </div>
-    <h3 style="text-align:center; padding-top:10px;">Student List : </h3>
+    <div class="gridRow">
+        <h3 style="text-align:center; padding-top:10px;">Student List : </h3>
+        <form asp-action="Students" method="get">
+            <div class="form-actions no-color">
+
+                <label for="PageNumber"> Item per Page: </label>
+                <input name="itemsPerPage" class="searchBar" style="width:40px" type"number" value="@ViewData["ItemsPerPage"]" />
+                <input type="submit" value="Show" class="btn" />
+            </div>
+        </form>
+
+    </div>
+
 <div class="cards">
     @{
 
@@ -82,9 +94,9 @@
 
             <form asp-action="Students" method="get" class="grid-container">
                 <div class="form-actions no-color">
-
+                    <input type="hidden" name="ItemsPerPage" value="@ViewData["ItemsPerPage"]" />
                     <label for="PageNumber"> Goto Page</label>
-                    <select name="PageNumber">
+                    <select name="PageNumber" class="searchBar" style="width:100px">
                         <option class="selectItem" value=@(Model.PageIndex)>--select--</option>
                         @foreach (int index in Enumerable.Range(1, (Model.TotalPages)))
                         {
@@ -96,7 +108,7 @@
             </form>
         </div>
 
-        <a asp-action="Students"
+        <a asp-action="Students" asp-route-itemsPerPage="@ViewData["ItemsPerPage"]"
            asp-route-pageNumber="@(Model.PageIndex - 1)"
            asp-route-currentFilter="@ViewData["CurrentFilter"]"
            class="btn @prevDisabled">
@@ -109,7 +121,7 @@
             if (page == Model.PageIndex)
             {
                 <a asp-action="Students" class="selected"
-           asp-route-pageNumber="@(page)"
+           asp-route-pageNumber="@(page)" asp-route-itemsPerPage="@ViewData["ItemsPerPage"]"
            asp-route-currentFilter="@ViewData["CurrentFilter"]">
                     @(page)
                 </a>
@@ -117,7 +129,7 @@
             else
             {
                 <a asp-action="Students" class="btn"
-           asp-route-pageNumber="@(page)"
+           asp-route-pageNumber="@(page)" asp-route-itemsPerPage="@ViewData["ItemsPerPage"]"
            asp-route-currentFilter="@ViewData["CurrentFilter"]"
            class="btn">
                     @(page)
@@ -127,6 +139,7 @@
 
         <a asp-action="Students"
            asp-route-pageNumber="@(Model.PageIndex + 1)"
+           asp-route-itemsPerPage="@ViewData["ItemsPerPage"]"
            asp-route-currentFilter="@ViewData["CurrentFilter"]"
            class="btn @nextDisabled">
             Next

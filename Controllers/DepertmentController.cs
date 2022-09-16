@@ -26,8 +26,8 @@ namespace University_Information_System.Controllers
 
 
         #region Depertments
-        public async Task<IActionResult> Depertments(string currentFilter,
-                    string searchString, int? pageNumber)
+        public async Task<IActionResult> Depertments(string currentFilter, 
+                    string searchString, int? pageNumber, int? itemsPerPage)
         {      
             var depertments = departmentService.getAllDepertment();
 
@@ -39,7 +39,11 @@ namespace University_Information_System.Controllers
             {
                 searchString = currentFilter;
             }
+
+            int pageSize = itemsPerPage ?? 5;
+            ViewData["ItemsPerPage"] = pageSize;
             ViewData["CurrentFilter"] = searchString;
+
             searchString = !String.IsNullOrEmpty(searchString)? searchString.ToLower():"";
 
             if (!String.IsNullOrEmpty(searchString))
@@ -47,7 +51,7 @@ namespace University_Information_System.Controllers
                 depertments =depertments.Where(dept => dept.DeptName.ToLower().Contains(searchString) 
                 || dept.Descryption.ToLower().Contains(searchString));
             }
-            int pageSize = 1;
+            
 
             return View(await PaginatedList<Depertment>.CreateAsync(depertments, pageNumber ?? 1, pageSize));
         }
