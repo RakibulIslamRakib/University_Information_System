@@ -30,7 +30,7 @@ namespace University_Information_System.Controllers
 
 
         public async Task<IActionResult> Subjects(string currentFilter,
-                    string searchString, int? pageNumber)
+                    string searchString, int? pageNumber, int? itemsPerPage)
         {
             var subjects = subjectService.getAllSubject();
 
@@ -42,6 +42,8 @@ namespace University_Information_System.Controllers
             {
                 searchString = currentFilter;
             }
+            int pageSize = itemsPerPage ?? 5;
+            ViewData["ItemsPerPage"] = pageSize;
             ViewData["CurrentFilter"] = searchString;
 
             searchString = !String.IsNullOrEmpty(searchString) ? searchString.ToLower() : "";
@@ -50,10 +52,7 @@ namespace University_Information_System.Controllers
                 subjects = subjects.Where(sub => sub.SubjectName.ToLower().Contains(searchString)
                 || sub.Descryption.ToLower().Contains(searchString));
             }
-
-            int pageSize = 3;
-
-
+ 
             return View(await PaginatedList<Subject>.CreateAsync(subjects, pageNumber ?? 1, pageSize));
         }
 

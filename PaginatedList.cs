@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿ 
 using Microsoft.EntityFrameworkCore;
-using University_Information_System.Models;
+ 
 
 namespace University_Information_System
 {
@@ -16,7 +13,7 @@ namespace University_Information_System
     //start
  
 
-public PaginatedList(List<T> items, int count, int pageIndex, int pageSize)
+        public PaginatedList(List<T> items, int count, int pageIndex, int pageSize)
         {
             PageIndex = pageIndex;
             TotalPages = (int)Math.Ceiling(count / (double)pageSize);
