@@ -28,7 +28,7 @@ namespace University_Information_System.Controllers
         public async Task<IActionResult> Students(string currentFilter,
                     string searchString, int? pageNumber, int? itemsPerPage)
         {
-            var students = studentService.getAllStudent();
+            var students = await studentService.getAllStudent();
 
             if (searchString != null)
             {
@@ -46,54 +46,56 @@ namespace University_Information_System.Controllers
            
             if (!String.IsNullOrEmpty(searchString))
             {
-                students = students.Where(st => st.FirstName.ToLower().Contains(searchString)
-                || st.LastName.ToLower().Contains(searchString));
+                students = (List<Student>)students.Where(st => st.FirstName.ToLower().Contains(searchString)
+                || st.LastName.ToLower().Contains(searchString)).ToList();
             }
 
            
-            return View(await PaginatedList<Student>.CreateAsync(students, pageNumber ?? 1, pageSize));
+            return View( PaginatedList<Student>.Create(students, pageNumber ?? 1, pageSize));
         }
 
         #endregion Students
 
+
         #region AddStudent
-        public IActionResult AddStudent()
+        public async Task<IActionResult> AddStudent()
         {
-            ViewBag.depertments = departmentService.getAllDepertment();
+            ViewBag.depertments = await departmentService.GetAllDepertment();
             return View();
         }
 
 
         [HttpPost]
-        public IActionResult AddStudent(Student student)
+        public async Task<IActionResult> AddStudent(Student student)
         {
             if (ModelState.IsValid)
             {
-                studentService.AddStudent(student);
+               await studentService.AddStudent(student);
 
-                return RedirectToAction(actionName: "Students", controllerName: "Student");
+               return RedirectToAction(actionName: "Students", controllerName: "Student");
 
             }
 
-            ViewBag.depertments = departmentService.getAllDepertment();
+            ViewBag.depertments = await departmentService.GetAllDepertment();
             return View(student);
         }
         #endregion AddStudent
 
         #region DeleteStudent
-        public IActionResult DeleteStudent(int id)
+        public async Task<IActionResult> DeleteStudent(int id)
         {
-            var student = studentService.GetStudentById(id);
-            student.DeptName = departmentService.GetDepertmentById(student.DepertmentId).DeptName;
-
+            var student = await studentService.GetStudentById(id);
+            var dept = await departmentService.GetDepertmentById(student.DepertmentId);
+            if(dept == null) return View("Error");
+            student.DeptName = dept.DeptName;
             return View(student);
         }
 
 
         [HttpPost]
-        public IActionResult DeleteStudent(Student student)
+        public async Task<IActionResult> DeleteStudent(Student student)
         {
-            studentService.DeleteStudent(student);
+            await studentService.DeleteStudent(student);
 
             return RedirectToAction(actionName: "Students", controllerName: "Student");
         }
@@ -101,32 +103,33 @@ namespace University_Information_System.Controllers
         #endregion DeleteStudent
 
         #region UpdateStudent
-        public IActionResult UpdateStudent(int id)
+        public async  Task<IActionResult> UpdateStudent(int id)
         {
-            var student = studentService.GetStudentById(id);
+            var student = await studentService.GetStudentById(id);
 
             return View(student);
         }
 
         [HttpPost]
-        public IActionResult UpdateStudent(Student student)
+        public async Task<IActionResult> UpdateStudent(Student student)
         {
             if (ModelState.IsValid)
             {
-                studentService.UpdateStudent(student);
+               await studentService.UpdateStudent(student);
 
                 return RedirectToAction(actionName: "Students", controllerName: "Student");
 
             }
             return View(student);
         }
+
         #endregion UpdateStudent
 
 
         #region DetailsStudent
-        public IActionResult DetailsStudent(int id)
+        public async Task<IActionResult> DetailsStudent(int id)
         {
-            var student = studentService.GetStudentDetailsById(id);
+            var student = await studentService.GetStudentDetailsById(id);
 
             return View(student);
         }
@@ -134,36 +137,36 @@ namespace University_Information_System.Controllers
         #endregion DetailsStudent
 
         #region EnroleSubject
-        public IActionResult EnroleSubject(int id)
+        public async Task<IActionResult> EnroleSubject(int id)
         {
             TempData["StudentId"] = id;
-            var student = studentService.GetStudentById(id);
-            var subjectOftheDept = new List<Subject>(departmentService.GetSubjectByDepertmentId(student.DepertmentId));
-            var subjectOfTheStudent = studentService.GetSubjectByStudentId(id);
-            var subjectOutOfTheStudent = subjectOftheDept.Except(subjectOfTheStudent).ToList();
+            var student = await studentService.GetStudentById(id);
+            var subjectOftheDept = await departmentService.GetSubjectByDepertmentId(student.DepertmentId);
+            var subjectOfTheStudent = await studentService.GetSubjectByStudentId(id);
+            var subjectOutOfTheStudent =  subjectOftheDept.Except(subjectOfTheStudent);
 
             return View(subjectOutOfTheStudent);
 
         }
 
+
         [HttpPost]
-        public IActionResult EnroleSubject(int id, int subjectId)
+        public async Task<IActionResult> EnroleSubject(int id, int subjectId)
         {
             var enrollment = new SubjectStudentMapped();
             enrollment.subjectId = subjectId;
             enrollment.studentId= id;
-            studentService.AddSubjectStudentMapped(enrollment);
+            await studentService.AddSubjectStudentMapped(enrollment);
             
-            return RedirectToAction(actionName: "DetailsStudent", controllerName: "Student", new { @id = id });
-
+            return RedirectToAction(actionName: "DetailsStudent", controllerName: "Student", new { id });
         }
         #endregion EnroleSubject
 
 
         #region DeleteEnrolment
-        public IActionResult DeleteEnrolment(int subjectId, int studentId)
+        public async Task<IActionResult> DeleteEnrolment(int subjectId, int studentId)
         {
-            studentService.DeleteEnrolmentFromSubjectStudentMapped(subjectId, studentId);
+            await studentService.DeleteEnrolmentFromSubjectStudentMapped(subjectId, studentId);
             
             return RedirectToAction(actionName: "DetailsStudent", controllerName: "Student", new { @id = studentId });
         }

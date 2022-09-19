@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 using University_Information_System.Data;
 using University_Information_System.Models;
 using University_Information_System.Services.ServiceInterfaces;
@@ -19,117 +20,142 @@ namespace University_Information_System.Services.ServiceClasses
             this.studentService = studentService;
         }
 
-        public void AddDepertment(Depertment depertment)
+        public async Task AddDepertment(Depertment depertment)
         {
-            db.Depertment.Add(depertment);
-            db.SaveChanges();
+            await db.Depertment.AddAsync(depertment);
+            await db.SaveChangesAsync();
         }
 
-        public IQueryable<Depertment> getAllDepertment()
+        public async Task<List<Depertment> > GetAllDepertment()
         {
-            var depertments = db.Depertment;
-
-            return depertments;
+            return await db.Depertment.ToListAsync() ;
         }
 
-        public Depertment GetDepertmentById(int id)
+        public async Task<Depertment> GetDepertmentById(int id)
         {
+          var department = await db.Depertment.FindAsync(id);
+            if (department == null) return new Depertment();
 
-            return db.Depertment.Find(id);
+            return department;
         }
 
-        public void UpdateDepertment(Depertment depertment)
+        public async Task UpdateDepertment(Depertment depertment)
         {
-            db.Depertment.Update(depertment);
-            db.SaveChanges();
+           db.Depertment.Update(depertment);
+           await db.SaveChangesAsync();
         }
 
-        public void DeleteDepertment(Depertment depertment)
+        public async Task DeleteDepertment(Depertment depertment)
         {
-            var studentOdTheDept = GetStudentByDepertmentId(depertment.id);
+            var studentOdTheDept = await GetStudentByDepertmentId(depertment.id);
             var enrolMentsOfTheStudentsOfTheDept = new List<SubjectStudentMapped>();
+
             foreach (var student in studentOdTheDept)
             {
-                enrolMentsOfTheStudentsOfTheDept.AddRange(db.SubjectStudentMapped.Where(enrol => enrol.studentId == student.id).ToList());
+                 enrolMentsOfTheStudentsOfTheDept.AddRange(db.SubjectStudentMapped.Where(enrol => enrol.studentId == student.id));
             }
             db.SubjectStudentMapped.RemoveRange(enrolMentsOfTheStudentsOfTheDept);
-            db.SaveChanges();
+            await db.SaveChangesAsync();
 
             db.Student.RemoveRange(studentOdTheDept);
-            db.SaveChanges();
+            await db.SaveChangesAsync();
 
-            var subDeptOfTheDept = db.SubjectDepartmentMapped.Where(sd=>sd.departmentId==depertment.id).ToList();
+            var subDeptOfTheDept = await db.SubjectDepartmentMapped.Where(sd=>sd.departmentId==depertment.id).ToListAsync();
             db.SubjectDepartmentMapped.RemoveRange(subDeptOfTheDept);
-            db.SaveChanges();
+            await db.SaveChangesAsync();
 
             db.Depertment.Remove(depertment);
-            db.SaveChanges();
+            await db.SaveChangesAsync();
         }
 
-        public Depertment GetDepertmentDetailsById(int id)
+
+
+        public async Task<List<Teacher> > GetTeacherByDepertmentId(int id)
         {
-            var depertment = db.Depertment.Find(id);
-            //depertment.Teachers = GetTeacherByDepertmentId(id);
-            depertment.Teachers = new List<Teacher>();
-            depertment.Students = GetStudentByDepertmentId(id);
-            depertment.Subjects = GetSubjectByDepertmentId(id);
-            foreach(var subject in depertment.Subjects)
+            var subjects = await GetSubjectByDepertmentId(id);
+            var teachers = new List<Teacher>();
+
+            foreach (var subject in subjects)
             {
-                depertment.Teachers.AddRange(subjectService.GetTeacherBySubjectId(subject.id));
+                teachers.AddRange( await subjectService.GetTeacherBySubjectId(subject.id));
             }
-            var teacher = new HashSet<Teacher>(depertment.Teachers);
-            depertment.Teachers = new List<Teacher>(teacher);
+            var teacher = new HashSet<Teacher>(teachers);
+            teachers = new List<Teacher>(teacher);
+
+            return teachers;
+        }
+
+
+
+        public async Task<Depertment> GetDepertmentDetailsById(int id)
+        {
+            var depertment = await db.Depertment.FindAsync(id);
+            if (depertment == null) return new Depertment();
+
+            depertment.Students = await GetStudentByDepertmentId(id);
+            depertment.Subjects = await GetSubjectByDepertmentId(id);
+            depertment.Teachers = await GetTeacherByDepertmentId(id);
 
             return depertment;
         }
 
 
-        public List<Subject> GetSubjectByDepertmentId(int id)
-        {
-            var subjectIdOfTheDepertment = db.SubjectDepartmentMapped.Where(sd => sd.departmentId == id ).Select(sd=>sd.subjectId).ToList();
-            
-            
-            var allSubjectOfTheDepertment = db.Subject.Where(subject=> subjectIdOfTheDepertment.Contains(subject.id)).ToList();
 
-            return allSubjectOfTheDepertment;
+        public async Task<List<Subject>> GetSubjectByDepertmentId(int id)
+        {
+            var subjectIdOfTheDepertment = await db.SubjectDepartmentMapped.Where(sd => sd.departmentId == id).Select(sd => sd.subjectId).ToListAsync();
+            
+            
+            var allSubjectOfTheDepertment = await db.Subject.Where(subject=> subjectIdOfTheDepertment.Contains(subject.id)).ToListAsync();
+
+            return  allSubjectOfTheDepertment;
         }
         
 
-        public List<Student> GetStudentByDepertmentId(int id)
+
+        public async Task<List<Student>> GetStudentByDepertmentId(int id)
         {
 
-            return db.Student.Where(st => st.DepertmentId == id).ToList();
+            return await db.Student.Where(st => st.DepertmentId == id).ToListAsync();
         }
 
-        public void DeleteStudentFromDept(int studentId)
+
+        public async Task DeleteStudentFromDept(int studentId)
         {
-            studentService.DeleteStudent(studentService.GetStudentById(studentId));
+            var student = await studentService.GetStudentById(studentId);
+
+            if (student != null)
+            {
+                await studentService.DeleteStudent(student);
+            }
+    
         }
 
-        public void AddSubjectDapertmentMapped(SubjectDepartmentMapped subjectDapertmentMapped)
+        public async Task AddSubjectDapertmentMapped(SubjectDepartmentMapped subjectDapertmentMapped)
         {
-            db.SubjectDepartmentMapped.Add(subjectDapertmentMapped);
-            db.SaveChanges();
+           await db.SubjectDepartmentMapped.AddAsync(subjectDapertmentMapped);
+           await db.SaveChangesAsync();
         }
 
-        public void DeleteSubjectFromSubjectDepartmentMapped(int subjectId, int deptId)
+
+        public async Task DeleteSubjectFromSubjectDepartmentMapped(int subjectId, int deptId)
         {
-            var subDeptVar = db.SubjectDepartmentMapped.FirstOrDefault(sd => sd.departmentId == deptId && sd.subjectId==subjectId);
+            var subDeptVar = await db.SubjectDepartmentMapped.FirstOrDefaultAsync(sd => sd.departmentId == deptId && sd.subjectId==subjectId);
             
-            db.SubjectDepartmentMapped.Remove(subDeptVar);
-            db.SaveChanges();           
+            if (subDeptVar != null)
+            {
+                db.SubjectDepartmentMapped.Remove(subDeptVar);
+                await db.SaveChangesAsync();
+            }
         }
 
 
-        public List<Subject> SubjectOutOfDept(int depertmentId)
+        public async Task<List<Subject>> SubjectOutOfDept(int depertmentId)
         {
-            var subjects = subjectService.getAllSubject().ToList(); ;
-            var subjectOftheDept = GetSubjectByDepertmentId(depertmentId);
+            var subjects = await subjectService.getAllSubject(); 
+            var subjectOftheDept = await GetSubjectByDepertmentId(depertmentId);
             var subjectOutOftheDept = subjects.Except(subjectOftheDept).ToList();
-            
             return subjectOutOftheDept;
         }
-
-       
     }
 }

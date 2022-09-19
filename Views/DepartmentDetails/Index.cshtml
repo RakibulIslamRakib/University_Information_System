@@ -1,0 +1,86 @@
+﻿@model Depertment
+
+
+<link rel="stylesheet" href="~/css/details.css" />
+
+@{
+    <div class="container">
+        <a asp-action="Depertments">Go Back </a>
+
+        <h3 style="text-align:center">Department : Model.DeptName</h3>
+
+
+        <ul class="detailsMenu">
+            <li id="subject"><a href="#" type="button" onclick="clickAction('subject')">Subjects</a> </li>
+            <li id="student"><a href="#" type="button" onclick="clickAction('student')">Students</a> </li>
+            <li id="teacher"><a href="#" type="button" onclick="clickAction('teacher')">Teachers</a> </li>
+        </ul>
+
+
+        <div class="detailsUl" id="subjectDiv">
+            @RenderBody() 
+        </div>
+
+
+    </div>
+
+}
+
+
+<script>
+
+    function clickAction(paramStr) {
+
+
+        var subject = document.getElementById("subject");
+        var student = document.getElementById("student");
+        var teacher = document.getElementById("teacher");
+
+        var subjectDiv = document.getElementById("subjectDiv");
+        var studentDiv = document.getElementById("studentDiv");
+        var teacherDiv = document.getElementById("teacherDiv");
+
+
+        if (paramStr === "subject") {
+
+            subject.style.backgroundColor = "#95B9C7";
+            student.style.backgroundColor = "whitesmoke";
+            teacher.style.backgroundColor = "whitesmoke";
+
+            studentDiv.style.display = "none";
+            teacherDiv.style.display = "none";
+            subjectDiv.style.display = "block";
+
+        }
+        else if (paramStr === "student") {
+            student.style.backgroundColor = "#95B9C7";
+            subject.style.backgroundColor = "whitesmoke";
+            teacher.style.backgroundColor = "whitesmoke";
+
+            studentDiv.style.display = "block";
+            teacherDiv.style.display = "none";
+            subjectDiv.style.display = "none";
+
+        }
+
+        else {
+            teacher.style.backgroundColor = "#95B9C7";
+            student.style.backgroundColor = "whitesmoke";
+            subject.style.backgroundColor = "whitesmoke";
+
+            studentDiv.style.display = "none";
+            teacherDiv.style.display = "block";
+            subjectDiv.style.display = "none";
+
+        }
+
+
+    };
+
+
+    window.addEventListener('DOMContentLoaded', (event) => {
+        clickAction("subject");
+    });
+
+</script>
+
