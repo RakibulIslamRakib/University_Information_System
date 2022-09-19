@@ -1,4 +1,5 @@
-﻿using University_Information_System.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using University_Information_System.Data;
 using University_Information_System.Models;
 using University_Information_System.Services.ServiceInterfaces;
 
@@ -13,77 +14,80 @@ namespace University_Information_System.Services.ServiceClasses
         }
 
 
-        public void AddSubject(Subject subject)
+        public async Task AddSubject(Subject subject)
         {
-            db.Subject.Add(subject);
-            db.SaveChanges();
+            await db.Subject.AddAsync(subject);
+            await db.SaveChangesAsync();
         }
 
 
-        public IQueryable<Subject> getAllSubject()
+        public async Task<List<Subject>> getAllSubject()
         {
-            return db.Subject;
+            return await db.Subject.ToListAsync();
 
         }
 
-        public void DeleteSubject(Subject subject)
+        public async Task DeleteSubject(Subject subject)
         {
-            var enrolmentOfTheSubject = db.SubjectStudentMapped.Where(ss=>ss.subjectId==subject.id);
+            var enrolmentOfTheSubject = await db.SubjectStudentMapped.Where(ss=>ss.subjectId==subject.id).ToListAsync();
             db.SubjectStudentMapped.RemoveRange(enrolmentOfTheSubject);
-            db.SaveChanges();
+            await db.SaveChangesAsync();
 
-            var subTeacherOfTheSubject = db.SubjectTeacherMapped.Where(st => st.SubjectId == subject.id);
+            var subTeacherOfTheSubject = await db.SubjectTeacherMapped.Where(st => st.SubjectId == subject.id).ToListAsync();
             db.SubjectTeacherMapped.RemoveRange(subTeacherOfTheSubject);
-            db.SaveChanges();
+            await db.SaveChangesAsync();
 
             db.Subject.Remove(subject);
-            db.SaveChanges();
+            await db.SaveChangesAsync();
         }
 
 
-        public Subject GetSubjectById(int id)
+        public async Task<Subject> GetSubjectById(int id)
         {
-            return db.Subject.Find(id);
+            var subject = await db.Subject.FindAsync(id);
+            return subject;
         }
 
-        public void UpdateSubject(Subject subject)
+        public async Task UpdateSubject(Subject subject)
         {
             db.Subject.Update(subject);
-            db.SaveChanges();
+            await db.SaveChangesAsync();
         }
 
-        public List<Student> GetStudentBySubjectId(int id)
+        public async Task <List<Student>> GetStudentBySubjectId(int id)
         {
-            var studentIdOfTheSubject = db.SubjectStudentMapped.Where(ss => ss.subjectId == id).Select(ss=>ss.studentId);
-            var allStudentOfTheSubject = db.Student.Where(student => studentIdOfTheSubject.Contains(student.id)).ToList();
+            var studentIdOfTheSubject = await db.SubjectStudentMapped.Where(ss => ss.subjectId == id).Select(ss=>ss.studentId).ToListAsync();
+            var allStudentOfTheSubject = await db.Student.Where(student => studentIdOfTheSubject.Contains(student.id)).ToListAsync();
 
             return allStudentOfTheSubject;
         }
 
-        public List<Teacher> GetTeacherBySubjectId(int id)
+        public async Task<List<Teacher>> GetTeacherBySubjectId(int id)
         {
-            var teacherIdOfTheSubject = db.SubjectTeacherMapped.Where(st => st.SubjectId == id).Select(st => st.TeacherId);
-            var allTeacherOfTheSubject = db.Teacher.Where(teacher => teacherIdOfTheSubject.Contains(teacher.Id)).ToList();
+            var teacherIdOfTheSubject = await db.SubjectTeacherMapped.Where(st => st.SubjectId == id).Select(st => st.TeacherId).ToListAsync();
+            var allTeacherOfTheSubject = await db.Teacher.Where(teacher => teacherIdOfTheSubject.Contains(teacher.Id)).ToListAsync();
 
             return allTeacherOfTheSubject;
         }
 
 
-        public List<Depertment> GetDepertmentBySubjectId(int id)
+        public async Task<List<Depertment>> GetDepertmentBySubjectId(int id)
         {
-            var depertmentIdOfTheSubject = db.SubjectDepartmentMapped.Where(sd => sd.subjectId == id).Select(sd => sd.departmentId);
-            var allDepertmentOfTheSubject = db.Depertment.Where(dept => depertmentIdOfTheSubject.Contains(dept.id)).ToList();
+            var depertmentIdOfTheSubject = await db.SubjectDepartmentMapped.Where(sd => sd.subjectId == id).Select(sd => sd.departmentId).ToListAsync();
+            var allDepertmentOfTheSubject = await db.Depertment.Where(dept => depertmentIdOfTheSubject.Contains(dept.id)).ToListAsync();
 
             return allDepertmentOfTheSubject;
         }
 
 
-        public Subject GetSubjectDetailsById(int id)
+        public async Task<Subject> GetSubjectDetailsById(int id)
         {
-            var subject = db.Subject.Find(id);
-            subject.Depertments = GetDepertmentBySubjectId(id);
-            subject.Teachers = GetTeacherBySubjectId(id);
-            subject.Students = GetStudentBySubjectId(id);
+            var subject = await db.Subject.FindAsync(id);
+            if (subject == null) return subject;
+
+            subject.Depertments = await GetDepertmentBySubjectId(id);
+            subject.Teachers = await GetTeacherBySubjectId(id);
+            subject.Students =await GetStudentBySubjectId(id);
 
             return subject;
         }

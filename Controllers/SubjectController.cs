@@ -32,7 +32,7 @@ namespace University_Information_System.Controllers
         public async Task<IActionResult> Subjects(string currentFilter,
                     string searchString, int? pageNumber, int? itemsPerPage)
         {
-            var subjects = subjectService.getAllSubject();
+            var subjects = await subjectService.getAllSubject();
 
             if (searchString != null)
             {
@@ -50,10 +50,10 @@ namespace University_Information_System.Controllers
             if (!String.IsNullOrEmpty(searchString))
             {
                 subjects = subjects.Where(sub => sub.SubjectName.ToLower().Contains(searchString)
-                || sub.Descryption.ToLower().Contains(searchString));
+                || sub.Descryption.ToLower().Contains(searchString)).ToList();
             }
  
-            return View(await PaginatedList<Subject>.CreateAsync(subjects, pageNumber ?? 1, pageSize));
+            return View( PaginatedList<Subject>.Create(subjects, pageNumber ?? 1, pageSize));
         }
 
         #endregion Subjects
@@ -66,13 +66,13 @@ namespace University_Information_System.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddSubject(Subject subject)
+        public async Task<IActionResult> AddSubject(Subject subject)
         {
             subject.CreatedDate = DateTime.Now;
             subject.CreatedBy = 12;
             if (ModelState.IsValid)
             {
-                subjectService.AddSubject(subject);
+                await subjectService.AddSubject(subject);
                 return RedirectToAction(actionName: "Subjects", controllerName: "Subject");
             }
             return View(subject);
@@ -81,17 +81,18 @@ namespace University_Information_System.Controllers
         #endregion AddSubject
 
         #region DeleteSubject
-        public IActionResult DeleteSubject(int id)
+        public async Task<IActionResult> DeleteSubject(int id)
         {
-            var subject = subjectService.GetSubjectById(id);
+            var subject = await subjectService.GetSubjectById(id);
+            if (subject == null) return View("Error");  
 
             return View(subject);
         }
 
         [HttpPost]
-        public IActionResult DeleteSubject(Subject subject)
+        public async Task<IActionResult> DeleteSubject(Subject subject)
         {
-            subjectService.DeleteSubject(subject);
+            await subjectService.DeleteSubject(subject);
             
             return RedirectToAction(actionName: "Subjects", controllerName: "Subject");
         }
@@ -99,21 +100,21 @@ namespace University_Information_System.Controllers
 
 
         #region UpdateSubject
-        public IActionResult UpdateSubject(int id)
+        public async Task<IActionResult> UpdateSubject(int id)
         {
-            var subject = subjectService.GetSubjectById(id);
+            var subject = await subjectService.GetSubjectById(id);
 
             return View(subject);
         }
 
         [HttpPost]
-        public IActionResult UpdateSubject(Subject subject)
+        public async Task<IActionResult> UpdateSubject(Subject subject)
         {
             subject.UpdatedDate=DateTime.Now;
             subject.UpdatedBy= 12;
             if (ModelState.IsValid)
             {
-                subjectService.UpdateSubject(subject);
+                await subjectService.UpdateSubject(subject);
 
                 return RedirectToAction(actionName: "Subjects", controllerName: "Subject");
             }
@@ -123,13 +124,13 @@ namespace University_Information_System.Controllers
 
 
         #region DetailsSubject
-        public IActionResult DetailsSubject(int id)
+        public async Task<IActionResult> DetailsSubject(int id)
         {
-            var subject = subjectService.GetSubjectDetailsById(id);
+            var subject = await subjectService.GetSubjectDetailsById(id);
+            if(subject == null) return View("Error");   
 
             return View(subject);
         }
-
 
         #endregion DetailsSubject
 

@@ -1,5 +1,6 @@
 ﻿
 using Microsoft.AspNetCore.Mvc;
+using System.Drawing.Printing;
 using University_Information_System.Models;
 using University_Information_System.Services.ServiceInterfaces;
 
@@ -29,7 +30,7 @@ namespace University_Information_System.Controllers
         public async Task<IActionResult> Depertments(string currentFilter, 
                     string searchString, int? pageNumber, int? itemsPerPage)
         {      
-            var depertments = departmentService.getAllDepertment();
+            var depertments = await departmentService.GetAllDepertment();
 
             if (searchString != null)
             {
@@ -48,13 +49,14 @@ namespace University_Information_System.Controllers
 
             if (!String.IsNullOrEmpty(searchString))
             {
-                depertments =depertments.Where(dept => dept.DeptName.ToLower().Contains(searchString) 
-                || dept.Descryption.ToLower().Contains(searchString));
+                depertments =   depertments.Where(dept => dept.DeptName.ToLower().Contains(searchString)
+                || dept.Descryption.ToLower().Contains(searchString)).ToList();
             }
-            
-
-            return View(await PaginatedList<Depertment>.CreateAsync(depertments, pageNumber ?? 1, pageSize));
+       
+            return View(PaginatedList<Depertment>.Create(depertments, pageNumber ?? 1, pageSize));
         }
+
+
 
         #endregion Depertments
 
@@ -62,11 +64,11 @@ namespace University_Information_System.Controllers
         #region AddDepertment
         public IActionResult AddDepertment()
         {
-            return View();
+            return  View();
         }
 
         [HttpPost]
-        public IActionResult AddDepertment(Depertment depertment)
+        public async Task<IActionResult> AddDepertment(Depertment depertment)
         {
             depertment.CreatedDate = DateTime.Now;
             depertment.CreatedBy = 1;
@@ -75,7 +77,7 @@ namespace University_Information_System.Controllers
 
             if (ModelState.IsValid)
             {
-                departmentService.AddDepertment(depertment);
+               await departmentService.AddDepertment(depertment);
 
                 return RedirectToAction(actionName: "Depertments", controllerName: "Depertment");
             }
@@ -87,17 +89,17 @@ namespace University_Information_System.Controllers
 
 
         #region DeleteDepertment
-        public IActionResult DeleteDepertment(int id)
+        public async Task<IActionResult> DeleteDepertment(int id)
         {
-            var department = departmentService.GetDepertmentById(id);
+            var department = await departmentService.GetDepertmentById(id);
 
             return View(department);
         }
 
         [HttpPost]
-        public IActionResult DeleteDepertment(Depertment depertment)
+        public async Task<IActionResult> DeleteDepertment(Depertment depertment)
         {
-            departmentService.DeleteDepertment(depertment);
+            await departmentService.DeleteDepertment(depertment);
 
             return RedirectToAction(actionName: "Depertments", controllerName: "Depertment");
         }
@@ -105,24 +107,23 @@ namespace University_Information_System.Controllers
 
 
         #region UpdateDepertment
-        public IActionResult UpdateDepertment(int id)
+        public async Task<IActionResult> UpdateDepertment(int id)
         {
-            var updatedDept = departmentService.GetDepertmentById(id);
+            var updatedDept = await departmentService.GetDepertmentById(id);
 
             return View(updatedDept);
         }
 
         [HttpPost]
-        public IActionResult UpdateDepertment(Depertment depertment)
-        {
-            //var updatedDeptVar = departmentService.GetDepertmentById(depertment.id);   
+        public async Task<IActionResult> UpdateDepertment(Depertment depertment)
+        { 
             depertment.UpdatedDate= DateTime.Now;
             depertment.UpdatedBy = 1;
             //var err = ModelState.Values.SelectMany(er => er.Errors);
 
             if (ModelState.IsValid)
             {
-                departmentService.UpdateDepertment(depertment);
+               await departmentService.UpdateDepertment(depertment);
 
                 return RedirectToAction(actionName: "Depertments", controllerName: "Depertment");
             }
@@ -134,32 +135,34 @@ namespace University_Information_System.Controllers
 
 
         #region DetailsDepertment
-        public IActionResult DetailsDepertment(int id)
+        public async Task<IActionResult> DetailsDepertment(int id,string atributeType, int pageNumber)
         {
-            var depertment = departmentService.GetDepertmentDetailsById(id);
-
-            return View(depertment);
+            var depertment = await departmentService.GetDepertmentDetailsById(id);
+           
+            return  View(depertment);
         }
         #endregion DetailsDepertment
 
 
         #region AddSubjectToTheDepertment
-        public IActionResult AddSubjectToTheDepertment(int id)
+        public async Task<IActionResult> AddSubjectToTheDepertment(int id)
         {
             TempData["departmentId"] = id;
-            var subjectOutOftheDept = departmentService.SubjectOutOfDept(id);
+            var subjectOutOftheDept = await departmentService.SubjectOutOfDept(id);
             
             return View(subjectOutOftheDept);
         }
 
         [HttpPost]
-        public IActionResult AddSubjectToTheDepertment(int id, int subjectId)
+        public async Task<IActionResult> AddSubjectToTheDepertment(int id, int subjectId)
         {
-            var subDept = new SubjectDepartmentMapped();
-            subDept.departmentId = id;
-            subDept.subjectId = subjectId;
+            var subDept = new SubjectDepartmentMapped
+            {
+                departmentId = id,
+                subjectId = subjectId
+            };
 
-            departmentService.AddSubjectDapertmentMapped(subDept);
+            await departmentService.AddSubjectDapertmentMapped(subDept);
             
             return RedirectToAction(actionName: "DetailsDepertment" , controllerName:"Depertment" , new { @id = id });
     
@@ -169,17 +172,17 @@ namespace University_Information_System.Controllers
 
 
         #region DeleteSubjectFromDept
-        public IActionResult DeleteSubjectFromDept(int subjectId,int deptId)
+        public async Task<IActionResult> DeleteSubjectFromDept(int subjectId,int deptId)
         {
-            departmentService.DeleteSubjectFromSubjectDepartmentMapped(subjectId, deptId);
+            await departmentService.DeleteSubjectFromSubjectDepartmentMapped(subjectId, deptId);
             
-            return RedirectToAction(actionName: "Depertments", controllerName: "Depertment");
+            return RedirectToAction(actionName: "DetailsDepertment", controllerName: "Depertment", new { @id = deptId });
         }
 
 
-        public IActionResult DeleteStudentFromDept(int studentId, int deptId)
+        public async Task<IActionResult> DeleteStudentFromDept(int studentId, int deptId)
         {
-            departmentService.DeleteStudentFromDept(studentId);
+            await departmentService.DeleteStudentFromDept(studentId);
             
             return RedirectToAction(actionName: "DetailsDepertment", controllerName: "Depertment", new {@id = deptId});
         }

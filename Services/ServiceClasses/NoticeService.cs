@@ -1,4 +1,5 @@
 ﻿
+using Microsoft.EntityFrameworkCore;
 using University_Information_System.Data;
 using University_Information_System.Models;
 using University_Information_System.Services.ServiceInterfaces;
@@ -15,42 +16,40 @@ namespace University_Information_System.Services.ServiceClasses
             this.db = db;
         }
 
-        public void AddNotice(Notice notice)
+        public async Task AddNotice(Notice notice)
         {
-            db.Notice.Add(notice);
-            db.SaveChanges();
+            await db.Notice.AddAsync(notice);
+            await db.SaveChangesAsync();
         }
 
-        public IQueryable<Notice> getAllNotice()
+        public async Task<List<Notice>> getAllNotice()
         {
-            return db.Notice; 
+            return await db.Notice.ToListAsync(); 
         }
 
-        public void UpdateNotice(Notice notice)
+        public async Task UpdateNotice(Notice notice)
         {
-            db.Notice.Update(notice);
-            db.SaveChanges();
+           db.Notice.Update(notice);
+           await db.SaveChangesAsync();
         }
 
-        public Notice GetNoticeById(int id)
-        {
-
-            return db.Notice.Find(id);
-        }
-
-        public void DeleteNotice(Notice notice)
-        {
-            db.Notice.Remove(notice);
-            db.SaveChanges();
+        public async Task<Notice> GetNoticeById(int id)
+        {        
+            return await db.Notice.FindAsync(id);         
         }
 
 
-
-        public Notice GetNoticeDetailsById(int id)
+        public async Task DeleteNotice(Notice notice)
         {
-            var notice = db.Notice.Find(id);
+           db.Notice.Remove(notice);
+           await db.SaveChangesAsync();
+        }
 
 
+
+        public async Task<Notice> GetNoticeDetailsById(int id)
+        {
+            var notice = await db.Notice.FindAsync(id);
             return notice;
         }
 

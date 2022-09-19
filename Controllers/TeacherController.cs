@@ -33,7 +33,7 @@ namespace University_Information_System.Controllers
         public async Task<IActionResult> Teachers(string currentFilter,
                     string searchString, int? pageNumber, int? itemsPerPage)
         {
-            var teachers = teacherService.getAllTeacher();
+            var teachers = await teacherService.getAllTeacher();
 
             if (searchString != null)
             {
@@ -51,12 +51,12 @@ namespace University_Information_System.Controllers
             if (!String.IsNullOrEmpty(searchString))
             {
                 teachers = teachers.Where(tr => tr.FirstName.ToLower().Contains(searchString)
-                || tr.LastName.ToLower().Contains(searchString) || tr.Descryption.ToLower().Contains(searchString));
+                || tr.LastName.ToLower().Contains(searchString) || tr.Descryption.ToLower().Contains(searchString)).ToList();
             }
 
  
 
-            return View(await PaginatedList<Teacher>.CreateAsync(teachers, pageNumber ?? 1, pageSize));
+            return View(PaginatedList<Teacher>.Create(teachers, pageNumber ?? 1, pageSize));
 
         }
         #endregion Teachers
@@ -69,12 +69,12 @@ namespace University_Information_System.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddTeacher(Teacher teacher)
+        public async Task<IActionResult> AddTeacher(Teacher teacher)
         {
             if (ModelState.IsValid)
             {
 
-                teacherService.AddTeacher(teacher);
+               await teacherService.AddTeacher(teacher);
 
                 return RedirectToAction(actionName: "Teachers", controllerName: "Teacher");
             }
@@ -84,38 +84,38 @@ namespace University_Information_System.Controllers
         #endregion AddTeacher
 
         #region DeleteTeacher
-        public IActionResult DeleteTeacher(int id)
+        public async Task<IActionResult> DeleteTeacher(int id)
         {
-            var teacher = teacherService.GetTeacherById(id);
-
+            var teacher = await teacherService.GetTeacherById(id);
+            if(teacher == null)return View("Error");    
             return View(teacher);
         }
 
         [HttpPost]
-        public IActionResult DeleteTeacher(Teacher teacher)
+        public async Task<IActionResult> DeleteTeacher(Teacher teacher)
         {
-            teacherService.DeleteTeacher(teacher);
+            await teacherService.DeleteTeacher(teacher);
             
             return RedirectToAction(actionName: "Teachers", controllerName: "Teacher");
         }
         #endregion DeleteTeacher
 
         #region  UpdateTeacher
-        public IActionResult UpdateTeacher(int id)
+        public async Task<IActionResult> UpdateTeacher(int id)
         {
 
-            var teacher = teacherService.GetTeacherById(id);
+            var teacher = await teacherService.GetTeacherById(id);
 
             return View(teacher);
         }
 
         [HttpPost]
-        public IActionResult UpdateTeacher(Teacher teacher)
+        public async Task<IActionResult> UpdateTeacher(Teacher teacher)
         {
             if (ModelState.IsValid)
             {
 
-                teacherService.UpdateTeacher(teacher);
+               await teacherService.UpdateTeacher(teacher);
 
                 return RedirectToAction(actionName: "Teachers", controllerName: "Teacher");
             }
@@ -125,9 +125,11 @@ namespace University_Information_System.Controllers
         #endregion  UpdateTeacher
 
         #region  DetailsTeacher
-        public IActionResult DetailsTeacher(int id)
+        public async Task<IActionResult> DetailsTeacher(int id)
         {
-            var teacher = teacherService.GetTeacherDetailsById(id);
+            var teacher = await teacherService.GetTeacherDetailsById(id);
+
+            if(teacher == null) return View("Error");
 
             return View(teacher);
         }
@@ -136,27 +138,29 @@ namespace University_Information_System.Controllers
 
 
         #region  AddSubjectToTheTeacher
-        public IActionResult AddSubjectToTheTeacher(int id)
+        public async Task<IActionResult> AddSubjectToTheTeacher(int id)
         {
 
             TempData["teacherId"] = id;
-            var subjects = subjectService.getAllSubject().ToList();
+            var subjects = await subjectService.getAllSubject();
 
-            var subjectOftheTeacher =  teacherService.GetSubjectByTeacherId(id);
+            var subjectOftheTeacher = await teacherService.GetSubjectByTeacherId(id);
 
-            var subjectOutOftheTeacher = subjects.Except(subjectOftheTeacher.ToList()).ToList();
+            var subjectOutOftheTeacher =  subjects.Except(subjectOftheTeacher);
 
             return View(subjectOutOftheTeacher);
         }
        
 
         [HttpPost]
-        public IActionResult AddSubjectToTheTeacher(int id, int subjectId)
+        public async Task<IActionResult> AddSubjectToTheTeacher(int id, int subjectId)
         {
-            var subTeacher = new SubjectTeacherMapped();
-            subTeacher.TeacherId = id;
-            subTeacher.SubjectId = subjectId;
-            teacherService.AddSubjectTeacherMapped(subTeacher);
+            var subTeacher = new SubjectTeacherMapped
+            {
+                TeacherId = id,
+                SubjectId = subjectId
+            };
+            await teacherService.AddSubjectTeacherMapped(subTeacher);
 
             return RedirectToAction(actionName: "DetailsTeacher", controllerName: "Teacher", new { @id = id });
 
@@ -164,9 +168,9 @@ namespace University_Information_System.Controllers
         #endregion  AddSubjectToTheTeacher
 
         #region  DeleteSubjectFromTeacher
-        public IActionResult DeleteSubjectFromTeacher(int subjectId, int TeacherId)
+        public async Task<IActionResult> DeleteSubjectFromTeacher(int subjectId, int TeacherId)
         {
-            teacherService.DeleteSubTeacherMapped(subjectId, TeacherId);
+            await teacherService.DeleteSubTeacherMapped(subjectId, TeacherId);
             return RedirectToAction(actionName: "DetailsTeacher", controllerName: "Teacher", new {@id = TeacherId});
         }
 

@@ -30,7 +30,7 @@ namespace University_Information_System.Controllers
         public async Task<IActionResult> Index(string currentFilter,
                     string searchString, int? pageNumber, int? itemsPerPage)
         {
-            var notice= noticeService.getAllNotice();
+            var notice= await noticeService.getAllNotice();
 
             if (searchString != null)
             {
@@ -49,10 +49,10 @@ namespace University_Information_System.Controllers
             if (!String.IsNullOrEmpty(searchString))
             {
                 notice= notice.Where(st => st.NoticeTitle.ToLower().Contains(searchString)
-                || st.Descryption.ToLower().Contains(searchString));
+                || st.Descryption.ToLower().Contains(searchString)).ToList();
             }
  
-            return View(await PaginatedList<Notice>.CreateAsync(notice, pageNumber ?? 1, pageSize));
+            return View(PaginatedList<Notice>.Create(notice, pageNumber ?? 1, pageSize));
         }
         #endregion Index
 
@@ -71,10 +71,10 @@ namespace University_Information_System.Controllers
             notice.CreatedDate = DateTime.Now;
             notice.CreatedBy= 1;
 
-            var err = ModelState.Values.SelectMany(er => er.Errors);
+            //var err = ModelState.Values.SelectMany(er => er.Errors);
             if (ModelState.IsValid)
             {
-                noticeService.AddNotice(notice);
+                await noticeService.AddNotice(notice);
                 return  RedirectToAction(actionName: "Index", controllerName: "Home");
             }
 
@@ -84,18 +84,18 @@ namespace University_Information_System.Controllers
         #endregion AddNotice
 
         #region DeleteNotice
-        public IActionResult DeleteNotice(int id)
+        public async Task<IActionResult> DeleteNotice(int id)
         {
-            var notice = noticeService.GetNoticeById(id);
-
+            var notice = await noticeService.GetNoticeById(id);
+            if(notice == null) return View("Error");
             return View(notice);
         }
 
 
         [HttpPost]
-        public IActionResult DeleteNotice(Notice notice)
+        public async Task<IActionResult> DeleteNotice(Notice notice)
         {
-            noticeService.DeleteNotice(notice);
+          await noticeService.DeleteNotice(notice);
 
             return RedirectToAction(actionName: "Index", controllerName: "Home");
         }
@@ -104,9 +104,10 @@ namespace University_Information_System.Controllers
 
 
         #region UpdateNotice
-        public IActionResult UpdateNotice(int id)
+        public async Task<IActionResult> UpdateNotice(int id)
         {
-            var notice = noticeService.GetNoticeById(id);
+            var notice = await noticeService.GetNoticeById(id);
+            if (notice == null) return View("Error");
 
             return View(notice);
         }
@@ -116,13 +117,12 @@ namespace University_Information_System.Controllers
         public async Task<IActionResult> UpdateNotice(Notice notice)
         {
             
-
             if (ModelState.IsValid)
             {
-                var updatedNotice = noticeService.GetNoticeById(notice.id);
+                var updatedNotice = await noticeService.GetNoticeById(notice.id);
                 updatedNotice.NoticeTitle = notice.NoticeTitle;
                 updatedNotice.Descryption = notice.Descryption;
-                noticeService.UpdateNotice(updatedNotice);
+                await noticeService.UpdateNotice(updatedNotice);
                 return RedirectToAction(actionName: "Index", controllerName: "Home");
             }
 
@@ -132,9 +132,10 @@ namespace University_Information_System.Controllers
         #endregion UpdateNotice
 
         #region DetailsNotice
-        public IActionResult DetailsNotice(int id)
+        public async Task<IActionResult> DetailsNotice(int id)
         {
-            var notice = noticeService.GetNoticeDetailsById(id);
+            var notice = await noticeService.GetNoticeDetailsById(id);
+            if (notice == null) return View("Error");
 
             return View(notice);
         }

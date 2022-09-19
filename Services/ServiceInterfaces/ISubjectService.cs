@@ -4,14 +4,14 @@ namespace University_Information_System.Services.ServiceInterfaces
 {
     public interface ISubjectService
     {
-        public void AddSubject(Subject subject);
-        public IQueryable<Subject> getAllSubject();
-        public Subject GetSubjectById(int id);
-        public void UpdateSubject(Subject subject);
-        public void DeleteSubject(Subject subject);
-        public Subject GetSubjectDetailsById(int id);
-        public List<Teacher> GetTeacherBySubjectId(int id);
-        public List<Depertment> GetDepertmentBySubjectId(int id);
-        public List<Student> GetStudentBySubjectId(int id);
+        public Task AddSubject(Subject subject);
+        public Task<List<Subject>> getAllSubject();
+        public Task<Subject> GetSubjectById(int id);
+        public Task UpdateSubject(Subject subject);
+        public Task DeleteSubject(Subject subject);
+        public Task<Subject> GetSubjectDetailsById(int id);
+        public Task<List<Teacher>> GetTeacherBySubjectId(int id);
+        public Task<List<Depertment>> GetDepertmentBySubjectId(int id);
+        public Task<List<Student>> GetStudentBySubjectId(int id);
     }
 }

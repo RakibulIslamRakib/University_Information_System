@@ -43,7 +43,7 @@
      <div class="form-actions no-color">
        
                     <label for="PageNumber"> Item per Page: </label>
-                <input name="itemsPerPage" class="searchBar" style="width:40px" type"number" value="@ViewData["ItemsPerPage"]" />
+                <input name="itemsPerPage"  class="searchBar" style="width:40px" type"number" value="@ViewData["ItemsPerPage"]" />
                     <input type="submit"  value="Show" class="btn" />
     </div>
 </form>
@@ -70,8 +70,7 @@
                                 <div class="button-group">
 
 
-                                        <a class="detailsBtn"
-                       asp-conztroller="Depertment" asp-action="DetailsDepertment"
+                                        <a class="detailsBtn" asp-action="DetailsDepertment"
                        asp-route-id=@dept.id> See details..</a>
 
                                         <a class="updateBtn"

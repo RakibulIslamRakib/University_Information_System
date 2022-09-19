@@ -5,13 +5,13 @@ namespace University_Information_System.Services.ServiceInterfaces
 {
     public interface INoticeService
     {
-        public IQueryable<Notice> getAllNotice();
-        public void AddNotice(Notice notice);
+        public Task<List<Notice>> getAllNotice();
+        public Task AddNotice(Notice notice);
  
-        public void UpdateNotice(Notice notice);
-        public void DeleteNotice(Notice notice);
+        public Task UpdateNotice(Notice notice);
+        public Task DeleteNotice(Notice notice);
 
-        public Notice GetNoticeById(int id);
-        public  Notice GetNoticeDetailsById(int id);
+        public Task<Notice> GetNoticeById(int id);
+        public Task<Notice> GetNoticeDetailsById(int id);
     }
 }
