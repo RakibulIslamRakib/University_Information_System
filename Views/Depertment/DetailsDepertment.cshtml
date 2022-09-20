@@ -5,95 +5,276 @@
 
 @{
     <div class="container">
-        <a asp-action="Depertments">Go Back </a>
+            <a asp-action="Depertments">Go Back </a>
 
-        <h3 style="text-align:center">Department : @(Model.DeptName)</h3>
-
-
-        <ul class="detailsMenu">
-            <li id="subject"><a href="#" type="button" onclick="clickAction('subject')">Subjects</a> </li>
-            <li id="student"><a href="#" type="button" onclick="clickAction('student')">Students</a> </li>
-            <li id="teacher"><a href="#" type="button" onclick="clickAction('teacher')">Teachers</a> </li>
-        </ul>
+            <h3 style="text-align:center">Department : @(Model.DeptName)</h3>
 
 
-        <div class="detailsUl" id="subjectDiv">
-            <h2 style="margin-top:40px;">Subjects of @(Model.DeptName) Department:</h2>
-            <a asp-controller="Depertment" asp-action="AddSubjectToTheDepertment"
-           asp-route-id=@Model.id> Add Subject </a>
+            <ul class="detailsMenu">
+                <li id="subject">
+                    <a asp-action="DetailsDepertment" asp-route-atributeType="subject"
+               asp-route-pageNumber="@(ViewBag.pageNumber)"
+               asp-route-itemsPerPage="@ViewData["ItemsPerPage"]"
+               asp-route-currentFilter="@ViewData["CurrentFilter"]"  type="button" onclick="clickAction('subject')">Subjects</a>
+                </li>
+                <li id="student">
+                    <a asp-action="DetailsDepertment" asp-route-atributeType="student"
+               asp-route-pageNumber="@(ViewBag.pageNumber)"
+               asp-route-itemsPerPage="@ViewData["ItemsPerPage"]"
+               asp-route-currentFilter="@ViewData["CurrentFilter"]"  type="button" onclick="clickAction('student')">Students</a>
+                </li>
+                <li id="teacher">
+                    <a asp-action="DetailsDepertment" asp-route-atributeType="teacher"
+               asp-route-pageNumber="@(ViewBag.pageNumber)"
+               asp-route-itemsPerPage="@ViewData["ItemsPerPage"]"
+               asp-route-currentFilter="@ViewData["CurrentFilter"]"  type="button" onclick="clickAction('teacher')">Teachers</a>
+                </li>
+            </ul>
 
-            <hr>
+
+            @if(ViewData["atributeType"].ToString()=="subject"){
+            <div class="detailsUl" id="subjectDiv">              
+                <div class="grid-container">
+
+                    <form asp-action="DetailsDepertment" method="get" class="grid-container">
+                        <div class="form-actions no-color">
+                            <p>
+                                <input type="hidden" name="atributeType" value="subject" />
+                                <input type="text" name="SearchString" placeholder="search subject..."
+                                   class="searchBar" value="@ViewData["CurrentFilter"]" />
+
+                                <input type="submit" value="Search" class="btn" />
+
+                                <a asp-controller="Depertment" class="btn" asp-action="AddSubjectToTheDepertment"
+                           asp-route-id=@Model.id> Add Subject </a>
+
+                            </p>
+                        </div>
+                    </form>
+                </div>
+                
+                <div class="gridRow">
+                    <h2 style="margin-top:40px;">Subjects of @(Model.DeptName) Department:</h2>
+                    <hr>
+                    <form asp-action="DetailsDepertment" asp-route-atributeType="subject" method="get">
+                        <div class="form-actions no-color">
+                            <input type="hidden" name="atributeType" value="subject" />
+                            <label for="itemsPerPage">Items Per Page : </label>
+                            <input name="itemsPerPage" class="searchBar" style="width:40px" type"number"
+                            value="@ViewData["ItemsPerPage"]" />
+                            <input type="submit" value="Show" class="btn" />
+                        </div>
+                    </form>
+
+                </div>
 
 
-            @foreach (var subject in Model.Subjects)
+                
+
+
+                @foreach (var subject in Model.Subjects)
             {
-                <div class="grid-containerList">
-                    <p>
-                        Name :
-                        <a class="item1" asp-controller="Subject" asp-action="DetailsSubject"
+                    <div class="grid-containerList">
+                        <p>
+                            Name :
+                            <a class="item1" asp-controller="Subject" asp-action="DetailsSubject"
                    asp-route-id=@subject.id>
-                            @(subject.SubjectName)
-                        </a>
-                    </p>
-                    <input type="button" class="item2 removeBtn"
-                       value="Delete"
-                       onclick="location.href='@Url.Action("DeleteSubjectFromDept", "Depertment",
+                                @(subject.SubjectName)
+                            </a>
+                        </p>
+                        <input type="button" class="item2 removeBtn"
+                           value="Delete"
+                           onclick="location.href='@Url.Action("DeleteSubjectFromDept", "Depertment",
 new { @subjectId = subject.id, @deptId = Model.id})'" />
 
-                </div>
+                    </div>
             }
 
-        </div>
+                <div class="paginationDiv">
+                    <div class="gridRow">
+
+                        <a asp-action="DetailsDepertment" asp-route-atributeType="subject"
+                   asp-route-pageNumber="@(ViewBag.pageNumber - 1)"
+           asp-route-itemsPerPage="@ViewData["ItemsPerPage"]"
+           asp-route-currentFilter="@ViewData["CurrentFilter"]"
+           class="btn" >
+                    Previous
+                </a>
+
+                        <a asp-action="DetailsDepertment" asp-route-atributeType="subject"
+                   asp-route-pageNumber="@(ViewBag.pageNumber + 1)"
+                   asp-route-itemsPerPage="@ViewData["ItemsPerPage"]"
+                   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+                   class="btn" >
+                            Next
+                        </a>
+
+</div>
+</div>
+            </div>
+        }
+
+           else if(ViewData["atributeType"].ToString() == "teacher")
+        {
+                <div class="detailsUl" id="teacherDiv">
+                  
+                <div class="grid-container">
+
+                    <form asp-action="DetailsDepertment"  method="get" class="grid-container">
+                        <div class="form-actions no-color">
+                            <p>
+                                <input type="hidden" name="atributeType" value="teacher" />
+                                <input type="text" name="SearchString" placeholder="search teacher..."
+                                   class="searchBar" value="@ViewData["CurrentFilter"]" />
+
+                                <input type="submit" value="Search" class="btn" />
 
 
+                            </p>
+                        </div>
+                    </form>
+                </div>
+                
+                <div class="gridRow">
+                    <h2 style="margin-top:40px;">
+                        Teachers of @(
+                Model.DeptName
+                    ) Department:
+                    </h2>
 
-        <div class="detailsUl" id="teacherDiv">
-            <h2 style="margin-top:40px;">Teachers of @(Model.DeptName) Department:</h2>
+                    <hr>
+                    <form asp-action="DetailsDepertment" asp-route-atributeType="teacher" method="get">
+                        <div class="form-actions no-color">
+                            <input type="hidden" name="atributeType" value="teacher" />
+                            <label for="itemsPerPage">Items Per Page : </label>
+                            <input name="itemsPerPage" class="searchBar" style="width:40px" type"number" value="@ViewData["ItemsPerPage"]" />
+                            <input type="submit" value="Show" class="btn" />
+                        </div>
+                    </form>
 
-            <hr>
+                </div>
+
+                   
 
 
-            @foreach (var teacher in Model.Teachers)
-            {
-                <div class="grid-containerList">
-                    <p>
-                        Name:
-                        <a class="item1" asp-controller="Teacher" asp-action="DetailsTeacher"
+                    @foreach (var teacher in Model.Teachers)
+                {
+                        <div class="grid-containerList">
+                            <p>
+                                Name:
+                                <a class="item1" asp-controller="Teacher" asp-action="DetailsTeacher"
                    asp-route-id=@teacher.Id>
-                            @(teacher.FirstName) @(teacher.LastName)
+                                    @(
+                                teacher.FirstName
+                                    ) @(
+                                  teacher.LastName
+                                      )
+                                </a>
+                            </p>
+                            <div class="item2"></div>
+                        </div>
+                }
+
+                <div class="paginationDiv">
+                    <div class="gridRow">
+
+                        <a asp-action="DetailsDepertment" asp-route-atributeType="teacher"
+                   asp-route-pageNumber="@(ViewBag.pageNumber - 1)"
+           asp-route-itemsPerPage="@ViewData["ItemsPerPage"]"
+           asp-route-currentFilter="@ViewData["CurrentFilter"]"
+           class="btn" >
+                    Previous
+                </a>
+
+                        <a asp-action="DetailsDepertment" asp-route-atributeType="teacher"
+                   asp-route-pageNumber="@(ViewBag.pageNumber + 1)"
+                   asp-route-itemsPerPage="@ViewData["ItemsPerPage"]"
+                   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+                   class="btn" >
+                            Next
                         </a>
-                    </p>
-                    <div class="item2"></div>
+
+</div>
+</div>
                 </div>
-            }
-        </div>
 
+        }
 
+        else{
+            <div class="detailsUl" id="studentDiv">
+                
 
-        <div class="detailsUl" id="studentDiv">
-            <h2 style="margin-top:40px;">Students of @(Model.DeptName) Department:</h2>
+                <div class="grid-container">
 
+                    <form asp-action="DetailsDepertment"  method="get" class="grid-container">
+                        <div class="form-actions no-color">
+                            <p>
+                                <input type="hidden" name="atributeType" value="student" />
+                                <input type="text" name="SearchString" placeholder="search student..."
+                                   class="searchBar" value="@ViewData["CurrentFilter"]" />
 
+                                <input type="submit" value="Search" class="btn" />
 
-            <hr>
-            @foreach (var student in Model.Students)
+                            </p>
+                        </div>
+                    </form>
+                </div>
+            
+                <div class="gridRow">
+                    <h2 style="margin-top:40px;">Students of @(Model.DeptName) Department:</h2>
+                    <hr>
+                    <form asp-action="DetailsDepertment"  method="get">
+                        <div class="form-actions no-color">
+                            <input type="hidden" name="atributeType" value="student" />
+                            <label for="itemsPerPage">Items Per Page : </label>
+                            <input name="itemsPerPage" class="searchBar" style="width:40px" type"number" value="@ViewData["ItemsPerPage"]" />
+                            <input type="submit" value="Show" class="btn" />
+                        </div>
+                    </form>
+
+                </div>
+
+               
+                @foreach (var student in Model.Students)
             {
-                <div class="grid-containerList">
-                    <p>
-                        Name :
-                        <a class="item1" asp-controller="Student" asp-action="DetailsStudent"
+                    <div class="grid-containerList">
+                        <p>
+                            Name :
+                            <a class="item1" asp-controller="Student" asp-action="DetailsStudent"
                    asp-route-id=@student.id>
-                            @(student.FirstName) @(student.LastName)
-                        </a>
-                    </p>
-                    <input type="button" class="item2 removeBtn"
-                       value="Delete"
-                       onclick="location.href='@Url.Action("DeleteStudentFromDept", "Depertment",
+                                @(student.FirstName) @(student.LastName)
+                            </a>
+                        </p>
+                        <input type="button" class="item2 removeBtn"
+                           value="Delete"
+                           onclick="location.href='@Url.Action("DeleteStudentFromDept", "Depertment",
 new { @studentId = student.id, @deptId = Model.id})'" />
-                </div>
+                    </div>
             }
-        </div>
 
+                <div class="paginationDiv">
+                    <div class="gridRow">
+
+                        <a asp-action="DetailsDepertment" asp-route-atributeType="student"
+                   asp-route-pageNumber="@(ViewBag.pageNumber - 1)"
+                   asp-route-itemsPerPage="@ViewData["ItemsPerPage"]"
+                   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+                   class="btn">
+                            Previous
+                        </a>
+
+                        <a asp-action="DetailsDepertment" asp-route-atributeType="student"
+                   asp-route-pageNumber="@(ViewBag.pageNumber + 1)"
+                   asp-route-itemsPerPage="@ViewData["ItemsPerPage"]"
+                   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+                   class="btn">
+                            Next
+                        </a>
+
+                    </div>
+                </div>
+            </div>
+        }
 
 
     </div>
@@ -101,60 +282,5 @@ new { @studentId = student.id, @deptId = Model.id})'" />
 }
 
 
-<script>
-
-    function clickAction(paramStr) {
-
-
-        var subject = document.getElementById("subject");
-        var student = document.getElementById("student");
-        var teacher = document.getElementById("teacher");
-
-        var subjectDiv = document.getElementById("subjectDiv");
-        var studentDiv = document.getElementById("studentDiv");
-        var teacherDiv = document.getElementById("teacherDiv");
-
-
-        if (paramStr === "subject") {
-
-            subject.style.backgroundColor = "#95B9C7";
-            student.style.backgroundColor = "whitesmoke";
-            teacher.style.backgroundColor = "whitesmoke";
-
-            studentDiv.style.display = "none";
-            teacherDiv.style.display = "none";
-            subjectDiv.style.display = "block";
-
-        }
-        else if (paramStr === "student") {
-            student.style.backgroundColor = "#95B9C7";
-            subject.style.backgroundColor = "whitesmoke";
-            teacher.style.backgroundColor = "whitesmoke";
-
-            studentDiv.style.display = "block";
-            teacherDiv.style.display = "none";
-            subjectDiv.style.display = "none";
-
-        }
-
-        else {
-            teacher.style.backgroundColor = "#95B9C7";
-            student.style.backgroundColor = "whitesmoke";
-            subject.style.backgroundColor = "whitesmoke";
-
-            studentDiv.style.display = "none";
-            teacherDiv.style.display = "block";
-            subjectDiv.style.display = "none";
-
-        }
-
-
-    };
-
-
-    window.addEventListener('DOMContentLoaded', (event) => {
-        clickAction("subject");
-    });
-
-</script>
+ 
 
