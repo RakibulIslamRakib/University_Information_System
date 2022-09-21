@@ -21,7 +21,7 @@ namespace University_Information_System.Controllers
 
         [Route("signup")]
         [HttpPost]
-        public async Task<IActionResult> SignUp(SignUpModel userModel)
+        public async Task<IActionResult> SignUpAsync(SignUpModel userModel)
         {
             if (ModelState.IsValid)
             {
@@ -39,6 +39,40 @@ namespace University_Information_System.Controllers
                 ModelState.Clear();
             }
             return View(userModel);
+        }
+
+
+        [Route("login")]
+        public IActionResult Login()
+        {
+            return View();
+        }
+
+
+        [Route("login")]
+        [HttpPost]
+        public async Task<IActionResult> Login(SignInModel signINModel , string returnUrl)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await _accountService.PasswordSignInAsync(signINModel);
+                if (result.Succeeded)
+                {
+                    if(!string.IsNullOrEmpty(returnUrl))return LocalRedirect(returnUrl);
+                    return RedirectToAction("Index", "Home");                   
+                    
+                }
+                
+                    ModelState.AddModelError("", "Invalid credentials");
+               
+            }
+            return View(signINModel);
+        }
+
+        public async Task<IActionResult> Logout()
+        {
+          await _accountService.SignOutAsync();
+            return RedirectToAction("Index", "Home");
         }
     }
 }

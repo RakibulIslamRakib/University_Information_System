@@ -1,49 +1,60 @@
 ﻿@model University_Information_System.Models.SignUpModel
 
+<link rel="stylesheet" href="~/css/addItems.css" />
+
 @{
-    Layout = null;
+    ViewData["Title"] = "Sign Up";
+   
 }
 
-<!DOCTYPE html>
 
-<html>
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <title>SignUp</title>
-</head>
-<body>
 
-<h4>SignUpModel</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="SignUp">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<div class="container">
+    <h3 style="text-align:center">Sign Up</h3>
+    <form asp-controller="Account" asp-action="SignUp">
+        <div asp-validation-summary="ModelOnly" class="errorMessage"></div>
             <div class="form-group">
                 <label asp-for="Email" class="control-label"></label>
-                <input asp-for="Email" class="form-control" />
-                <span asp-validation-for="Email" class="text-danger"></span>
+            <input asp-for="Email" class="form-control" placeholder="email.." />
+            <span asp-validation-for="Email" class="errorMessage"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FirstName" class="control-label"></label>
+            <input asp-for="FirstName" class="form-control" placeholder="first name.." />
+            <span asp-validation-for="FirstName" class="errorMessage"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="LastName" class="control-label"></label>
+            <input asp-for="LastName" class="form-control" placeholder="last name.." />
+            <span asp-validation-for="LastName" class="errorMessage"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="About" class="control-label"></label>
+            <textarea asp-for="About" placeholder="Write something.." placeholder="about..." style="height:120px"></textarea>
+            <span asp-validation-for="About" class="errorMessage"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DateOfBirth" class="control-label"></label>
+                <input asp-for="DateOfBirth" class="form-control" />
+            <span asp-validation-for="DateOfBirth" class="errorMessage"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Password" class="control-label"></label>
-                <input asp-for="Password" class="form-control" />
-                <span asp-validation-for="Password" class="text-danger"></span>
+            <input asp-for="Password" class="form-control" placeholder="password.." />
+            <span asp-validation-for="Password" class="errorMessage"></span>
             </div>
             <div class="form-group">
                 <label asp-for="ConfirmPassword" class="control-label"></label>
-                <input asp-for="ConfirmPassword" class="form-control" />
-                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+            <input asp-for="ConfirmPassword" class="form-control" placeholder="confirm password." />
+            <span asp-validation-for="ConfirmPassword" class="errorMessage"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
         </form>
-    </div>
 </div>
 
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
 
-</body>
-</html>

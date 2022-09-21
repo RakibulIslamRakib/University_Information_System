@@ -6,6 +6,7 @@ namespace University_Information_System.Models
     {
         public string FirstName { get; set; }
         public string LasttName { get; set; }
+        public string About { get; set; }
         public DateTime? DateOfBirth { get; set; }
     }
 }

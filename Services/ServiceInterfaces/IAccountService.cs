@@ -5,6 +5,8 @@ namespace University_Information_System.Services.ServiceInterfaces
 {
     public interface IAccountService
     {
-        public Task<IdentityResult> CreateUserAsync(SignUpModel userModel);
+        Task<IdentityResult> CreateUserAsync(SignUpModel userModel);
+        Task<SignInResult> PasswordSignInAsync(SignInModel signInUser);
+        Task SignOutAsync();
     }
 }

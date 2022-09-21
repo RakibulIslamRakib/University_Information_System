@@ -1,4 +1,5 @@
 ﻿
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using University_Information_System.Models;
@@ -6,6 +7,7 @@ using University_Information_System.Services.ServiceInterfaces;
 
 namespace University_Information_System.Controllers
 {
+    [Authorize(Roles ="Admin")]
     public class DepertmentController : Controller
     {
         #region Fields
