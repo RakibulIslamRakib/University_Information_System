@@ -136,26 +136,23 @@ namespace University_Information_System.Controllers
 
         #region DetailsDepertment
         public async Task<IActionResult> DetailsDepertment(int id, string currentFilter,
-                    string searchString,  int? itemsPerPage , string atributeType = "subject", int pageNumber = 1)
+                    string searchString,  int? pageSize , int? pageIndex, string atributeType = "subject")
         {
             var depertment = await departmentService.GetDepertmentDetailsById(id);
 
             if (searchString != null)
             {
-                pageNumber = 1;
+                pageIndex = 1;
             }
             else
             {
                 searchString = currentFilter;
             }
 
-            int pageSize = itemsPerPage ?? 1;
-
-            ViewData["ItemsPerPage"] = pageSize;
-            ViewData["CurrentFilter"] = searchString;
-            ViewData["atributeType"] = atributeType;
-            ViewBag.pageNumber = pageNumber;
-
+            depertment.PageSize = pageSize ?? 5;
+            depertment.SearchString = searchString;
+            depertment.PageIndex = pageIndex??1;
+            ViewData["atributeType"] = atributeType ?? "subject";
 
             searchString = !String.IsNullOrEmpty(searchString) ? searchString.ToLower() : "";
 
@@ -172,9 +169,10 @@ namespace University_Information_System.Controllers
                     || st.LastName.ToLower().Contains(searchString)).ToList();
                 }
 
-                ViewData["TotalPages"]  = (int)Math.Ceiling(students.Count / (double)pageSize);
-                    var items = students.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
+                    depertment.TotalPages = (int)Math.Ceiling(students.Count / (double)depertment.PageSize);
+                    var items = students.Skip((depertment.PageIndex - 1) * depertment.PageSize).Take(depertment.PageSize).ToList();
                     depertment.Students = items;
+                    depertment.Pages = depertment.GetPages(students.Count, depertment.PageSize);
                     depertment.Subjects = new List<Subject>();
                     depertment.Teachers = new List<Teacher>();
                  
@@ -191,9 +189,10 @@ namespace University_Information_System.Controllers
                     || sb.Descryption.ToLower().Contains(searchString)).ToList();
                 }
 
-                ViewData["TotalPages"] = (int)Math.Ceiling(subjects.Count / (double)pageSize);
-                var items = subjects.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
+                depertment.TotalPages = (int)Math.Ceiling(subjects.Count / (double)depertment.PageSize);
+                var items = subjects.Skip((depertment.PageIndex - 1) * depertment.PageSize).Take(depertment.PageSize).ToList();
                 depertment.Subjects = items;
+                depertment.Pages = depertment.GetPages(subjects.Count, depertment.PageSize);
                 depertment.Students = new List<Student>();
                 depertment.Teachers = new List<Teacher>();
             }
@@ -207,10 +206,10 @@ namespace University_Information_System.Controllers
                     teachers = teachers.Where(tr => tr.FirstName.ToLower().Contains(searchString)
                     || tr.LastName.ToLower().Contains(searchString)).ToList();
                 }
-
-                ViewData["TotalPages"] = (int)Math.Ceiling(teachers.Count / (double)pageSize);
-                var items = teachers.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
-                depertment.Teachers= items;
+                depertment.TotalPages = (int)Math.Ceiling(teachers.Count / (double)depertment.PageSize);
+                var items = teachers.Skip((depertment.PageIndex - 1) * depertment.PageSize).Take(depertment.PageSize).ToList();
+                depertment.Pages = depertment.GetPages(teachers.Count, depertment.PageSize);
+                depertment.Teachers = items;
                 depertment.Subjects = new List<Subject>();
                 depertment.Students = new List<Student>();
             }
