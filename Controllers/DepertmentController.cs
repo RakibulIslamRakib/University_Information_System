@@ -136,7 +136,7 @@ namespace University_Information_System.Controllers
 
         #region DetailsDepertment
         public async Task<IActionResult> DetailsDepertment(int id, string currentFilter,
-                    string searchString,  int? pageSize , int? pageIndex, string atributeType = "subject")
+                    string searchString,  int? pageSize , int? pageIndex, string atributeType = "Subjects")
         {
             var depertment = await departmentService.GetDepertmentDetailsById(id);
 
@@ -152,7 +152,7 @@ namespace University_Information_System.Controllers
             depertment.PageSize = pageSize ?? 5;
             depertment.SearchString = searchString;
             depertment.PageIndex = pageIndex??1;
-            ViewData["atributeType"] = atributeType ?? "subject";
+            ViewData["atributeType"] = atributeType ?? "Subjects";
 
             searchString = !String.IsNullOrEmpty(searchString) ? searchString.ToLower() : "";
 
@@ -160,7 +160,7 @@ namespace University_Information_System.Controllers
             var subjects = depertment.Subjects;
             var teachers = depertment.Teachers;
 
-            if (atributeType == "student")
+            if (atributeType == "Students")
             {
 
                 if (!String.IsNullOrEmpty(searchString))
@@ -180,7 +180,7 @@ namespace University_Information_System.Controllers
             }
 
 
-            else if (atributeType == "subject")
+            else if (atributeType == "Subjects")
             {
 
                 if (!String.IsNullOrEmpty(searchString))
