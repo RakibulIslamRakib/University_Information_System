@@ -1,10 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
- 
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+
+
 using University_Information_System.Models;
 
 namespace University_Information_System.Data
 {
-    public class ApplicationDbContext:DbContext
+    public class ApplicationDbContext: IdentityDbContext<ApplicationUser>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {

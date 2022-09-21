@@ -6,28 +6,6 @@
     margin-right:15%;
 }
 
-@media (max-width: 700px) {
-    .mainDiv {
-        padding-top: 100px;
-        padding-left: 10px;
-        padding-right: 10px;
-        margin-left: 5%;
-        margin-right: 5%;
-    }
-
-    .paginationDiv .gridRow {
-        padding-left: 1%;
-        padding-right: 1%;
-        margin-bottom:20px;
-
-    }
-}
-
-.grid-container {
-    display: grid;
-    text-align:center;
-    
-}
 
 
 .main {
@@ -51,76 +29,15 @@
 
 
 
-.search-item {
-    display: flex;
-}
-
-.searchBar {
-    padding: 6px;
-    margin-top: 8px;
-    font-size: 17px;
-    border: none;
-    width: 40%;
-    border: 1px solid #98AFC7;
-    border-radius:5px;
-}
-
-.btn {
-    background-color: #008CBA; /* Green */
-    border: none;
-    color: white;
-    padding: 10px 22px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    border-radius: 4px;
-    margin:3px;
-}
 
 
-.info {
-    display: flex;
-    flex-direction: column;
-    width: 85%;
-}
+
 
 .item-header {
     display: flex;
     justify-content: space-between;
 }
 
-.containerDiv {
-    border-radius: 5px;
-    background-color: #f2f2f2;
-    padding: 20px;
-    margin: 10px;
-    margin-left: 10%;
-    margin-right: 10%;
-}
-
-.paginationDiv {
-    bottom: 60px;
-    margin-top: 40px;
-    padding-bottom: 40px;
-    text-align: center;
-    width: 100%;
-    text-align: center;
-    border: 1px solid none;
-    box-shadow: 2px;
-}
-
-    .paginationDiv .gridRow {
-        margin: 10px;
-        padding-bottom: 20px;
-        padding-left: 20%;
-        padding-right: 20%;
-        text-align: left;
-        display: grid;
-        grid-template-columns: 2fr 5fr;
-    }
-
-@import url("https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap");
 
 *,
 *::before,
@@ -169,13 +86,7 @@ img {
     background-color: #ebf4fb;
 }
 
-.disabled {
-    pointer-events: none;
-    color: currentColor;
-    cursor: not-allowed;
-    opacity: 0.5;
-    text-decoration: none;
-}
+
 
 
 .card__body {
@@ -249,23 +160,3 @@ img {
     outline: inherit;
 }
 
-.selected {
-    background-color: green; /* Green */
-    border: none;
-    color: white;
-    padding: 10px 22px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    border-radius: 4px;
-}
-.selectItem {
-    background-color: #f9fcfb;
-    height: 40px;
-    font-size: 20px;
-    text-align: left;
-    padding: 5px;
-    margin-bottom: 5px;
-    border-bottom: 2px solid black;
-}
