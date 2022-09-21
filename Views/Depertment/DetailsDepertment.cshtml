@@ -7,24 +7,24 @@
     <div class="container">
             <a asp-action="Depertments">Go Back </a>
 
-            <h3 style="text-align:center">Department : @(Model.DeptName)</h3>
+            <h2 style="text-align:center">Department : @(Model.DeptName)</h2>
 
 
             <ul class="detailsMenu">
                 <li id="subject">
-                    <a asp-action="DetailsDepertment" asp-route-atributeType="subject"
+                    <a asp-action="DetailsDepertment" asp-route-atributeType="Subjects"
                asp-route-pageIndex="@(Model.PageIndex)"
                asp-route-pageSize="@(Model.PageSize)"
                asp-route-currentFilter="@(Model.SearchString)" type="button" onclick="clickAction('subject')">Subjects</a>
                 </li>
                 <li id="student">
-                <a asp-action="DetailsDepertment" asp-route-atributeType="student"
+                <a asp-action="DetailsDepertment" asp-route-atributeType="Students"
                asp-route-pageIndex="@(Model.PageIndex)"
                asp-route-pageSize="@(Model.PageSize)"
                asp-route-currentFilter="@(Model.SearchString)" type="button" onclick="clickAction('student')">Students</a>
                 </li>
                 <li id="teacher">
-                <a asp-action="DetailsDepertment" asp-route-atributeType="teacher"
+                <a asp-action="DetailsDepertment" asp-route-atributeType="Teachers"
                asp-route-pageIndex="@(Model.PageIndex)"
                asp-route-pageSize="@(Model.PageSize)"
                asp-route-currentFilter="@(Model.SearchString)" type="button" onclick="clickAction('teacher')">Teachers</a>
@@ -36,30 +36,31 @@
 }
 
 
-            @if(ViewData["atributeType"].ToString()=="subject"){
-            <div class="detailsUl" id="subjectDiv">
-                <h2 style="margin-top:10px;">Subjects of @(Model.DeptName) Department:</h2>
+       
+            <div class="detailsUl" >
+                <h3 style="margin-top:10px;">@(ViewData["atributeType"]) of @(Model.DeptName) Department:</h3>
                  <div class="gridRow">
-                  
-                  
-                    <form asp-action="DetailsDepertment" asp-route-atributeType="subject" method="get">
+
+
+                <form asp-action="DetailsDepertment" asp-route-atributeType=@(ViewData["atributeType"]) method="get">
                         <div class="form-actions no-color">
-                            <input type="hidden" name="atributeType" value="subject" />
+                        <input type="hidden" name="atributeType" value=@(ViewData["atributeType"]) />
                             <label for="itemsPerPage">Items Per Page : </label>
                             <input name="pageSize" class="searchBar" style="width:40px" type"number"
                                value="@(Model.PageSize)" />
 
                             <input type="submit" value="Show" class="btn" />
-
+                        @if (ViewData["atributeType"].ToString() == "Subjects")
+                        {
                             <a asp-controller="Depertment" class="btn" asp-action="AddSubjectToTheDepertment"
-                       asp-route-id=@Model.id> Add Subject </a>
+                       asp-route-id=@Model.id> Add Subject </a>}
                         </div>
                     </form>
                         <form asp-action="DetailsDepertment" method="get" class="grid-container">
                             <div class="form-actions no-color">
-                               
-                                    <input type="hidden" name="atributeType" value="subject" />
-                                    <input type="text" name="searchString" placeholder="search subject..."
+
+                        <input type="hidden" name="atributeType" value="@(ViewData["atributeType"])" />
+                        <input type="text" name="searchString" placeholder="search @(ViewData["atributeType"])..."
                                        class="searchBar" value="@(Model.SearchString)" />
 
                                     <input type="submit" value="Search" class="btn" />
@@ -75,9 +76,20 @@
 
                 <hr>
 
+<div>
 
-                
+            @if (ViewData["atributeType"].ToString() == "Subjects")
+            {
+                    @if (Model.Subjects.Count==0){
+                          <div class="grid-containerList">
+                        <p>
+                            Name :
+                            <a class="item1" href="#">Nothing Founds </a>
+                        </p>
 
+                    </div>
+                    }
+                    else{
 
                 @foreach (var subject in Model.Subjects)
             {
@@ -96,328 +108,153 @@ new { @subjectId = subject.id, @deptId = Model.id})'" />
 
                     </div>
             }
-
-                <div class="paginationDiv">
-                    <div class="gridRow">      
-                            <h4>Page No @(Model.PageIndex) of @(Model.TotalPages)</h4>
-
-                            <form asp-action="DetailsDepertment" method="get" class="grid-container">
-                                <div class="form-actions no-color">
-                                    <input type="hidden" name="atributeType" value="subject" />
-                                    <input type="hidden" name="pageSize" value="@(Model.PageSize)" />
-                                    <label for="PageIndex"> Goto Page</label>
-                                    <select name="PageIndex" class="searchBar" style="width:100px">
-                                        <option class="selectItem" value=@(Model.PageIndex)>--select--</option>
-                                        @foreach (int index in Enumerable.Range(1, Model.TotalPages))
-                                        {
-                                            <option class="selectItem" value=@(index)>Page : @(index)</option>
-                                        }
-                                    </select>
-                                    <input type="submit" value="Go" class="btn" />
-                                </div>
-                            </form>
-                        </div>
-
-                        <a asp-action="DetailsDepertment" asp-route-atributeType="subject"
-                   asp-route-pageIndex="@(Model.PageIndex - 1)"
-           asp-route-pageSize="@(Model.PageSize)"
-                   asp-route-currentFilter="@(Model.SearchString)"
-               class="btn @prevDisabled">
-                    Previous
-                </a>
-                        @foreach (int page in Model.Pages)
-                        {
-                            if (page == Model.PageIndex)
-                            {
-                                <a class="selected"
-                             asp-action="DetailsDepertment"
-                             asp-route-atributeType="subject"
-                   asp-route-pageIndex="@(page)"
-           asp-route-pageSize="@(Model.PageSize)"
-                   asp-route-currentFilter="@(Model.SearchString)"
-           class="btn" >
-                                    @(page)
-                                </a>
-                            }
-                            else
-                            {
-                                <a class="btn"
-                   asp-action="DetailsDepertment"
-                   asp-route-atributeType="subject"
-                   asp-route-pageIndex="@(page)"
-                   asp-route-pageSize="@(Model.PageSize)"
-                   asp-route-currentFilter="@(Model.SearchString)"
-                   class="btn">
-                                    @(page)
-                                </a>
-                            }
-                        }
-
-                        <a asp-action="DetailsDepertment" asp-route-atributeType="subject"
-                   asp-route-pageIndex="@(Model.PageIndex + 1)"
-                   asp-route-pageSize="@(Model.PageSize)"
-                   asp-route-currentFilter="@(Model.SearchString)"
-               class="btn @nextDisabled">
-                            Next
-                        </a>
-
-</div>
-</div>
-            
-        }
-
-           else if(ViewData["atributeType"].ToString() == "teacher")
-        {
-                <div class="detailsUl" id="teacherDiv">
-
-                <h2 style="margin-top:10px;">
-                    Teachers of @(
-            Model.DeptName
-                ) Department:
-                </h2>
-                
-                <div class="gridRow">
-                   
-                    <form asp-action="DetailsDepertment" asp-route-atributeType="teacher" method="get">
-                        <div class="form-actions no-color">
-                            <input type="hidden" name="atributeType" value="teacher" />
-                            <label for="pageSize">Items Per Page : </label>
-                            <input name="pageSize" class="searchBar" style="width:40px" type"number" value="@(Model.PageSize)" />
-                            <input type="submit" value="Show" class="btn" />
-                        </div>
-                    </form>
-
-                    <form asp-action="DetailsDepertment" method="get" class="grid-container">
-                        <div class="form-actions no-color">
-                            <p>
-                                <input type="hidden" name="atributeType" value="teacher" />
-                                <input type="text" name="searchString" placeholder="search teacher..."
-                                   class="searchBar" value="@(Model.SearchString)" />
-
-                                <input type="submit" value="Search" class="btn" />
-
-
-                            </p>
-                        </div>
-                    </form>
-
-                    <hr>
-                    
-
-                </div>
-
-                   
-
-
-                    @foreach (var teacher in Model.Teachers)
-                {
-                        <div class="grid-containerList">
-                            <p>
-                                Name:
-                                <a class="item1" asp-controller="Teacher" asp-action="DetailsTeacher"
-                   asp-route-id=@teacher.Id>
-                                    @(
-                                teacher.FirstName
-                                    ) @(
-                                  teacher.LastName
-                                      )
-                                </a>
-                            </p>
-                            <div class="item2"></div>
-                        </div>
+                    }
                 }
 
-                <div class="paginationDiv">
-                    <div class="gridRow">
-                        <h4>Page No @(Model.PageIndex) of @(Model.TotalPages)</h4>
-
-                        <form asp-action="DetailsDepertment" method="get" class="grid-container">
-                            <div class="form-actions no-color">
-                                <input type="hidden" name="atributeType" value="teacher" />
-                                <input type="hidden" name="pageSize" value="@(Model.PageSize)" />
-                                <label for="PageIndex"> Goto Page</label>
-                                <select name="PageIndex" class="searchBar" style="width:100px">
-                                    <option class="selectItem" value=@(Model.PageIndex)>--select--</option>
-                                    @foreach (int index in Enumerable.Range(1, Model.TotalPages))
-                                    {
-                                        <option class="selectItem" value=@(index)>Page : @(index)</option>
-                                    }
-                                </select>
-                                <input type="submit" value="Go" class="btn" />
-                            </div>
-                        </form>
-                    </div>
-                        <a asp-action="DetailsDepertment" asp-route-atributeType="teacher"
-                   asp-route-pageIndex="@(Model.PageIndex - 1)"
-                   asp-route-pageSize="@(Model.PageSize)"
-                   asp-route-currentFilter="@(Model.SearchString)"
-               class="btn @prevDisabled">
-                            Previous
-                        </a>
-                        @foreach (int page in Model.Pages)
-                        {
-                            if (page == Model.PageIndex)
-                            {
-                                <a class="selected"
-                   asp-action="DetailsDepertment"
-                   asp-route-atributeType="teacher"
-                   asp-route-pageIndex="@(page)"
-                   asp-route-pageSize="@(Model.PageSize)"
-                   asp-route-currentFilter="@(Model.SearchString)"
-                   class="btn">
-                                    @(page)
-                                </a>
-                            }
-                            else
-                            {
-                                <a class="btn"
-                   asp-action="DetailsDepertment"
-                   asp-route-atributeType="teacher"
-                   asp-route-pageIndex="@(page)"
-                   asp-route-pageSize="@(Model.PageSize)"
-                   asp-route-currentFilter="@(Model.SearchString)"
-                   class="btn">
-                                    @(page)
-                                </a>
-                            }
-                        }
-
-                        <a asp-action="DetailsDepertment" asp-route-atributeType="teacher"
-                   asp-route-pageIndex="@(Model.PageIndex + 1)"
-                   asp-route-pageSize="@(Model.PageSize)"
-                   asp-route-currentFilter="@(Model.SearchString)"
-               class="btn @nextDisabled">
-                            Next
-                        </a>
-
-                    </div>
-                </div>
-               
-
-        }
-
-        else{
-            <div class="detailsUl" id="studentDiv">
-                <h2 style="margin-top:10px;">Students of @(Model.DeptName) Department:</h2>
-
-                <div class="gridRow">
-                    
-                
-                    <form asp-action="DetailsDepertment" method="get">
-                        <div class="form-actions no-color">
-                            <input type="hidden" name="atributeType" value="student" />
-                            <label for="pageSize">Items Per Page : </label>
-                            <input name="pageSize" class="searchBar" style="width:40px" type"number" value="@(Model.PageSize)" />
-                            <input type="submit" value="Show" class="btn" />
-                        </div>
-                    </form>
-
-                 
-
-                    <form asp-action="DetailsDepertment"  method="get" class="grid-container">
-                        <div class="form-actions no-color">
+                else if(ViewData["atributeType"].ToString() == "Teachers")
+                {
+                    @if (Model.Teachers.Count == 0)
+                    {
+                        <div class="grid-containerList">
                             <p>
-                                <input type="hidden" name="atributeType" value="student" />
-                                <input type="text" name="searchString" placeholder="search student..."
-                                   class="searchBar" value="@(Model.SearchString)" />
-
-                                <input type="submit" value="Search" class="btn" />
-
+                                Name :
+                                <a class="item1" href="#">Nothing Founds </a>
                             </p>
-                        </div>
-                    </form>
-                    <hr>
-                </div>
-            
-                
 
-               
-                @foreach (var student in Model.Students)
-            {
-                    <div class="grid-containerList">
-                        <p>
-                            Name :
-                            <a class="item1" asp-controller="Student" asp-action="DetailsStudent"
+                        </div>
+                    }
+                    else
+                    {
+
+                        @foreach (var teacher in Model.Teachers)
+                        {
+                            <div class="grid-containerList">
+                                <p>
+                                    Name:
+                                    <a class="item1" asp-controller="Teacher" asp-action="DetailsTeacher"
+                   asp-route-id=@teacher.Id>
+                                        @(
+                                    teacher.FirstName
+                                    ) @(
+                                          teacher.LastName
+                                          )
+                                    </a>
+                                </p>
+                                <div class="item2"></div>
+                            </div>
+                        }
+                    }
+
+                }
+
+                else{
+                    @if (Model.Students.Count == 0)
+                    {
+                        <div class="grid-containerList">
+                            <p>
+                                Name :
+                                <a class="item1" href="#">Nothing Founds </a>
+                            </p>
+
+                        </div>
+                    }
+                    else
+                    {
+
+                        @foreach (var student in Model.Students)
+                        {
+                            <div class="grid-containerList">
+                                <p>
+                                    Name :
+                                    <a class="item1" asp-controller="Student" asp-action="DetailsStudent"
                    asp-route-id=@student.id>
-                                @(student.FirstName) @(student.LastName)
-                            </a>
-                        </p>
-                        <input type="button" class="item2 removeBtn"
+                                        @(
+                                        student.FirstName
+                                        ) @(
+                                          student.LastName
+                                          )
+                                    </a>
+                                </p>
+                                <input type="button" class="item2 removeBtn"
                            value="Delete"
                            onclick="location.href='@Url.Action("DeleteStudentFromDept", "Depertment",
 new { @studentId = student.id, @deptId = Model.id})'" />
-                    </div>
-            }
-
-                <div class="paginationDiv">
-                    <div class="gridRow">
-                        <h4>Page No @(Model.PageIndex) of @(Model.TotalPages)</h4>
-
-                        <form asp-action="DetailsDepertment" method="get" class="grid-container">
-                            <div class="form-actions no-color">
-                                <input type="hidden" name="atributeType" value="student" />
-                                <input type="hidden" name="pageSize" value="@(Model.PageSize)" />
-                                <label for="PageIndex"> Goto Page</label>
-                                <select name="PageIndex" class="searchBar" style="width:100px">
-                                    <option class="selectItem" value=@(Model.PageIndex)>--select--</option>
-                                    @foreach (int index in Enumerable.Range(1, Model.TotalPages))
-                                    {
-                                        <option class="selectItem" value=@(index)>Page : @(index)</option>
-                                    }
-                                </select>
-                                <input type="submit" value="Go" class="btn" />
                             </div>
-                        </form>
-                </div>
-                        <a asp-action="DetailsDepertment" asp-route-atributeType="student"
-                   asp-route-pageIndex="@(Model.PageIndex - 1)"
-                   asp-route-pageSize="@(Model.PageSize)"
-                   asp-route-currentFilter="@(Model.SearchString)"
-               class="btn @prevDisabled">
-                            Previous
-                        </a>
-                        @foreach (int page in Model.Pages)
-                        {
-                            if (page == Model.PageIndex)
-                            {
-                                <a class="selected"
-                   asp-action="DetailsDepertment"
-                   asp-route-atributeType="student"
-                   asp-route-pageIndex="@(page)"
-                   asp-route-pageSize="@(Model.PageSize)"
-                   asp-route-currentFilter="@(Model.SearchString)"
-                   class="btn">
-                                    @(page)
-                                </a>
-                            }
-                            else
-                            {
-                                <a class="btn"
-                   asp-action="DetailsDepertment"
-                   asp-route-atributeType="student"
-                   asp-route-pageIndex="@(page)"
-                   asp-route-pageSize="@(Model.PageSize)"
-                   asp-route-currentFilter="@(Model.SearchString)"
-                   class="btn">
-                                    @(page)
-                                </a>
-                            }
                         }
 
-                        <a asp-action="DetailsDepertment" asp-route-atributeType="student"
-                   asp-route-pageIndex="@(Model.PageIndex + 1)"
-                   asp-route-pageSize="@(Model.PageSize)"
-                   asp-route-currentFilter="@(Model.SearchString)"
-               class="btn @nextDisabled">
-                            Next
-                        </a>
+                    }
 
+                }
+
+        </div>
+        <div class="paginationDiv">
+            <div class="gridRow">
+                <h4>Page No @(Model.PageIndex) of @(Model.TotalPages)</h4>
+
+                <form asp-action="DetailsDepertment" method="get" class="grid-container">
+                    <div class="form-actions no-color">
+                        <input type="hidden" name="atributeType" value="@(ViewData["atributeType"])" />
+                        <input type="hidden" name="pageSize" value="@(Model.PageSize)" />
+                        <input type="hidden" name="searchString" value="@(Model.SearchString)" />
+                        <label for="PageIndex"> Goto Page</label>
+                        <select name="PageIndex" class="searchBar" style="width:100px">
+                            <option class="selectItem" value=@(Model.PageIndex)>--select--</option>
+                            @foreach (int index in Enumerable.Range(1, Model.TotalPages))
+                            {
+                                <option class="selectItem" value=@(index)>Page : @(index)</option>
+                            }
+                        </select>
+                        <input type="submit" value="Go" class="btn" />
                     </div>
-                </div>
-          
-        }
+                </form>
+            </div>
 
+            <a asp-action="DetailsDepertment" asp-route-atributeType="@(ViewData["atributeType"])"
+           asp-route-pageIndex="@(Model.PageIndex - 1)"
+           asp-route-pageSize="@(Model.PageSize)"
+           asp-route-currentFilter="@(Model.SearchString)"
+           class="btn @prevDisabled">
+                Previous
+            </a>
+            @foreach (int page in Model.Pages)
+            {
+                if (page == Model.PageIndex)
+                {
+                    <a class="selected"
+           asp-action="DetailsDepertment"
+           asp-route-atributeType="@(ViewData["atributeType"])"
+           asp-route-pageIndex="@(page)"
+           asp-route-pageSize="@(Model.PageSize)"
+           asp-route-currentFilter="@(Model.SearchString)"
+           class="btn">
+                        @(page)
+                    </a>
+                }
+                else
+                {
+                    <a class="btn"
+           asp-action="DetailsDepertment"
+           asp-route-atributeType="@(ViewData["atributeType"])"
+           asp-route-pageIndex="@(page)"
+           asp-route-pageSize="@(Model.PageSize)"
+           asp-route-currentFilter="@(Model.SearchString)"
+           class="btn">
+                        @(page)
+                    </a>
+                }
+            }
 
+            <a asp-action="DetailsDepertment" asp-route-atributeType="@(ViewData["atributeType"])"
+           asp-route-pageIndex="@(Model.PageIndex + 1)"
+           asp-route-pageSize="@(Model.PageSize)"
+           asp-route-currentFilter="@(Model.SearchString)"
+           class="btn @nextDisabled">
+                Next
+            </a>
+
+        </div>
+
+        </div>
     </div>
 
 }
