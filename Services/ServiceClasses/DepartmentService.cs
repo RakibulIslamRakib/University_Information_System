@@ -12,12 +12,15 @@ namespace University_Information_System.Services.ServiceClasses
         public readonly ApplicationDbContext db;
         private readonly ISubjectService subjectService;
         private readonly IStudentService studentService;
+ 
 
-        public DepartmentService(ApplicationDbContext db , ISubjectService subjectService, IStudentService studentService)
+        public DepartmentService(ApplicationDbContext db , ISubjectService subjectService,
+            IStudentService studentService )
         {
             this.db = db;
             this.subjectService = subjectService;
             this.studentService = studentService;
+   
         }
 
         public async Task AddDepertment(Depertment depertment)
@@ -28,6 +31,7 @@ namespace University_Information_System.Services.ServiceClasses
 
         public async Task<List<Depertment> > GetAllDepertment()
         {
+
             return await db.Depertment.ToListAsync() ;
         }
 

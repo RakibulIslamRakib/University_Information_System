@@ -1,7 +1,6 @@
 ﻿
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Linq;
 using University_Information_System.Models;
 using University_Information_System.Services.ServiceInterfaces;
 
@@ -13,16 +12,18 @@ namespace University_Information_System.Controllers
         #region Fields
 
         private readonly IDepartmentService departmentService;
-
+        private readonly IUserService _userService;
+ 
         #endregion Fields
 
 
 
         #region ctor
 
-        public DepertmentController(IDepartmentService departmentService)
+        public DepertmentController(IDepartmentService departmentService, IUserService userService)
         {
             this.departmentService = departmentService;
+            _userService = userService;
         }
 
         #endregion ctor
@@ -31,7 +32,9 @@ namespace University_Information_System.Controllers
         #region Depertments
         public async Task<IActionResult> Depertments(string currentFilter, 
                     string searchString, int? pageNumber, int? itemsPerPage)
-        {      
+        { 
+            
+
             var depertments = await departmentService.GetAllDepertment();
 
             if (searchString != null)
@@ -72,9 +75,11 @@ namespace University_Information_System.Controllers
         [HttpPost]
         public async Task<IActionResult> AddDepertment(Depertment depertment)
         {
-            depertment.CreatedDate = DateTime.Now;
+            var userId = _userService.GetUserId();
+            var isLoggedIn = _userService.IsAuthenticated();
+            depertment.CreatedDate = DateTime.Now;            
             depertment.CreatedBy = 1;
-
+            
             //var err = ModelState.Values.SelectMany(er => er.Errors);
 
             if (ModelState.IsValid)

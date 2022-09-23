@@ -74,5 +74,28 @@ namespace University_Information_System.Controllers
           await _accountService.SignOutAsync();
             return RedirectToAction("Index", "Home");
         }
+
+        [Route("change-password")]
+        public IActionResult  ChangePassword()
+        {
+            return View();
+        }
+
+        [HttpPost("change-password")]
+        public async Task<IActionResult> ChangePassword(ChangePasswordModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await _accountService.ChangePasswordAsync(model);
+
+                if (result.Succeeded)
+                {
+                    ViewBag.success = true;
+                    ModelState.Clear();
+                    return View();
+                }
+            }
+                return View(model);
+        }
     }
 }

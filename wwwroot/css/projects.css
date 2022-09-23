@@ -26,7 +26,21 @@
 }
 
 
+@media (max-width: 700px) {
+    .mainDiv {
+        padding-top: 100px;
+        padding-left: 10px;
+        padding-right: 10px;
+        margin-left: 5%;
+        margin-right: 5%;
+    }
 
+    .paginationDiv .gridRow {
+        padding-left: 1%;
+        padding-right: 1%;
+        margin-bottom: 20px;
+    }
+}
 
 
 

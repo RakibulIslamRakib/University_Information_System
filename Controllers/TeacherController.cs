@@ -125,11 +125,87 @@ namespace University_Information_System.Controllers
         #endregion  UpdateTeacher
 
         #region  DetailsTeacher
-        public async Task<IActionResult> DetailsTeacher(int id)
+        public async Task<IActionResult> DetailsTeacher(int id, string currentFilter,
+                    string searchString, int? pageSize, int? pageIndex, string atributeType = "Subjects")
+
         {
             var teacher = await teacherService.GetTeacherDetailsById(id);
 
-            if(teacher == null) return View("Error");
+            if (searchString != null)
+            {
+                pageIndex = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
+
+            teacher.PageSize = pageSize ?? 5;
+            teacher.SearchString = searchString;
+            teacher.PageIndex = pageIndex ?? 1;
+            ViewData["atributeType"] = atributeType ?? "Subjects";
+
+            searchString = !String.IsNullOrEmpty(searchString) ? searchString.ToLower() : "";
+
+            var students = teacher.Students;
+            var subjects = teacher.Subjects;
+            var departments = teacher.Depertments;
+
+            if (atributeType == "Students")
+            {
+
+                if (!String.IsNullOrEmpty(searchString))
+                {
+                    students = students.Where(st => st.FirstName.ToLower().Contains(searchString)
+                    || st.LastName.ToLower().Contains(searchString)).ToList();
+                }
+
+                teacher.TotalPages = (int)Math.Ceiling(students.Count / (double) teacher.PageSize);
+                var items = students.Skip((teacher.PageIndex - 1) * teacher.PageSize).Take(teacher.PageSize).ToList();
+                teacher.Students = items;
+                teacher.Pages = teacher.GetPages(students.Count, teacher.PageSize);
+                teacher.Subjects = new List<Subject>();
+                teacher.Depertments = new List<Depertment>();
+
+
+            }
+
+
+            else if (atributeType == "Subjects")
+            {
+
+                if (!String.IsNullOrEmpty(searchString))
+                {
+                    subjects = subjects.Where(sb => sb.SubjectName.ToLower().Contains(searchString)
+                    || sb.Descryption.ToLower().Contains(searchString)).ToList();
+                }
+
+                teacher.TotalPages = (int)Math.Ceiling(subjects.Count / (double)teacher.PageSize);
+                var items = subjects.Skip((teacher.PageIndex - 1) * teacher.PageSize).Take(teacher.PageSize).ToList();
+                teacher.Subjects = items;
+                teacher.Pages = teacher.GetPages(subjects.Count, teacher.PageSize);
+                teacher.Students = new List<Student>();
+                teacher.Depertments = new List<Depertment>();
+            }
+
+
+            else
+            {
+
+                if (!String.IsNullOrEmpty(searchString))
+                {
+                    teachers = teachers.Where(tr => tr.FirstName.ToLower().Contains(searchString)
+                    || tr.LastName.ToLower().Contains(searchString)).ToList();
+                }
+                teacher.TotalPages = (int)Math.Ceiling(teachers.Count / (double)teacher.PageSize);
+                var items = teachers.Skip((depertment.PageIndex - 1) * teacher.PageSize).Take(teacher.PageSize).ToList();
+                teacher.Pages = teacher.GetPages(teachers.Count, teacher.PageSize);
+                teacher.Teachers = items;
+                teacher.Subjects = new List<Subject>();
+                teacher.Students = new List<Student>();
+            }
+
+            return View(depertment);
 
             return View(teacher);
         }

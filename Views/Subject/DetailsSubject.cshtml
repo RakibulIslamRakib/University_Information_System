@@ -6,24 +6,84 @@
     <div class="container">
         <a asp-action="Subjects">Go Back </a>
 
-        <h3 style="text-align:center">Subject's Name : @(Model.SubjectName)</h3>
+        <h2 style="text-align:center">Subject : @(Model.SubjectName)</h2>
 
 
-<div id="myDIV" class="header">
-</div>
+        <ul class="detailsMenu">
+            <li id="subject">
+                <a asp-action="DetailsSubject" asp-route-atributeType="Depertments"
+               asp-route-pageIndex="@(Model.PageIndex)"
+               asp-route-pageSize="@(Model.PageSize)"
+               asp-route-currentFilter="@(Model.SearchString)" type="button" onclick="clickAction('subject')">Departments</a>
+            </li>
+            <li id="student">
+                <a asp-action="DetailsSubject" asp-route-atributeType="Students"
+               asp-route-pageIndex="@(Model.PageIndex)"
+               asp-route-pageSize="@(Model.PageSize)"
+               asp-route-currentFilter="@(Model.SearchString)" type="button" onclick="clickAction('student')">Students</a>
+            </li>
+            <li id="teacher">
+                <a asp-action="DetailsSubject" asp-route-atributeType="Teachers"
+               asp-route-pageIndex="@(Model.PageIndex)"
+               asp-route-pageSize="@(Model.PageSize)"
+               asp-route-currentFilter="@(Model.SearchString)" type="button" onclick="clickAction('teacher')">Teachers</a>
+            </li>
+        </ul>
 
-<ul class="detailsMenu">
-            <li id="department"><a href="#" type="button" onclick="clickAction('department')">Department</a> </li>
-<li id="student"><a href="#" type="button" onclick="clickAction('student')">Students</a> </li>
-<li id="teacher"><a href="#" type="button" onclick="clickAction('teacher')">Teachers</a> </li>
-</ul>
+        @{
+            var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+            var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+        }
 
 
-        <div class="detailsUl" id="departmentDiv">
-            <h3 style="margin-top:40px;">Departments Contain's @(Model.SubjectName) Subject:</h3>
-           
+
+        <div class="detailsUl">
+            <h3 style="margin-top:10px;">@(ViewData["atributeType"]) of @(Model.SubjectName) Subject:</h3>
+            <div class="gridRow">
+
+
+                <form asp-action="DetailsSubject" asp-route-atributeType=@(ViewData["atributeType"]) method="get">
+                    <div class="form-actions no-color">
+                        <input type="hidden" name="atributeType" value=@(ViewData["atributeType"]) />
+                        <label for="itemsPerPage">Items Per Page : </label>
+                        <input name="pageSize" class="searchBar" style="width:40px" type"number"
+                               value="@(Model.PageSize)" />
+
+                        <input type="submit" value="Show" class="btn" />
+      
+                    </div>
+                </form>
+                <form asp-action="DetailsSubject" method="get" class="grid-container">
+                    <div class="form-actions no-color">
+
+                        <input type="hidden" name="atributeType" value="@(ViewData["atributeType"])" />
+                        <input type="text" name="searchString" placeholder="search @(ViewData["atributeType"])..."
+                               class="searchBar" value="@(Model.SearchString)" />
+
+                        <input type="submit" value="Search" class="btn" />
+
+
+
+                    </div>
+                </form>
+
+            </div>
+
+
+
             <hr>
 
+            <div>
+        @if (ViewData["atributeType"].ToString() == "Depertments")
+    {
+        @if (Model.Depertments.Count==0){
+        <div class="grid-containerList">
+            <p>Nothing Founds </p>
+             
+
+        </div>
+    }
+    else{
 
             @foreach (var depertment in Model.Depertments)
             
@@ -38,13 +98,24 @@
 
                 </div>
             }
+            }
+            }
 
-        </div>
 
 
-        <div class="detailsUl" id="teacherDiv">
-            <h3 style="margin-top:40px;">Teachers of @(Model.SubjectName) Subject:</h3>
-            <hr>
+
+            else if(ViewData["atributeType"].ToString() == "Teachers")
+            {
+            @if (Model.Teachers.Count == 0)
+            {
+                <div class="grid-containerList">
+                    <p>Nothing Founds </p>
+                    
+
+                </div>
+            }
+            else
+            {
 
 
             @foreach (var teacher in Model.Teachers)
@@ -59,15 +130,23 @@
                     <div class="item2"></div>
                 </div>
             }
-        </div>
+        
+            }
 
+                }
 
-        <div class="detailsUl" id="studentDiv">
-            <h3 style="margin-top:40px;">Students of @(Model.SubjectName) Subject:</h3>
+            else{
+            @if (Model.Students.Count == 0)
+            {
+                <div class="grid-containerList">
+                   
+                        <p>Nothing Founds </p>
+                   
 
-
-
-            <hr>
+                </div>
+            }
+            else
+            {
             @foreach (var student in Model.Students)
             {
                 <div class="grid-containerList">
@@ -79,66 +158,89 @@
                     </p>
                 </div>
             }
-        </div>
+       
+            
+            }
+
+                }
+
+
+            </div>
+
+
+
+
+            <div class="paginationDiv">
+    <div class="gridRow">
+        <h4>Page No @(Model.PageIndex) of @(Model.TotalPages)</h4>
+
+        <form asp-action="DetailsSubject" method="get" class="grid-container">
+            <div class="form-actions no-color">
+                <input type="hidden" name="atributeType" value="@(ViewData["atributeType"])" />
+                <input type="hidden" name="pageSize" value="@(Model.PageSize)" />
+                <input type="hidden" name="searchString" value="@(Model.SearchString)" />
+                <label for="PageIndex"> Goto Page</label>
+                <select name="PageIndex" class="searchBar" style="width:100px">
+                    <option class="selectItem" value=@(Model.PageIndex)>--select--</option>
+                    @foreach (int index in Enumerable.Range(1, Model.TotalPages))
+                    {
+                        <option class="selectItem" value=@(index)>Page : @(index)</option>
+                    }
+                </select>
+                <input type="submit" value="Go" class="btn" />
+            </div>
+        </form>
+    </div>
+
+                <a asp-action="DetailsSubject" asp-route-atributeType="@(ViewData["atributeType"])"
+       asp-route-pageIndex="@(Model.PageIndex - 1)"
+       asp-route-pageSize="@(Model.PageSize)"
+       asp-route-currentFilter="@(Model.SearchString)"
+       class="btn @prevDisabled">
+        Previous
+    </a>
+    @foreach (int page in Model.Pages)
+    {
+        if (page == Model.PageIndex)
+        {
+            <a class="selected"
+               asp-action="DetailsSubject"
+       asp-route-atributeType="@(ViewData["atributeType"])"
+       asp-route-pageIndex="@(page)"
+       asp-route-pageSize="@(Model.PageSize)"
+       asp-route-currentFilter="@(Model.SearchString)"
+       class="btn">
+                @(page)
+            </a>
+        }
+        else
+        {
+            <a class="btn"
+               asp-action="DetailsSubject"
+       asp-route-atributeType="@(ViewData["atributeType"])"
+       asp-route-pageIndex="@(page)"
+       asp-route-pageSize="@(Model.PageSize)"
+       asp-route-currentFilter="@(Model.SearchString)"
+       class="btn">
+                @(page)
+            </a>
+        }
+    }
+
+                <a asp-action="DetailsSubject" asp-route-atributeType="@(ViewData["atributeType"])"
+       asp-route-pageIndex="@(Model.PageIndex + 1)"
+       asp-route-pageSize="@(Model.PageSize)"
+       asp-route-currentFilter="@(Model.SearchString)"
+       class="btn @nextDisabled">
+        Next
+    </a>
+
+</div>
+
+         </div>
     </div>
 
 }
 
 
-
-<script>
-
-    function clickAction(paramStr) {
-
-
-        var department = document.getElementById("department");
-        var student = document.getElementById("student");
-        var teacher = document.getElementById("teacher");
-
-        var departmentDiv = document.getElementById("departmentDiv");
-        var studentDiv = document.getElementById("studentDiv");
-        var teacherDiv = document.getElementById("teacherDiv");
-
-
-        if (paramStr === "department") {
-
-            department.style.backgroundColor = "#95B9C7";
-            student.style.backgroundColor = "whitesmoke";
-            teacher.style.backgroundColor = "whitesmoke";
-
-            studentDiv.style.display = "none";
-            teacherDiv.style.display = "none";
-            departmentDiv.style.display = "block";
-
-        }
-        else if (paramStr === "student") {
-            student.style.backgroundColor = "#95B9C7";
-            department.style.backgroundColor = "whitesmoke";
-            teacher.style.backgroundColor = "whitesmoke";
-
-            studentDiv.style.display = "block";
-            teacherDiv.style.display = "none";
-            departmentDiv.style.display = "none";
-
-        }
-
-        else {
-            teacher.style.backgroundColor = "#95B9C7";
-            student.style.backgroundColor = "whitesmoke";
-            department.style.backgroundColor = "whitesmoke";
-
-            studentDiv.style.display = "none";
-            teacherDiv.style.display = "block";
-            departmentDiv.style.display = "none";
-
-        }
-
-
-    };
-
-
-    window.addEventListener('DOMContentLoaded', (event) => {
-        clickAction("department");
-    });
-
-</script>
+ 

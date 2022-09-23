@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace University_Information_System.Models
 {
-    public class Subject
+    public class Subject:Base
     {
         [Key]
         public int id { get; set; }
