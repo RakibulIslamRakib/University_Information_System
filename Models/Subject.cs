@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace University_Information_System.Models
 {
-    public class Subject
+    public class Subject:Base
     {
         [Key]
         public int id { get; set; }
@@ -22,16 +22,16 @@ namespace University_Information_System.Models
         [NotMapped]
         public List<Depertment>? Depertments { get; set; }
         [NotMapped]
-        public List<Teacher>? Teachers { get; set; }
+        public List<ApplicationUser>? Teachers { get; set; }
         [NotMapped]
-        public List<Student>? Students { get; set; }
+        public List<ApplicationUser>? Students { get; set; }
 
         [Required]
         public DateTime CreatedDate { get; set; }
         public DateTime? UpdatedDate { get; set; }
 
         [Required]
-        public int CreatedBy { get; set; }
-        public int? UpdatedBy { get; set; }
+        public string CreatedBy { get; set; }
+        public string? UpdatedBy { get; set; }
     }
 }

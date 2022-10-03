@@ -9,7 +9,7 @@
 
 
 
-<div class="container">
+<div class="container account">
     <h3 style="text-align:center">Sign Up</h3>
     <form asp-controller="Account" asp-action="SignUp">
         <div asp-validation-summary="ModelOnly" class="errorMessage"></div>
@@ -28,16 +28,7 @@
             <input asp-for="LastName" class="form-control" placeholder="last name.." />
             <span asp-validation-for="LastName" class="errorMessage"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="About" class="control-label"></label>
-            <textarea asp-for="About" placeholder="Write something.." placeholder="about..." style="height:120px"></textarea>
-            <span asp-validation-for="About" class="errorMessage"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="DateOfBirth" class="control-label"></label>
-                <input asp-for="DateOfBirth" class="form-control" />
-            <span asp-validation-for="DateOfBirth" class="errorMessage"></span>
-            </div>
+   
             <div class="form-group">
                 <label asp-for="Password" class="control-label"></label>
             <input asp-for="Password" class="form-control" placeholder="password.." />
@@ -54,7 +45,4 @@
         </form>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
 

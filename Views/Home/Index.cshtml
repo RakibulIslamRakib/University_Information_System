@@ -13,32 +13,40 @@
 @{
     if (TempData["success"] != null)
     {
-                    <h3 class="headline"
-                    style="align-content:center;
-                                background-color: #04AA6D;
-                                color: white;
-                                padding: 12px 20px;
-                                border: none;
-                                border-radius: 4px;
-                                text-align:center; height:30px;">
-                        Message :   @TempData["success"]
-                    </h3>
+                        <h3 class="headline"
+                        style="align-content:center;
+                                    background-color: #04AA6D;
+                                    color: white;
+                                    padding: 12px 20px;
+                                    border: none;
+                                    border-radius: 4px;
+                                    text-align:center; height:30px;">
+                            Message :   @TempData["success"]
+                        </h3>
     }
 }
 
 <div class="grid-container">
-    <form asp-action="Index" method="get" class="item-1">
-        <div class="form-actions no-color">
-            <p>
-                <input class="searchBar" placeholder="Search notice..." type="text"
-                 name="SearchString" value="@ViewData["CurrentFilter"]" />
-                <input type="submit" value="Search" class="btn btn-default" />
-                    <input type="button" class="btn"
-                           value="Add New Notice"
-                           onclick="location.href='@Url.Action("AddNotice", "Home")'" />
-            </p>
-        </div>
-    </form>
+       
+<form asp-action="Index" method="get" class="item-1">
+    <div class="form-actions no-color">
+        <p>
+            <input class="searchBar" placeholder="Search notice..." type="text"
+                name="SearchString" value="@ViewData["CurrentFilter"]" />
+            <input type="submit" value="Search" class="btn btn-default" />
+@if (ViewBag.isAdmin == true)
+{
+            <input type="button" class="btn"
+                value="Add New Notice"
+                onclick="location.href='@Url.Action("AddNotice", "Home")'" />
+                }
+        </p>
+    </div>
+</form>
+           
+
+   
+    
 
  </div>
     <div class="gridRow">
@@ -74,7 +82,8 @@
                         <div class="card__body">
                             <span class="tag">Created : @(notice.CreatedDate)</span>
                             <span class="tag">Author : @(notice.Creator)</span>
-                        <p style="font-size:14px">Descryption :<br> @(notice.Descryption.Count() > 40 ? notice.Descryption.Substring(40)+"...." : notice.Descryption)</p>
+                        <p style="font-size:14px">Descryption :<br> @(notice.Descryption.Count() > 50 ?
+                            notice.Descryption.Substring(0,50)+"...." : notice.Descryption)</p>
                         </div>
 
 
@@ -83,10 +92,16 @@
                             <a class="detailsBtn"
                        asp-conztroller="Home" asp-action="DetailsNotice"
                        asp-route-id=@notice.id> See details..</a>
-                            <a class="updateBtn"
+                       
+                 @{
+            if (ViewBag.isAdmin == true)
+            {      
+                           <a class="updateBtn"
                asp-conztroller="Home" asp-action="UpdateNotice" asp-route-id="@notice.id"> Update</a>
-                            <a class="deleteBtn"
+                                <a class="deleteBtn"
                asp-conztroller="Home" asp-action="DeleteNotice" asp-route-id="@notice.id"> Delete</a>
+            }
+            }
                     </div>
                             </div>
                 </div>

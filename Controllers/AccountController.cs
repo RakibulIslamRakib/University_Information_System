@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using University_Information_System.Models;
 using University_Information_System.Services.ServiceInterfaces;
 
@@ -25,19 +26,41 @@ namespace University_Information_System.Controllers
         {
             if (ModelState.IsValid)
             {
-               var result = await _accountService.CreateUserAsync(userModel);
-                if (!result.Succeeded)
+               var resultSignUp = await _accountService.CreateUserAsync(userModel);
+                if (!resultSignUp.Succeeded)
                 {
-                    foreach(var err in result.Errors)
+                    foreach(var err in resultSignUp.Errors)
                     {
                         ModelState.AddModelError("", err.Description);
                     }
+
                     return View(userModel);
                 }
-             
-                
+
+                var signInModel = new SignInModel
+                {
+                    Email = userModel.Email,
+                    password = userModel.Password,
+                    RememberMe = false
+                };
+
+
+               
                 ModelState.Clear();
+                var result = await _accountService.PasswordSignInAsync(signInModel);
+
+              
+
+                if (result.Succeeded)
+                {
+
+                    return RedirectToAction("Index", "Home");
+
+                }
+                
+                
             }
+
             return View(userModel);
         }
 
@@ -73,6 +96,29 @@ namespace University_Information_System.Controllers
         {
           await _accountService.SignOutAsync();
             return RedirectToAction("Index", "Home");
+        }
+
+        [Route("change-password")]
+        public IActionResult  ChangePassword()
+        {
+            return View();
+        }
+
+        [HttpPost("change-password")]
+        public async Task<IActionResult> ChangePassword(ChangePasswordModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await _accountService.ChangePasswordAsync(model);
+
+                if (result.Succeeded)
+                {
+                    ViewBag.success = true;
+                    ModelState.Clear();
+                    return View();
+                }
+            }
+                return View(model);
         }
     }
 }

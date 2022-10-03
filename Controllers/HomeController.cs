@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Data;
 using University_Information_System.Models;
 using University_Information_System.Services.ServiceClasses;
 using University_Information_System.Services.ServiceInterfaces;
@@ -12,15 +14,19 @@ namespace University_Information_System.Controllers
         #region Fields
 
         private readonly INoticeService noticeService;
+        private readonly IAccountService accountService;
+        private readonly IUserService userService;
 
         #endregion Fields
 
 
 
         #region ctor
-        public HomeController(INoticeService noticeService)
+        public HomeController(INoticeService noticeService, IAccountService accountService, IUserService userService)
         {
             this.noticeService = noticeService;
+            this.accountService = accountService;
+            this.userService = userService;
         }
 
         #endregion ctor
@@ -40,6 +46,14 @@ namespace University_Information_System.Controllers
             {
                 searchString = currentFilter;
             }
+
+            ViewBag.isAdmin = false;
+
+            if (userService.IsAuthenticated())
+            {
+                var userRoles = await accountService.GetRoleOfCurrentUser();
+                ViewBag.isAdmin = userRoles.Contains("Admin");
+            }
             int pageSize = itemsPerPage ?? 5;
             ViewData["ItemsPerPage"] = pageSize;
             ViewData["CurrentFilter"] = searchString;
@@ -56,10 +70,11 @@ namespace University_Information_System.Controllers
         }
         #endregion Index
 
-
+        [Authorize(Roles = "Admin")]
         #region AddNotice
         public IActionResult AddNotice()
         {
+            ViewData["createdBy"] = userService.GetUserId();
             return View();
 
         }
@@ -69,7 +84,6 @@ namespace University_Information_System.Controllers
         public async Task<IActionResult> AddNotice(Notice notice)
         {
             notice.CreatedDate = DateTime.Now;
-            notice.CreatedBy= 1;
 
             //var err = ModelState.Values.SelectMany(er => er.Errors);
             if (ModelState.IsValid)
@@ -83,6 +97,7 @@ namespace University_Information_System.Controllers
         }
         #endregion AddNotice
 
+        [Authorize(Roles = "Admin")]
         #region DeleteNotice
         public async Task<IActionResult> DeleteNotice(int id)
         {
@@ -102,12 +117,14 @@ namespace University_Information_System.Controllers
 
         #endregion DeleteNotice
 
-
+        [Authorize(Roles = "Admin")]
         #region UpdateNotice
         public async Task<IActionResult> UpdateNotice(int id)
         {
             var notice = await noticeService.GetNoticeById(id);
             if (notice == null) return View("Error");
+            ViewData["createdBy"] = userService.GetUserId();
+            ViewData["createdDate"] = notice.CreatedDate;
 
             return View(notice);
         }

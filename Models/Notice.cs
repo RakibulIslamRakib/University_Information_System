@@ -29,9 +29,9 @@ namespace University_Information_System.Models
         public DateTime? UpdatedDate { get; set; }
 
         [Required]
-        public int CreatedBy { get; set; }
+        public string CreatedBy { get; set; }
 
-        public int? UpdatedBy { get; set; }
+        public string? UpdatedBy { get; set; }
 
 
     }

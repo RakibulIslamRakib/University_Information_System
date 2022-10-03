@@ -12,12 +12,15 @@ namespace University_Information_System.Services.ServiceClasses
         public readonly ApplicationDbContext db;
         private readonly ISubjectService subjectService;
         private readonly IStudentService studentService;
+ 
 
-        public DepartmentService(ApplicationDbContext db , ISubjectService subjectService, IStudentService studentService)
+        public DepartmentService(ApplicationDbContext db , ISubjectService subjectService,
+            IStudentService studentService )
         {
             this.db = db;
             this.subjectService = subjectService;
             this.studentService = studentService;
+   
         }
 
         public async Task AddDepertment(Depertment depertment)
@@ -28,6 +31,7 @@ namespace University_Information_System.Services.ServiceClasses
 
         public async Task<List<Depertment> > GetAllDepertment()
         {
+
             return await db.Depertment.ToListAsync() ;
         }
 
@@ -41,7 +45,12 @@ namespace University_Information_System.Services.ServiceClasses
 
         public async Task UpdateDepertment(Depertment depertment)
         {
-           db.Depertment.Update(depertment);
+            var dept = await GetDepertmentById(depertment.id);
+            dept.DeptName = depertment.DeptName;
+            dept.Descryption = depertment.Descryption;
+            dept.UpdatedDate = depertment.UpdatedDate;
+            dept.UpdatedBy = depertment.UpdatedBy;
+            db.Depertment.Update(dept);
            await db.SaveChangesAsync();
         }
 
@@ -52,12 +61,12 @@ namespace University_Information_System.Services.ServiceClasses
 
             foreach (var student in studentOdTheDept)
             {
-                 enrolMentsOfTheStudentsOfTheDept.AddRange(db.SubjectStudentMapped.Where(enrol => enrol.studentId == student.id));
+                 enrolMentsOfTheStudentsOfTheDept.AddRange(db.SubjectStudentMapped.Where(enrol => enrol.studentId == student.Id));
             }
             db.SubjectStudentMapped.RemoveRange(enrolMentsOfTheStudentsOfTheDept);
             await db.SaveChangesAsync();
 
-            db.Student.RemoveRange(studentOdTheDept);
+            //remove student role from those user
             await db.SaveChangesAsync();
 
             var subDeptOfTheDept = await db.SubjectDepartmentMapped.Where(sd=>sd.departmentId==depertment.id).ToListAsync();
@@ -70,17 +79,17 @@ namespace University_Information_System.Services.ServiceClasses
 
 
 
-        public async Task<List<Teacher> > GetTeacherByDepertmentId(int id)
+        public async Task<List<ApplicationUser> > GetTeacherByDepertmentId(int id)
         {
             var subjects = await GetSubjectByDepertmentId(id);
-            var teachers = new List<Teacher>();
+            var teachers = new List<ApplicationUser>();
 
             foreach (var subject in subjects)
             {
                 teachers.AddRange( await subjectService.GetTeacherBySubjectId(subject.id));
             }
-            var teacher = new HashSet<Teacher>(teachers);
-            teachers = new List<Teacher>(teacher);
+            var teacher = new HashSet<ApplicationUser>(teachers);
+            teachers = new List<ApplicationUser>(teacher);
 
             return teachers;
         }
@@ -103,7 +112,8 @@ namespace University_Information_System.Services.ServiceClasses
 
         public async Task<List<Subject>> GetSubjectByDepertmentId(int id)
         {
-            var subjectIdOfTheDepertment = await db.SubjectDepartmentMapped.Where(sd => sd.departmentId == id).Select(sd => sd.subjectId).ToListAsync();
+            var subjectIdOfTheDepertment = await db.SubjectDepartmentMapped.Where(
+                sd => sd.departmentId == id).Select(sd => sd.subjectId).ToListAsync();
             
             
             var allSubjectOfTheDepertment = await db.Subject.Where(subject=> subjectIdOfTheDepertment.Contains(subject.id)).ToListAsync();
@@ -113,14 +123,16 @@ namespace University_Information_System.Services.ServiceClasses
         
 
 
-        public async Task<List<Student>> GetStudentByDepertmentId(int id)
+        public async Task<List<ApplicationUser>> GetStudentByDepertmentId(int id)
         {
-
-            return await db.Student.Where(st => st.DepertmentId == id).ToListAsync();
+            var studentIdOfDept = await db.StudentDepertment.Where(sd=>sd.departmentId==id).Select(sd => sd.studentId).ToListAsync();
+            var students = await studentService.GetAllStudent();
+            var studentOfDept = students.Where(st => studentIdOfDept.Contains(st.Id)).ToList();
+            return studentOfDept;
         }
 
 
-        public async Task DeleteStudentFromDept(int studentId)
+        public async Task DeleteStudentFromDept(string studentId)
         {
             var student = await studentService.GetStudentById(studentId);
 
@@ -157,5 +169,6 @@ namespace University_Information_System.Services.ServiceClasses
             var subjectOutOftheDept = subjects.Except(subjectOftheDept).ToList();
             return subjectOutOftheDept;
         }
+
     }
 }

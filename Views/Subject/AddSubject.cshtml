@@ -7,11 +7,15 @@
 <div class="container">
     <h3 style="text-align:center">Add new Subject</h3>
     <form asp-controller = "Subject" asp-action="AddSubject">
+            <input type="hidden" asp-for="CreatedBy" value="@ViewData["createdBy"]">
+
         <label for="fname">Subject Name</label>
-        <input type="text" id="fname" asp-for="SubjectName" placeholder="subject name..">
+        <input type="text" id="fname" asp-for="SubjectName" 
+        placeholder="subject name..">
             <span class="errorMessage" asp-validation-for="SubjectName"></span>
         <label for="subject">Descryption</label>
-            <textarea id="subject" asp-for="Descryption" placeholder="Write something.." style="height:200px"></textarea>
+            <textarea id="subject" asp-for="Descryption"
+            placeholder="Write something.." style="height:200px"></textarea>
             <span class="errorMessage" asp-validation-for="Descryption"></span>
             <input type="submit" value="Submit">
     </form>

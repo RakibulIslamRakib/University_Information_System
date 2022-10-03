@@ -1,4 +1,4 @@
-﻿@model Student
+﻿@model ApplicationUser
 <link rel="stylesheet" href="~/css/contact.css" />
 
 @{
@@ -14,9 +14,6 @@
         <input type="text" id="fname" asp-for="LastName">
             <span class="errorMessage" asp-validation-for="LastName"></span>
 
-        <label for="lname">Registration No</label>
-        <input type="text" id="fname" asp-for="Reg">
-            <span class="errorMessage" asp-validation-for="Reg"></span>
 
             <input type="submit" value="Update">
     </form>

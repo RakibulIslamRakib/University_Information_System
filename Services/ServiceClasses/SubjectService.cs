@@ -8,9 +8,11 @@ namespace University_Information_System.Services.ServiceClasses
     public class SubjectService: ISubjectService
     {
         public readonly ApplicationDbContext db;
+        private readonly IAccountService accountService;
 
-        public SubjectService(ApplicationDbContext db) {
+        public SubjectService(ApplicationDbContext db, IAccountService accountService) {
             this.db = db;
+            this.accountService = accountService;
         }
 
 
@@ -29,11 +31,13 @@ namespace University_Information_System.Services.ServiceClasses
 
         public async Task DeleteSubject(Subject subject)
         {
-            var enrolmentOfTheSubject = await db.SubjectStudentMapped.Where(ss=>ss.subjectId==subject.id).ToListAsync();
+            var enrolmentOfTheSubject = await db.SubjectStudentMapped.Where(
+                ss=>ss.subjectId==subject.id).ToListAsync();
             db.SubjectStudentMapped.RemoveRange(enrolmentOfTheSubject);
             await db.SaveChangesAsync();
 
-            var subTeacherOfTheSubject = await db.SubjectTeacherMapped.Where(st => st.SubjectId == subject.id).ToListAsync();
+            var subTeacherOfTheSubject = await db.SubjectTeacherMapped.Where(
+                st => st.SubjectId == subject.id).ToListAsync();
             db.SubjectTeacherMapped.RemoveRange(subTeacherOfTheSubject);
             await db.SaveChangesAsync();
 
@@ -54,18 +58,25 @@ namespace University_Information_System.Services.ServiceClasses
             await db.SaveChangesAsync();
         }
 
-        public async Task <List<Student>> GetStudentBySubjectId(int id)
+        public async Task<List<ApplicationUser>> GetStudentBySubjectId(int id)
         {
-            var studentIdOfTheSubject = await db.SubjectStudentMapped.Where(ss => ss.subjectId == id).Select(ss=>ss.studentId).ToListAsync();
-            var allStudentOfTheSubject = await db.Student.Where(student => studentIdOfTheSubject.Contains(student.id)).ToListAsync();
+            var studentIdOfTheSubject = await db.SubjectStudentMapped.Where(
+                ss => ss.subjectId == id).Select(ss=>ss.studentId).ToListAsync();
+            var students =await accountService.GetUsersInRole("Student");
+          
+            var allStudentOfTheSubject = students.Where(
+                st => studentIdOfTheSubject.Contains(st.Id));
 
-            return allStudentOfTheSubject;
+            return allStudentOfTheSubject.ToList();
         }
 
-        public async Task<List<Teacher>> GetTeacherBySubjectId(int id)
+        public async Task<List<ApplicationUser>> GetTeacherBySubjectId(int id)
         {
-            var teacherIdOfTheSubject = await db.SubjectTeacherMapped.Where(st => st.SubjectId == id).Select(st => st.TeacherId).ToListAsync();
-            var allTeacherOfTheSubject = await db.Teacher.Where(teacher => teacherIdOfTheSubject.Contains(teacher.Id)).ToListAsync();
+            var teacherIdOfTheSubject = await db.SubjectTeacherMapped.Where(
+                st => st.SubjectId == id).Select(st => st.TeacherId).ToListAsync();
+            var teachers = await accountService.GetUsersInRole("Teacher");
+            var allTeacherOfTheSubject = teachers.Where(
+                tr => teacherIdOfTheSubject.Contains(tr.Id)).ToList();
 
             return allTeacherOfTheSubject;
         }
@@ -73,8 +84,10 @@ namespace University_Information_System.Services.ServiceClasses
 
         public async Task<List<Depertment>> GetDepertmentBySubjectId(int id)
         {
-            var depertmentIdOfTheSubject = await db.SubjectDepartmentMapped.Where(sd => sd.subjectId == id).Select(sd => sd.departmentId).ToListAsync();
-            var allDepertmentOfTheSubject = await db.Depertment.Where(dept => depertmentIdOfTheSubject.Contains(dept.id)).ToListAsync();
+            var depertmentIdOfTheSubject = await db.SubjectDepartmentMapped.Where(
+                sd => sd.subjectId == id).Select(sd => sd.departmentId).ToListAsync();
+            var allDepertmentOfTheSubject = await db.Depertment.Where(dept
+                => depertmentIdOfTheSubject.Contains(dept.id)).ToListAsync();
 
             return allDepertmentOfTheSubject;
         }

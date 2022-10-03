@@ -2,13 +2,14 @@
 
 namespace University_Information_System.Models
 {
-    public class SubjectTeacherMapped
+    public class StudentDepertment
     {
         [Key]
-        public int Id { get; set; }
+        public int id { get; set; }
+
         [Required]
-        public string TeacherId { get; set; }
+        public int departmentId { get; set; }
         [Required]
-        public int SubjectId { get; set; }
+        public string studentId { get; set; }
     }
 }

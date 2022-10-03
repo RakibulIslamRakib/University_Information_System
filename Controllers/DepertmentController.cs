@@ -1,18 +1,19 @@
 ﻿
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Linq;
 using University_Information_System.Models;
 using University_Information_System.Services.ServiceInterfaces;
 
 namespace University_Information_System.Controllers
 {
-    [Authorize(Roles ="Admin")]
+   
     public class DepertmentController : Controller
     {
         #region Fields
 
         private readonly IDepartmentService departmentService;
+        private readonly IUserService _userService;
+        private readonly IAccountService accountService;
 
         #endregion Fields
 
@@ -20,9 +21,12 @@ namespace University_Information_System.Controllers
 
         #region ctor
 
-        public DepertmentController(IDepartmentService departmentService)
+        public DepertmentController(IDepartmentService departmentService, IUserService userService,
+            IAccountService accountService)
         {
             this.departmentService = departmentService;
+            _userService = userService;
+            this.accountService = accountService;
         }
 
         #endregion ctor
@@ -31,7 +35,9 @@ namespace University_Information_System.Controllers
         #region Depertments
         public async Task<IActionResult> Depertments(string currentFilter, 
                     string searchString, int? pageNumber, int? itemsPerPage)
-        {      
+        { 
+            
+
             var depertments = await departmentService.GetAllDepertment();
 
             if (searchString != null)
@@ -43,6 +49,10 @@ namespace University_Information_System.Controllers
                 searchString = currentFilter;
             }
 
+            var userRoles = await accountService.GetRoleOfCurrentUser();
+            ViewBag.isAdmin = userRoles.Contains("Admin");
+            ViewBag.hasAuth = userRoles.Contains("Admin") || userRoles.Contains("Student")
+                || userRoles.Contains("Teacher");
             int pageSize = itemsPerPage ?? 5;
             ViewData["ItemsPerPage"] = pageSize;
             ViewData["CurrentFilter"] = searchString;
@@ -62,20 +72,23 @@ namespace University_Information_System.Controllers
 
         #endregion Depertments
 
-
+        [Authorize(Roles ="Admin")]
         #region AddDepertment
         public IActionResult AddDepertment()
         {
+            ViewData["createdBy"] = _userService.GetUserId();
             return  View();
         }
 
         [HttpPost]
         public async Task<IActionResult> AddDepertment(Depertment depertment)
         {
-            depertment.CreatedDate = DateTime.Now;
-            depertment.CreatedBy = 1;
 
-            //var err = ModelState.Values.SelectMany(er => er.Errors);
+
+            depertment.CreatedDate = DateTime.Now;
+            //depertment.CreatedBy = _userService.GetUserId();
+
+            var err = ModelState.Values.SelectMany(er => er.Errors);
 
             if (ModelState.IsValid)
             {
@@ -89,7 +102,7 @@ namespace University_Information_System.Controllers
 
         #endregion AddDepertment
 
-
+        [Authorize(Roles = "Admin")]
         #region DeleteDepertment
         public async Task<IActionResult> DeleteDepertment(int id)
         {
@@ -107,21 +120,23 @@ namespace University_Information_System.Controllers
         }
         #endregion DeleteDepertment
 
-
+        [Authorize(Roles = "Admin")]
         #region UpdateDepertment
         public async Task<IActionResult> UpdateDepertment(int id)
         {
             var updatedDept = await departmentService.GetDepertmentById(id);
-
+            ViewData["createdBy"] = _userService.GetUserId();
+            ViewData["createdDate"] = updatedDept.CreatedDate;
             return View(updatedDept);
         }
 
         [HttpPost]
         public async Task<IActionResult> UpdateDepertment(Depertment depertment)
-        { 
+        {
+            var userId = _userService.GetUserId();
             depertment.UpdatedDate= DateTime.Now;
-            depertment.UpdatedBy = 1;
-            //var err = ModelState.Values.SelectMany(er => er.Errors);
+            depertment.UpdatedBy = userId;
+            var err = ModelState.Values.SelectMany(er => er.Errors);
 
             if (ModelState.IsValid)
             {
@@ -136,6 +151,7 @@ namespace University_Information_System.Controllers
         #endregion UpdateDepertment
 
 
+        [Authorize(Roles = "Admin,Teacher,Student")]
         #region DetailsDepertment
         public async Task<IActionResult> DetailsDepertment(int id, string currentFilter,
                     string searchString,  int? pageSize , int? pageIndex, string atributeType = "Subjects")
@@ -151,6 +167,8 @@ namespace University_Information_System.Controllers
                 searchString = currentFilter;
             }
 
+            var userRoles = await accountService.GetRoleOfCurrentUser();
+            ViewBag.isAdmin = userRoles.Contains("Admin");
             depertment.PageSize = pageSize ?? 5;
             depertment.SearchString = searchString;
             depertment.PageIndex = pageIndex??1;
@@ -167,7 +185,7 @@ namespace University_Information_System.Controllers
 
                 if (!String.IsNullOrEmpty(searchString))
                 {
-                    students = students.Where(st => st.FirstName.ToLower().Contains(searchString)
+                    students = students?.Where(st => st.FirstName.ToLower().Contains(searchString)
                     || st.LastName.ToLower().Contains(searchString)).ToList();
                 }
 
@@ -176,7 +194,7 @@ namespace University_Information_System.Controllers
                     depertment.Students = items;
                     depertment.Pages = depertment.GetPages(students.Count, depertment.PageSize);
                     depertment.Subjects = new List<Subject>();
-                    depertment.Teachers = new List<Teacher>();
+                    depertment.Teachers = new List<ApplicationUser>();
                  
 
             }
@@ -187,7 +205,7 @@ namespace University_Information_System.Controllers
 
                 if (!String.IsNullOrEmpty(searchString))
                 {
-                    subjects = subjects.Where(sb => sb.SubjectName.ToLower().Contains(searchString)
+                    subjects = subjects?.Where(sb => sb.SubjectName.ToLower().Contains(searchString)
                     || sb.Descryption.ToLower().Contains(searchString)).ToList();
                 }
 
@@ -195,8 +213,8 @@ namespace University_Information_System.Controllers
                 var items = subjects.Skip((depertment.PageIndex - 1) * depertment.PageSize).Take(depertment.PageSize).ToList();
                 depertment.Subjects = items;
                 depertment.Pages = depertment.GetPages(subjects.Count, depertment.PageSize);
-                depertment.Students = new List<Student>();
-                depertment.Teachers = new List<Teacher>();
+                depertment.Students = new List<ApplicationUser>();
+                depertment.Teachers = new List<ApplicationUser>();
             }
 
          
@@ -205,7 +223,7 @@ namespace University_Information_System.Controllers
 
                 if (!String.IsNullOrEmpty(searchString))
                 {
-                    teachers = teachers.Where(tr => tr.FirstName.ToLower().Contains(searchString)
+                    teachers = teachers?.Where(tr => tr.FirstName.ToLower().Contains(searchString)
                     || tr.LastName.ToLower().Contains(searchString)).ToList();
                 }
                 depertment.TotalPages = (int)Math.Ceiling(teachers.Count / (double)depertment.PageSize);
@@ -213,7 +231,7 @@ namespace University_Information_System.Controllers
                 depertment.Pages = depertment.GetPages(teachers.Count, depertment.PageSize);
                 depertment.Teachers = items;
                 depertment.Subjects = new List<Subject>();
-                depertment.Students = new List<Student>();
+                depertment.Students = new List<ApplicationUser>();
             }
 
             return View(depertment);
@@ -222,6 +240,7 @@ namespace University_Information_System.Controllers
         #endregion DetailsDepertment
 
 
+        [Authorize(Roles = "Admin")]
         #region AddSubjectToTheDepertment
         public async Task<IActionResult> AddSubjectToTheDepertment(int id)
         {
@@ -248,7 +267,7 @@ namespace University_Information_System.Controllers
 
         #endregion AddSubjectToTheDepertment
 
-
+        [Authorize(Roles = "Admin")]
         #region DeleteSubjectFromDept
         public async Task<IActionResult> DeleteSubjectFromDept(int subjectId,int deptId)
         {
@@ -258,7 +277,7 @@ namespace University_Information_System.Controllers
         }
 
 
-        public async Task<IActionResult> DeleteStudentFromDept(int studentId, int deptId)
+        public async Task<IActionResult> DeleteStudentFromDept(string studentId, int deptId)
         {
             await departmentService.DeleteStudentFromDept(studentId);
             

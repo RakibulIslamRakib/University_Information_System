@@ -5,16 +5,17 @@ namespace University_Information_System.Services.ServiceInterfaces
 {
     public interface IStudentService
     {
-        public Task<List<Student>> getAllStudent();
-        public Task AddStudent(Student student);
+        public Task<List<ApplicationUser>> GetAllStudent();
+        public Task AddStudent(string userId, int deptId);
  
-        public Task UpdateStudent(Student student);
-        public Task DeleteStudent(Student student);
+        public Task UpdateStudent(ApplicationUser student);
+        public Task DeleteStudent(ApplicationUser student);
 
-        public Task<Student> GetStudentById(int id);
-        public Task<Student> GetStudentDetailsById(int id);
-        public Task<List<Subject>> GetSubjectByStudentId(int id);
+        public Task<ApplicationUser> GetStudentById(string id);
+        public Task<ApplicationUser> GetStudentDetailsById(string id);
+        public Task<List<Subject>> GetSubjectByStudentId(string id);
         public Task AddSubjectStudentMapped(SubjectStudentMapped subjectStudentMapped);
-        public Task DeleteEnrolmentFromSubjectStudentMapped(int subjectId, int studentId);
+        public Task DeleteEnrolmentFromSubjectStudentMapped(int subjectId, string studentId);
+        Task<Depertment> GetDeptByStudentId(string id);
     }
 }

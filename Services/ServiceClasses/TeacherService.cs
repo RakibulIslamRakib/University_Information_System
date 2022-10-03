@@ -12,23 +12,27 @@ namespace University_Information_System.Services.ServiceClasses
         public readonly ApplicationDbContext db;
 
         private readonly ISubjectService subjectService;
-
-        public TeacherService(ApplicationDbContext db, ISubjectService subjectService)
+        private readonly IAccountService accountService;
+        public TeacherService(ApplicationDbContext db, 
+            IAccountService accountService, ISubjectService subjectService)
         {
             this.db = db;
             this.subjectService = subjectService;
+            this.accountService = accountService;
         }
 
 
-        public async Task AddTeacher(Teacher teacher)
+
+        public async Task AddTeacher(ApplicationUser user)
         {
-           await db.Teacher.AddAsync(teacher);
-           await db.SaveChangesAsync();
+            await accountService.AddRole(user,"Teacher");
+            await db.SaveChangesAsync();
         }
 
-        public async Task DeleteSubTeacherMapped(int subjectId, int teacherId)
+        public async Task DeleteSubTeacherMapped(int subjectId, string teacherId)
         {
-            var subTeacher = await db.SubjectTeacherMapped.FirstOrDefaultAsync(st => st.TeacherId == teacherId && st.SubjectId == subjectId);
+            var subTeacher = await db.SubjectTeacherMapped.FirstOrDefaultAsync(
+                st => st.TeacherId == teacherId && st.SubjectId == subjectId);
 
             if (subTeacher != null)
             {
@@ -37,45 +41,42 @@ namespace University_Information_System.Services.ServiceClasses
             }
         }
 
-        public async Task DeleteTeacher(Teacher teacher)
+        public async Task DeleteTeacher(ApplicationUser teacher)
         {
-            var subTeacherOfTheTeacher = await db.SubjectTeacherMapped.Where(st => st.TeacherId == teacher.Id).ToListAsync();
+            var subTeacherOfTheTeacher = await db.SubjectTeacherMapped.Where(
+                st => st.TeacherId == teacher.Id).ToListAsync();
             db.SubjectTeacherMapped.RemoveRange(subTeacherOfTheTeacher);
+            await accountService.RemoveRole(teacher, "Teacher");
             await db.SaveChangesAsync();
 
-            db.Teacher.Remove(teacher);
-            await db.SaveChangesAsync();
         }
 
 
 
-        public async Task<List<Teacher>> getAllTeacher()
+        public async Task<List<ApplicationUser>> getAllTeacher()
         {
-            return await db.Teacher.ToListAsync();
-
+            var result = await accountService.GetUsersInRole("Teacher");
+            return result.ToList();
         }
 
 
 
-        public async Task<Teacher> GetTeacherById(int id)
+        public async Task<ApplicationUser> GetTeacherById(string id)
         {
-            return await db.Teacher.FindAsync(id);
+            var result = await accountService.GetUserById(id);
+            return result;
         }
 
 
 
-        public async Task UpdateTeacher(Teacher teacher)
+
+
+        public async Task<List<Subject>> GetSubjectByTeacherId(string id)
         {
-            db.Teacher.Update(teacher);
-            await db.SaveChangesAsync();
-        }
-
-
-
-        public async Task<List<Subject>> GetSubjectByTeacherId(int id)
-        {
-            var subjectIdOfTheTeacher = await db.SubjectTeacherMapped.Where(st => st.TeacherId == id).Select(st=>st.SubjectId).ToListAsync();
-            var allSubjectOfTheTeacher = await db.Subject.Where(sb=> subjectIdOfTheTeacher.Contains(sb.id)).ToListAsync();
+            var subjectIdOfTheTeacher = await db.SubjectTeacherMapped.Where(
+                st => st.TeacherId == id).Select(st=>st.SubjectId).ToListAsync();
+            var allSubjectOfTheTeacher = await db.Subject.Where(
+                sb=> subjectIdOfTheTeacher.Contains(sb.id)).ToListAsync();
 
             return allSubjectOfTheTeacher;
         }
@@ -89,7 +90,7 @@ namespace University_Information_System.Services.ServiceClasses
         }
 
 
-        public async Task<Teacher> GetTeacherDetailsById(int id)
+        public async Task<ApplicationUser> GetTeacherDetailsById(string id)
         {
             var teacher = await GetTeacherById(id);
             if (teacher == null) return teacher;
@@ -99,20 +100,22 @@ namespace University_Information_System.Services.ServiceClasses
           
             foreach (var subject in teacher.Subjects)
             {
-                teacher.Depertments.AddRange(await subjectService.GetDepertmentBySubjectId(subject.id));
+                teacher.Depertments.AddRange(await 
+                    subjectService.GetDepertmentBySubjectId(subject.id));
             }
             var depertmentSet = new HashSet<Depertment>(teacher.Depertments);
             teacher.Depertments = new List<Depertment>(depertmentSet);
 
 
-            teacher.Students = new List<Student>();
+            teacher.Students = new List<ApplicationUser>();
 
             foreach (var subject in teacher.Subjects)
             {
-                teacher.Students.AddRange(await subjectService.GetStudentBySubjectId(subject.id));
+                teacher.Students.AddRange(await
+                    subjectService.GetStudentBySubjectId(subject.id));
             }
-            var studenttSet = new HashSet<Student>(teacher.Students);
-            teacher.Students = new List<Student>(studenttSet);
+            var studenttSet = new HashSet<ApplicationUser>(teacher.Students);
+            teacher.Students = new List<ApplicationUser>(studenttSet);
 
             return teacher;
         }
