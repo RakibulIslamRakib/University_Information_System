@@ -21,13 +21,6 @@ namespace University_Information_System.Models
         [Required(ErrorMessage = "Last Name is required.")]
         public string LastName { get; set; }
 
-        [Display(Name = "About")]
-        [Required(ErrorMessage = "About is required.")]
-        public string About { get; set; }
-
-        [Display(Name = "Date Of Birth ")]
-        [DataType(DataType.DateTime)]
-        public DateTime DateOfBirth { get; set; }
 
 
         [Display(Name = "Password")]

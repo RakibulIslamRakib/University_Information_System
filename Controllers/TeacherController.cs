@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using System.Data;
 using University_Information_System.Models;
 using University_Information_System.Services.ServiceInterfaces;
 
@@ -12,15 +14,19 @@ namespace University_Information_System.Controllers
 
         private readonly ITeacherService teacherService;
         private readonly ISubjectService subjectService;
+        private readonly IAccountService accountService;
 
         #endregion Fields
 
 
         #region ctor
-        public TeacherController(ITeacherService teacherService, ISubjectService subjectService)
+        public TeacherController(ITeacherService teacherService, 
+            IAccountService accountService, ISubjectService subjectService)
         {
             this.teacherService = teacherService;
             this.subjectService = subjectService;
+            this.accountService = accountService;
+       
         }
         #endregion ctor
 
@@ -33,7 +39,7 @@ namespace University_Information_System.Controllers
         public async Task<IActionResult> Teachers(string currentFilter,
                     string searchString, int? pageNumber, int? itemsPerPage)
         {
-            var teachers = await teacherService.getAllTeacher();
+            var teachers = await accountService.GetUsersInRole("Teacher");
 
             if (searchString != null)
             {
@@ -43,6 +49,10 @@ namespace University_Information_System.Controllers
             {
                 searchString = currentFilter;
             }
+            var userRoles = await accountService.GetRoleOfCurrentUser();
+            ViewBag.isAdmin = userRoles.Contains("Admin");
+            ViewBag.hasAuth = userRoles.Contains("Admin") || userRoles.Contains("Student")
+                || userRoles.Contains("Teacher");
             int pageSize = itemsPerPage ?? 5;
             ViewData["ItemsPerPage"] = pageSize;
             ViewData["CurrentFilter"] = searchString;
@@ -51,48 +61,33 @@ namespace University_Information_System.Controllers
             if (!String.IsNullOrEmpty(searchString))
             {
                 teachers = teachers.Where(tr => tr.FirstName.ToLower().Contains(searchString)
-                || tr.LastName.ToLower().Contains(searchString) || tr.Descryption.ToLower().Contains(searchString)).ToList();
+                || tr.LastName.ToLower().Contains(searchString) || 
+                tr.Email.ToLower().Contains(searchString)).ToList();
             }
 
  
 
-            return View(PaginatedList<Teacher>.Create(teachers, pageNumber ?? 1, pageSize));
+            return View(PaginatedList<ApplicationUser>.Create(teachers, pageNumber ?? 1, pageSize));
 
         }
         #endregion Teachers
 
+
+        [Authorize(Roles = "Admin")]
         #region AddTeacher
-        public IActionResult AddTeacher()
+        public async Task<IActionResult> AddTeacher(string id)
         {
-            
-            return View();
+            var user = await accountService.GetUserById(id);
+            await teacherService.AddTeacher(user);
+            return RedirectToAction(actionName: "Teachers", controllerName: "Teacher");
         }
-
-        [HttpPost]
-        public async Task<IActionResult> AddTeacher(Teacher teacher)
-        {
-            if (ModelState.IsValid)
-            {
-
-               await teacherService.AddTeacher(teacher);
-
-                return RedirectToAction(actionName: "Teachers", controllerName: "Teacher");
-            }
-            return View(teacher);
-        }
-
         #endregion AddTeacher
 
-        #region DeleteTeacher
-        public async Task<IActionResult> DeleteTeacher(int id)
-        {
-            var teacher = await teacherService.GetTeacherById(id);
-            if(teacher == null)return View("Error");    
-            return View(teacher);
-        }
 
-        [HttpPost]
-        public async Task<IActionResult> DeleteTeacher(Teacher teacher)
+        [Authorize(Roles = "Admin")]
+        #region DeleteTeacher
+
+        public async Task<IActionResult> DeleteTeacher(ApplicationUser teacher)
         {
             await teacherService.DeleteTeacher(teacher);
             
@@ -100,8 +95,10 @@ namespace University_Information_System.Controllers
         }
         #endregion DeleteTeacher
 
+
+        [Authorize(Roles = "Admin,Teacher")]
         #region  UpdateTeacher
-        public async Task<IActionResult> UpdateTeacher(int id)
+        public async Task<IActionResult> UpdateTeacher(string id)
         {
 
             var teacher = await teacherService.GetTeacherById(id);
@@ -110,22 +107,24 @@ namespace University_Information_System.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> UpdateTeacher(Teacher teacher)
+        public async Task<IActionResult> UpdateTeacher(ApplicationUser user)
         {
             if (ModelState.IsValid)
             {
 
-               await teacherService.UpdateTeacher(teacher);
+               await accountService.UpdateUser(user);
 
                 return RedirectToAction(actionName: "Teachers", controllerName: "Teacher");
             }
 
-            return View(teacher);
+            return View(user);
         }
         #endregion  UpdateTeacher
 
+
+        [Authorize(Roles = "Admin,Teacher,Student")]
         #region  DetailsTeacher
-        public async Task<IActionResult> DetailsTeacher(int id, string currentFilter,
+        public async Task<IActionResult> DetailsTeacher(string id, string currentFilter,
                     string searchString, int? pageSize, int? pageIndex, string atributeType = "Subjects")
 
         {
@@ -139,6 +138,12 @@ namespace University_Information_System.Controllers
             {
                 searchString = currentFilter;
             }
+
+            var userRoles = await accountService.GetRoleOfCurrentUser();
+            ViewBag.isTeacher = userRoles.Contains("Teacher");
+            var currentUser = await accountService.GetCurrentUser();
+
+            ViewBag.CurrentUserId = currentUser.Id;
 
             teacher.PageSize = pageSize ?? 5;
             teacher.SearchString = searchString;
@@ -161,7 +166,8 @@ namespace University_Information_System.Controllers
                 }
 
                 teacher.TotalPages = (int)Math.Ceiling(students.Count / (double) teacher.PageSize);
-                var items = students.Skip((teacher.PageIndex - 1) * teacher.PageSize).Take(teacher.PageSize).ToList();
+                var items = students.Skip((teacher.PageIndex - 1) *
+                    teacher.PageSize).Take(teacher.PageSize).ToList();
                 teacher.Students = items;
                 teacher.Pages = teacher.GetPages(students.Count, teacher.PageSize);
                 teacher.Subjects = new List<Subject>();
@@ -181,10 +187,11 @@ namespace University_Information_System.Controllers
                 }
 
                 teacher.TotalPages = (int)Math.Ceiling(subjects.Count / (double)teacher.PageSize);
-                var items = subjects.Skip((teacher.PageIndex - 1) * teacher.PageSize).Take(teacher.PageSize).ToList();
+                var items = subjects.Skip((teacher.PageIndex - 1) *
+                    teacher.PageSize).Take(teacher.PageSize).ToList();
                 teacher.Subjects = items;
                 teacher.Pages = teacher.GetPages(subjects.Count, teacher.PageSize);
-                teacher.Students = new List<Student>();
+                teacher.Students = new List<ApplicationUser>();
                 teacher.Depertments = new List<Depertment>();
             }
 
@@ -194,18 +201,17 @@ namespace University_Information_System.Controllers
 
                 if (!String.IsNullOrEmpty(searchString))
                 {
-                    teachers = teachers.Where(tr => tr.FirstName.ToLower().Contains(searchString)
-                    || tr.LastName.ToLower().Contains(searchString)).ToList();
+                    departments = departments.Where(tr => tr.DeptName.ToLower().Contains(searchString)
+                    || tr.Descryption.ToLower().Contains(searchString)).ToList();
                 }
-                teacher.TotalPages = (int)Math.Ceiling(teachers.Count / (double)teacher.PageSize);
-                var items = teachers.Skip((depertment.PageIndex - 1) * teacher.PageSize).Take(teacher.PageSize).ToList();
-                teacher.Pages = teacher.GetPages(teachers.Count, teacher.PageSize);
-                teacher.Teachers = items;
+                teacher.TotalPages = (int)Math.Ceiling(departments.Count / (double)teacher.PageSize);
+                var items = departments.Skip((teacher.PageIndex - 1) * 
+                    teacher.PageSize).Take(teacher.PageSize).ToList();
+                teacher.Pages = teacher.GetPages(departments.Count, teacher.PageSize);
+                teacher.Depertments = items;
                 teacher.Subjects = new List<Subject>();
-                teacher.Students = new List<Student>();
+                teacher.Students = new List<ApplicationUser>();
             }
-
-            return View(depertment);
 
             return View(teacher);
         }
@@ -213,8 +219,9 @@ namespace University_Information_System.Controllers
         #endregion  DetailsTeacher
 
 
+        [Authorize(Roles = "Admin,Teacher")]
         #region  AddSubjectToTheTeacher
-        public async Task<IActionResult> AddSubjectToTheTeacher(int id)
+        public async Task<IActionResult> AddSubjectToTheTeacher(string id)
         {
 
             TempData["teacherId"] = id;
@@ -222,14 +229,15 @@ namespace University_Information_System.Controllers
 
             var subjectOftheTeacher = await teacherService.GetSubjectByTeacherId(id);
 
-            var subjectOutOftheTeacher =  subjects.Except(subjectOftheTeacher);
+            var subjectOutOftheTeacher = subjects.Except(subjectOftheTeacher).ToList();
+
 
             return View(subjectOutOftheTeacher);
         }
        
 
         [HttpPost]
-        public async Task<IActionResult> AddSubjectToTheTeacher(int id, int subjectId)
+        public async Task<IActionResult> AddSubjectToTheTeacher(string id, int subjectId)
         {
             var subTeacher = new SubjectTeacherMapped
             {
@@ -243,11 +251,13 @@ namespace University_Information_System.Controllers
         }
         #endregion  AddSubjectToTheTeacher
 
+        [Authorize(Roles = "Admin,Teacher")]
         #region  DeleteSubjectFromTeacher
-        public async Task<IActionResult> DeleteSubjectFromTeacher(int subjectId, int TeacherId)
+        public async Task<IActionResult> DeleteSubjectFromTeacher(int subjectId, string TeacherId)
         {
             await teacherService.DeleteSubTeacherMapped(subjectId, TeacherId);
-            return RedirectToAction(actionName: "DetailsTeacher", controllerName: "Teacher", new {@id = TeacherId});
+            return RedirectToAction(actionName: "DetailsTeacher", controllerName:
+                "Teacher", new {@id = TeacherId});
         }
 
         #endregion DeleteSubjectFromTeacher

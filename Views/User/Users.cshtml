@@ -3,36 +3,16 @@
 <link rel="stylesheet" href="~/css/projects.css" />
 
 <div class="mainDiv">
-@{
-    if (TempData["success"] != null)
-    {
-            <h3 class="headline" 
-            style="align-content:center;
-            background-color: #04AA6D;
-            color: white;
-            padding: 12px 20px;
-            border: none;
-            border-radius: 4px;
-            text-align:center; height:30px;">
-            Message :   @TempData["success"]
-            </h3>
-    }
-}
+
 
     <div class="grid-container">
-    <form asp-action="Teachers" method="get" class="grid-container">
+    <form asp-action="Users" method="get" class="grid-container">
     <div class="form-actions no-color">
         <p>
                 <input type="text" placeholder="search subject..." class="searchBar" 
                 name="SearchString" value="@ViewData["CurrentFilter"]" />
             <input type="submit" value="Search" class="btn btn-default" /> 
-            
-            @if (ViewBag.isAdmin == true)
-                                {
-                <input type="button" class="btn"
-                           value="Add New Teacher"
-                               onclick="location.href='@Url.Action("Users", "User", new{fromTeacher = true})'" />
-                                }
+               
         </p>
     </div>
 </form>
@@ -41,54 +21,64 @@
 </div>
 
     <div class="gridRow">
-        <h3 style="text-align:center; padding-top:10px;">Teacher's List' : </h3>
-        <form asp-action="Teachers" method="get">
+        <h3 style="text-align:center; padding-top:10px;">User's List' : </h3>
+        <form asp-action="Users" method="get">
             <div class="form-actions no-color">
 
                 <label for="PageNumber"> Item per Page: </label>
-                <input name="itemsPerPage" class="searchBar" style="width:40px" type"number" value="@ViewData["ItemsPerPage"]" />
+                <input name="itemsPerPage" class="searchBar" style="width:40px" type"number" 
+                value="@ViewData["ItemsPerPage"]" />
                 <input type="submit" value="Show" class="btn" />
             </div>
         </form>
 
     </div>
 
-<div class="cards">
+<div >
     @{
+     if (Model.Count == 0)
 
-
-        foreach (var teacher in Model)
         {
-
-                    <div class="card">
-                        <div class="card__header">
-                            <h4 class="card__title">Name : @(teacher.FirstName) @(teacher.LastName) </h4>
-                        </div>
-                           
-                        <div class="card__body">
-                                <p style="font-size:14px">
-                        <p>Email: @(teacher.Email)</p>
-                                   
-                        About : demo about added latter<br>
-                                   
-                        <div class="card__footer">
-                            <div class="button-group">
-                                    @if (ViewBag.hasAuth){
-                                            <a class="detailsBtn"
-                    asp-conztroller="Teacher" asp-action="DetailsTeacher" asp-route-id="@teacher.Id"> See details..</a>
-                                    }
-                                        @if (ViewBag.isAdmin == true){
-                                            <a class ="updateBtn"
-                            asp-conztroller="Teacher" asp-action="UpdateTeacher" asp-route-id="@teacher.Id"> Update</a>
-                                            <a class="deleteBtn"
-                    asp-conztroller="Teacher" asp-action="DeleteTeacher" asp-route-id="@teacher.Id"> Delete</a>
-                        }
-                        </div>
-                        </div>
-                    </div>
-                    </div>
+                <div class="grid-containerList">
+                <h3>User List Is Empty...</h3>
+                </div>
         }
 
+        else{
+
+        foreach (var user in Model)
+        {
+
+                                    <div class="grid-containerList">
+                                <p>
+                                    Name :  
+                                         @(user.FirstName) @(user.LastName)
+
+                                </p>
+
+                                @{
+                        if(ViewBag.deptId!=0){
+                                            <a class="updateBtn"
+                             asp-controller="Student" asp-action="AddStudent"asp-route-userId="@user.Id" 
+                             asp-route-deptId="@ViewBag.deptId"> Add </a>                        
+                    }
+
+                        else if(ViewBag.fromTeacher!=false){
+                   
+                                                                <a class ="updateBtn"
+                            asp-controller="Teacher" asp-action="AddTeacher" asp-route-id="@user.Id"> Add </a>
+                                             
+                        }
+
+                        else{
+                                    <a href="#"> Delete</a>
+                        }
+                                }
+                                    </div>
+                
+        }
+
+}
     }
 </div>
 

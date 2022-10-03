@@ -10,8 +10,8 @@ namespace University_Information_System.Services.ServiceInterfaces
         public Task UpdateSubject(Subject subject);
         public Task DeleteSubject(Subject subject);
         public Task<Subject> GetSubjectDetailsById(int id);
-        public Task<List<Teacher>> GetTeacherBySubjectId(int id);
+        public Task<List<ApplicationUser>> GetTeacherBySubjectId(int id);
         public Task<List<Depertment>> GetDepertmentBySubjectId(int id);
-        public Task<List<Student>> GetStudentBySubjectId(int id);
+        public Task<List<ApplicationUser>> GetStudentBySubjectId(int id);
     }
 }

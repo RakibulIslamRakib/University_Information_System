@@ -1,4 +1,5 @@
-﻿using System.Security.Claims;
+﻿
+using System.Security.Claims;
 using University_Information_System.Services.ServiceInterfaces;
 
 namespace University_Information_System.Services.ServiceClasses
@@ -13,13 +14,14 @@ namespace University_Information_System.Services.ServiceClasses
             _httpContext = httpContext;
         }
 
-
-
         public string GetUserId()
         {
 
             return _httpContext.HttpContext.User?.FindFirstValue(ClaimTypes.NameIdentifier);
         }
+
+
+
         public bool IsAuthenticated()
         {
             return _httpContext.HttpContext.User.Identity.IsAuthenticated;

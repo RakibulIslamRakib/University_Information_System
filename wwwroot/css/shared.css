@@ -1,4 +1,5 @@
 ﻿﻿
+<link href="https://fonts.googleapis.com/css?family=Arvo&display=swap" rel="stylesheet" >
 
 body {
     min-height: 100%;
@@ -8,11 +9,17 @@ body {
 }
 
 
+body {
+    margin: 0;
+    font-family: 'tahoma'
+}
+
+
+
 .menu_bar {
     list-style-type: none;
     margin: 0;
     padding-left: 16%;
-    overflow: hidden;
     background-color: #404d61;
     position: fixed;
     top: 0;
@@ -25,6 +32,7 @@ body {
     .menu_bar {
         padding-left: 5%;
     }
+   
     }
 
 .menu_bar>li {
@@ -42,12 +50,39 @@ body {
     background-color: #111;
 }
 
+.menu_bar> ul li:hover ul {
+    display: block;
+}
 
+.dropdown{
+    display:inline;
+    position:relative;
+}
+
+.dropdown-content {
+    position: absolute;
+    top: 40px;
+    display: none;
+    list-style-type: none;
+    background-color: #404d61;
+    text-align:left;
+    right:0px;
+    min-width:100px;
+}
+
+    .dropdown-content li{
+        display:block;
+    }
+
+
+    .dropdown:hover .dropdown-content {
+        display: block;
+    }
 
 
 
 .footer {
-    left:0;
+    left: 0;
     margin: 0;
     padding: 0;
     overflow: hidden;
@@ -55,7 +90,7 @@ body {
     position: fixed;
     bottom: 0;
     width: 100%;
-    text-align:center;
+    text-align: center;
 }
 
     .footer > p {
@@ -179,3 +214,4 @@ body {
     margin-bottom: 5px;
     border-bottom: 2px solid black;
 }
+

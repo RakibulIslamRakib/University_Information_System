@@ -20,17 +20,17 @@ namespace University_Information_System.Models
 
 
         [NotMapped]
-        public  List<Teacher>? Teachers { get; set; }
+        public  List<ApplicationUser>? Teachers { get; set; }
         [NotMapped]
         public  List<Subject>? Subjects { get; set; }
         [NotMapped]
-        public  List<Student>? Students { get; set; }
+        public  List<ApplicationUser>? Students { get; set; }
 
 
         public DateTime CreatedDate { get; set; }
         public DateTime? UpdatedDate { get; set; }
-        public int CreatedBy { get; set; }
-        public int? UpdatedBy { get; set; }
+        public string CreatedBy { get; set; }
+        public string? UpdatedBy { get; set; }
 
   
     }

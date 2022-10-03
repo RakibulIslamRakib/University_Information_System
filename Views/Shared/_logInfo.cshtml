@@ -1,14 +1,20 @@
 ﻿
 @inject Microsoft.AspNetCore.Identity.SignInManager<ApplicationUser> _signInManager
 
- @if(_signInManager.IsSignedIn(User)){ 
-         <li id="signup"> <a onclick="navAction('signup')" href="#" >@User.FindFirst("UserFirstName").Value</a></li>
-         <li id="Login"> <a onclick="navAction('teachers')" asp-controller="Account" asp-action="Logout">Logout</a></li>
-    <li id="Login"> <a onclick="navAction('teachers')" asp-controller="Account" asp-action="ChangePassword">Change Password</a></li>
-
+ @if(_signInManager.IsSignedIn(User)){
+    <li class="dropdown">
+        <a onclick="navAction('signup')" href="#">@User.FindFirst("UserFirstName").Value</a>
+        <ul class="dropdown-content" >
+            <li id="signup"> <a onclick="navAction('signup')" href="#">@User.FindFirst("UserFirstName").Value</a></li>
+            <li id="Login"> <a onclick="navAction('teachers')" asp-controller="Account" asp-action="Logout">Logout</a></li>
+            <li id="Login"> <a onclick="navAction('teachers')" asp-controller="Account" asp-action="ChangePassword">Change Password</a></li>
+        </ul>
+    </li>
  }  
  else{
-          <li id="signup"> <a onclick="navAction('signup')" asp-controller="Account" asp-route-returnUrl = "@Context.Request.Path" asp-action="Login" >Login</a></li>
-         <li id="Login"> <a onclick="navAction('teachers')" asp-controller="Account" asp-action="SignUp">Sign Up</a></li>
+          <li id="signup"> <a onclick="navAction('signup')" asp-controller="Account" 
+              asp-route-returnUrl = "@Context.Request.Path" asp-action="Login" >Login</a></li>
+         <li id="Login"> <a onclick="navAction('teachers')" asp-controller="Account" 
+             asp-action="SignUp">Sign Up</a></li>
 
  }

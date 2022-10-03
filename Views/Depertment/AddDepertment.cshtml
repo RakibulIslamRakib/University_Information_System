@@ -6,8 +6,10 @@
 <div class="container addIteme">
     <h3 style="text-align:center">Add new Depertment</h3>
     <form asp-controller = "Depertment" asp-action="AddDepertment">
+            <input type="hidden" asp-for="CreatedBy" value="@ViewData["createdBy"]">
+
         <label for="fname">Depertment Name</label>
-        <input type="text" id="fname" asp-for="DeptName" placeholder="depertment name..">
+        <input type="text"  asp-for="DeptName" placeholder="depertment name..">
             <span class="errorMessage" asp-validation-for="DeptName"></span>
  
         <label for="subject">Descryption</label>

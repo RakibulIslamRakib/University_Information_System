@@ -1,4 +1,4 @@
-﻿@model University_Information_System.Models.Student
+﻿@model University_Information_System.Models.ApplicationUser
 
 
 <link rel="stylesheet" href="~/css/addItems.css" />
@@ -15,16 +15,7 @@
                 <input type="text" id="fname" asp-for="LastName" placeholder="last name..">
             <span class="errorMessage" asp-validation-for="LastName"></span>
 
-                <label for="fname">Registration No </label>
-                <input type="text" id="fname" asp-for="Reg" placeholder="Registration..">
-            <span class="errorMessage" asp-validation-for="Reg"></span>
-
-            <label asp-for="DepertmentId"> Department</label>
-            <select asp-for="DepertmentId" asp-items="@(new SelectList( ViewBag.depertments , "id", "DeptName"))">
-                <option class="selectItem">--Select--</option>
-             </select>
-            <span class="errorMessage" asp-validation-for="DepertmentId"></span>
-
+         
 
             <input type="submit" value="Submit">
             </form>

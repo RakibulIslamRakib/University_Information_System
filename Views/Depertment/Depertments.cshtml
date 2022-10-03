@@ -9,13 +9,13 @@
     if (TempData["success"] != null)
     {
     <h3 class="headline" style="align-content:center; 
-                        background-color: #04AA6D;
-                        color: white;
-                        padding: 12px 20px;
-                        border: none;
-                        border-radius: 4px;
-                        text-align:center; height:30px;">
-                        Message :   @TempData["success"]
+                                background-color: #04AA6D;
+                                color: white;
+                                padding: 12px 20px;
+                                border: none;
+                                border-radius: 4px;
+                                text-align:center; height:30px;">
+                                Message :   @TempData["success"]
     </h3>
     }
 }
@@ -29,9 +29,14 @@
                     <input type="text" name="SearchString" placeholder="search depertment..." 
                     class="searchBar" value="@ViewData["CurrentFilter"]" />
                     <input type="submit"  value="Search" class="btn" />
-                <input type="button" class="btn"
-                       value="Add Department"
-                       onclick="location.href='@Url.Action("AddDepertment", "Depertment")'" />
+                 @{
+            if (ViewBag.isAdmin == true)
+            {      
+               
+                            <input type="button" class="btn"
+                               value="Add Department"
+                               onclick="location.href='@Url.Action("AddDepertment", "Depertment")'" />
+            }}
         </p>
     </div>
 </form>
@@ -55,35 +60,42 @@
         @{
             foreach (var dept in Model)
             {
-                                <div class="card">
-                                    <div class="card__header">
-                                    <h4 class="card__title"> @(dept.DeptName) </h4>
+                                        <div class="card">
+                                            <div class="card__header">
+                                            <h4 class="card__title"> @(dept.DeptName) </h4>
+                                            </div>
+                                    
+                                    <div class="card__body">
+                                            <span class="tag">Created : @(dept.CreatedDate)</span>
+                                            <p>Descryption : <br>
+                                                @(dept.Descryption.Count() > 40 ? dept.Descryption.Substring(40) + "...." : dept.Descryption)
+                                            </p>
                                     </div>
-                            
-                            <div class="card__body">
-                                    <span class="tag">Created : @(dept.CreatedDate)</span>
-                                    <p>Descryption : <br>
-                                        @(dept.Descryption.Count() > 40 ? dept.Descryption.Substring(40) + "...." : dept.Descryption)
-                                    </p>
-                            </div>
-                            <div class="card__footer">
-                                <div class="button-group">
+                                    <div class="card__footer">
+                                        <div class="button-group">
 
 
-                                        <a class="detailsBtn" asp-action="DetailsDepertment"
+                            @if (ViewBag.hasAuth)
+                            {
+                                                <a class="detailsBtn" asp-action="DetailsDepertment"
                        asp-route-id=@dept.id> See details..</a>
+                            }
 
-                                        <a class="updateBtn"
+                                @{
+                                if (ViewBag.isAdmin == true)
+                                {
+
+                                            <a class="updateBtn"
                        asp-conztroller="Depertment" asp-action="UpdateDepertment"
                        asp-route-id=@dept.id> Update</a>
 
-                                        <a class="deleteBtn"
+                                                    <a class="deleteBtn"
                        asp-conztroller="Depertment" asp-action="DeleteDepertment"
                        asp-route-id=@dept.id> Delete</a>
-
-                                </div>
-                            </div>
-                            </div>
+                                }}
+                                        </div>
+                                    </div>
+                                    </div>
             }
         }
     </div>

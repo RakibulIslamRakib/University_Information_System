@@ -15,19 +15,22 @@
                     <a asp-action="DetailsDepertment" asp-route-atributeType="Subjects"
                asp-route-pageIndex="@(Model.PageIndex)"
                asp-route-pageSize="@(Model.PageSize)"
-               asp-route-currentFilter="@(Model.SearchString)" type="button" onclick="clickAction('subject')">Subjects</a>
+               asp-route-currentFilter="@(Model.SearchString)" type="button" 
+               onclick="clickAction('subject')">Subjects</a>
                 </li>
                 <li id="student">
                 <a asp-action="DetailsDepertment" asp-route-atributeType="Students"
                asp-route-pageIndex="@(Model.PageIndex)"
                asp-route-pageSize="@(Model.PageSize)"
-               asp-route-currentFilter="@(Model.SearchString)" type="button" onclick="clickAction('student')">Students</a>
+               asp-route-currentFilter="@(Model.SearchString)" type="button" 
+               onclick="clickAction('student')">Students</a>
                 </li>
                 <li id="teacher">
                 <a asp-action="DetailsDepertment" asp-route-atributeType="Teachers"
                asp-route-pageIndex="@(Model.PageIndex)"
                asp-route-pageSize="@(Model.PageSize)"
-               asp-route-currentFilter="@(Model.SearchString)" type="button" onclick="clickAction('teacher')">Teachers</a>
+               asp-route-currentFilter="@(Model.SearchString)" type="button" 
+               onclick="clickAction('teacher')">Teachers</a>
                 </li>
             </ul>
   @{
@@ -38,11 +41,13 @@
 
        
             <div class="detailsUl" >
-                <h3 style="margin-top:10px;">@(ViewData["atributeType"]) of @(Model.DeptName) Department:</h3>
+                <h3 style="margin-top:10px;">@(ViewData["atributeType"]) of
+                @(Model.DeptName) Department:</h3>
                  <div class="gridRow">
 
 
-                <form asp-action="DetailsDepertment" asp-route-atributeType=@(ViewData["atributeType"]) method="get">
+                <form asp-action="DetailsDepertment" asp-route-atributeType=@(ViewData["atributeType"])
+                method="get">
                         <div class="form-actions no-color">
                         <input type="hidden" name="atributeType" value=@(ViewData["atributeType"]) />
                             <label for="itemsPerPage">Items Per Page : </label>
@@ -50,10 +55,23 @@
                                value="@(Model.PageSize)" />
 
                             <input type="submit" value="Show" class="btn" />
-                        @if (ViewData["atributeType"].ToString() == "Subjects")
+                        @if (ViewBag.isAdmin == true)
                         {
-                            <a asp-controller="Depertment" class="btn" asp-action="AddSubjectToTheDepertment"
-                       asp-route-id=@Model.id> Add Subject </a>}
+                            @if (ViewData["atributeType"].ToString() == "Subjects")
+                            {
+                                <a asp-controller="Depertment" class="btn" asp-action="AddSubjectToTheDepertment"
+                       asp-route-id=@Model.id> Add Subject </a>
+                            }
+
+                            @if (ViewData["atributeType"].ToString() == "Students")
+                            {
+
+                                <input type="button" class="btn"
+                                   value="Add Student"
+                               onclick="location.href='@Url.Action("Users", "User",new { @deptId = Model.id })'" />
+                            }
+                        }
+
                         </div>
                     </form>
                         <form asp-action="DetailsDepertment" method="get" class="grid-container">
@@ -101,10 +119,12 @@
                                 @(subject.SubjectName)
                             </a>
                         </p>
+                                @if(ViewBag.isAdmin == true){
                         <input type="button" class="item2 removeBtn"
                            value="Delete"
                            onclick="location.href='@Url.Action("DeleteSubjectFromDept", "Depertment",
 new { @subjectId = subject.id, @deptId = Model.id})'" />
+                                }
 
                     </div>
             }
@@ -148,6 +168,7 @@ new { @subjectId = subject.id, @deptId = Model.id})'" />
                 }
 
                 else{
+
                     @if (Model.Students.Count == 0)
                     {
                         <div class="grid-containerList">
@@ -167,7 +188,7 @@ new { @subjectId = subject.id, @deptId = Model.id})'" />
                                 <p>
                                     Name :
                                     <a class="item1" asp-controller="Student" asp-action="DetailsStudent"
-                   asp-route-id=@student.id>
+                   asp-route-id=@student.Id>
                                         @(
                                         student.FirstName
                                         ) @(
@@ -175,10 +196,12 @@ new { @subjectId = subject.id, @deptId = Model.id})'" />
                                           )
                                     </a>
                                 </p>
+                                @if(ViewBag.isAdmin == true){
                                 <input type="button" class="item2 removeBtn"
                            value="Delete"
                            onclick="location.href='@Url.Action("DeleteStudentFromDept", "Depertment",
-new { @studentId = student.id, @deptId = Model.id})'" />
+new { @studentId = student.Id, @deptId = Model.id})'" />
+                                }
                             </div>
                         }
 

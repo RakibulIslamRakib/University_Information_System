@@ -13,13 +13,13 @@ namespace University_Information_System.Services.ServiceInterfaces
 
         public Task<Depertment> GetDepertmentDetailsById(int id);
 
-        public Task<List<Student>> GetStudentByDepertmentId(int id);
+        public Task<List<ApplicationUser>> GetStudentByDepertmentId(int id);
         public Task<List<Subject>> GetSubjectByDepertmentId(int id);
         public Task<List<Subject>> SubjectOutOfDept(int depertmentId);
-        public Task<List<Teacher>> GetTeacherByDepertmentId(int id);
+        public Task<List<ApplicationUser>> GetTeacherByDepertmentId(int id);
 
         public Task AddSubjectDapertmentMapped(SubjectDepartmentMapped subjectDapertmentMapped);
         public Task DeleteSubjectFromSubjectDepartmentMapped(int subjectId, int deptId);
-        public Task DeleteStudentFromDept(int studentId);
+        public Task DeleteStudentFromDept(string studentId);
     }
 }

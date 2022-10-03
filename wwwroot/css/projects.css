@@ -16,161 +16,189 @@
 }
 
 
-
-
-[aria-current="page"] {
-    pointer-events: none;
-    cursor: default;
-    text-decoration: none;
-    color: black;
-}
-
-
-@media (max-width: 700px) {
-    .mainDiv {
-        padding-top: 100px;
-        padding-left: 10px;
-        padding-right: 10px;
-        margin-left: 5%;
-        margin-right: 5%;
-    }
-
-    .paginationDiv .gridRow {
-        padding-left: 1%;
-        padding-right: 1%;
-        margin-bottom: 20px;
-    }
-}
-
-
-
-
-
-
-.item-header {
-    display: flex;
-    justify-content: space-between;
-}
-
-
-*,
-*::before,
-*::after {
-    box-sizing: border-box;
-    padding: 0;
-    margin: 0;
-}
-
-.card__title{
-    padding:5px;
-}
-
-
-.cards {
-    padding: 40px;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    margin-block: 2rem;
-    gap: 2rem;
-    background-color: #f5f8f8;
-    width: 100%;
-}
-
-img {
-    max-width: 100%;
-    display: block;
-    object-fit: cover;
-}
-
-.card {
-    display: flex;
-    flex-direction: column;
-    width: clamp(20rem, calc(20rem + 2vw), 22rem);
-    box-shadow: 0 .1rem 1rem rgba(0, 0, 0, 0.1);
-    border-radius: 1em;
-    background: #ffffff;
-    box-shadow: 0 6px 16px 0rgba(0,0,0,.2);
-    overflow: hidden;
-    box-sizing: border-box;
-    padding: 30px;
-    height: 260px;
-    justify-content: space-between;
-    align-items: flex-start;
-    background-color: #ebf4fb;
-}
-
-
-
-
-.card__body {
-    padding: 1rem;
-    display: flex;
-    flex-direction: column;
-    gap: .5rem;
-}
-
-
-.tag {
-    align-self: flex-start;
-    padding: .25em .75em;
-    border-radius: 1em;
-    font-size: .75rem;
-}
-
-    .tag + .tag {
-        margin-left: .5em;
+    [aria-current="page"] {
+        pointer-events: none;
+        cursor: default;
+        text-decoration: none;
+        color: black;
     }
 
 
-.card__body h4 {
-    font-size: 1.5rem;
-    text-transform: capitalize;
-}
+    @media (max-width: 950px) {
+        .mainDiv {
+            padding-top: 100px;
+            padding-left: 10px;
+            padding-right: 10px;
+            margin-left: 5%;
+            margin-right: 5%;
+        }
 
-.card__footer {
-    display: flex;
-    padding: 1rem;
-    margin-top: auto;
-}
+        .paginationDiv .gridRow {
+            padding-left: 1%;
+            padding-right: 1%;
+            margin-bottom: 20px;
+        }
+    }
 
-.button-group {
-    display: flex;
-    gap: .5rem;
-}
 
-.deleteBtn {
-    font-weight:500;
-    text-decoration: underline;
-    background: none;
-    color: red;
-    border: none;
-    padding: 0;
-    font: inherit;
-    cursor: pointer;
-    outline: inherit;
-}
-.updateBtn {
-    font-weight: 500;
-    text-decoration: underline;
-    background: none;
-    color: yellowgreen;
-    border: none;
-    padding: 0;
-    font: inherit;
-    cursor: pointer;
-    outline: inherit;
-}
 
-.detailsBtn {
-    font-weight: 500;
-    text-decoration: underline;
-    background: none;
-    color: green;
-    border: none;
-    padding: 0;
-    font: inherit;
-    cursor: pointer;
-    outline: inherit;
-}
 
+
+
+    .item-header {
+        display: flex;
+        justify-content: space-between;
+    }
+
+
+    *,
+    *::before,
+    *::after {
+        box-sizing: border-box;
+        padding: 0;
+        margin: 0;
+    }
+
+    .card__title {
+        padding: 5px;
+    }
+
+
+    .cards {
+        padding: 40px;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        margin-block: 2rem;
+        gap: 2rem;
+        background-color: #f5f8f8;
+        width: 100%;
+    }
+
+    img {
+        max-width: 100%;
+        display: block;
+        object-fit: cover;
+    }
+
+    .card {
+        display: flex;
+        flex-direction: column;
+        width: clamp(20rem, calc(20rem + 2vw), 22rem);
+        box-shadow: 0 .1rem 1rem rgba(0, 0, 0, 0.1);
+        border-radius: 1em;
+        background: #ffffff;
+        box-shadow: 0 6px 16px 0rgba(0,0,0,.2);
+        overflow: hidden;
+        box-sizing: border-box;
+        padding: 30px;
+        height: 260px;
+        justify-content: space-between;
+        align-items: flex-start;
+        background-color: #ebf4fb;
+    }
+
+
+
+
+    .card__body {
+        padding: 1rem;
+        display: flex;
+        flex-direction: column;
+        gap: .5rem;
+    }
+
+
+    .tag {
+        align-self: flex-start;
+        padding: .25em .75em;
+        border-radius: 1em;
+        font-size: .75rem;
+    }
+
+        .tag + .tag {
+            margin-left: .5em;
+        }
+
+
+    .card__body h4 {
+        font-size: 1.5rem;
+        text-transform: capitalize;
+    }
+
+    .card__footer {
+        display: flex;
+        padding: 1rem;
+        margin-top: auto;
+    }
+
+    .button-group {
+        display: flex;
+        gap: .5rem;
+    }
+
+    .deleteBtn {
+        font-weight: 300;
+        text-decoration: underline;
+        background: none;
+        color: red;
+        border: none;
+        padding: 0;
+        font: inherit;
+        cursor: pointer;
+        outline: inherit;
+    }
+
+    .updateBtn {
+        font-weight: 300;
+        text-decoration: underline;
+        background: none;
+        color: yellowgreen;
+        border: none;
+        padding: 0;
+        font: inherit;
+        cursor: pointer;
+        outline: inherit;
+    }
+
+    .detailsBtn {
+        font-weight: 300;
+        text-decoration: underline;
+        background: none;
+        color: green;
+        border: none;
+        padding: 0;
+        font: inherit;
+        cursor: pointer;
+        outline: inherit;
+    }
+
+
+    .grid-containerList {
+        cursor: pointer;
+        position: relative;
+        display: grid;
+        grid-template-columns: 5fr 2fr 2fr;
+        margin-bottom: 2px;
+        margin-top: 3px;
+        text-align: center;
+        padding: 10px;
+        background-color: #ebf4fb;
+        height: 45px;
+    }
+
+        .grid-containerList > a {
+            font-size: 20px;
+            color: black;
+        }
+
+    .removeBtn {
+        text-decoration: underline;
+        background: none;
+        color: red;
+        border: none;
+        padding: 0;
+        font: inherit;
+        cursor: pointer;
+        outline: inherit;
+    }

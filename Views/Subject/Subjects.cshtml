@@ -6,14 +6,14 @@
     if (TempData["success"] != null)
     {
     <h3 class="headline" 
-    style="align-content:center;
-    background-color: #04AA6D;
-    color: white;
-    padding: 12px 20px;
-    border: none;
-    border-radius: 4px;
-    text-align:center; height:30px;">
-    Message :   @TempData["success"]
+            style="align-content:center;
+            background-color: #04AA6D;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            text-align:center; height:30px;">
+            Message :   @TempData["success"]
     </h3>
     }
 }
@@ -28,9 +28,15 @@
                     <input type="text" name="SearchString" placeholder="search subject..."
                     class="searchBar" value="@ViewData["CurrentFilter"]" />
                     <input type="submit" value="Search" class="btn" />
-                    <input class="btn" type="button"
-                           value="Add New Subject"
-                           onclick="location.href='@Url.Action("AddSubject", "Subject")'" />
+
+                     @{
+            if (ViewBag.isAdmin == true)
+            {      
+               
+                            <input class="btn" type="button"
+                                   value="Add New Subject"
+                                   onclick="location.href='@Url.Action("AddSubject", "Subject")'" />
+            }}
         </p>
     </div>
 </form>
@@ -57,32 +63,39 @@
         foreach (var subject in Model)
         {
 
-            <div class="card">
-                <div class="card__header">
-                    <h4>@(subject.SubjectName) </h4>
-                </div>
-                     
-                <div class="card__body" >
-                    <span class="tag style="font-size:12px">Created : @(subject.CreatedDate)</span>
-                   
+                    <div class="card">
+                        <div class="card__header">
+                            <h4>@(subject.SubjectName) </h4>
+                        </div>
+                             
+                        <div class="card__body" >
+                            <span class="tag style="font-size:12px">Created : @(subject.CreatedDate)</span>
+                           
 
-                        <p style="font-size:14px">
-                            Descryption : <br>
-                            @(subject.Descryption.Count() > 40 ? subject.Descryption.Substring(40) + "...." : subject.Descryption)
-                </div>
+                                <p style="font-size:14px">
+                                    Descryption : <br>
+                                    @(subject.Descryption.Count() > 50 ? subject.Descryption.Substring(50) + "...." : subject.Descryption)
+                        </div>
 
-                <div class="card__footer">
-                    <div class="button-group">
-
-                            <a class="detailsBtn"
+                        <div class="card__footer">
+                            <div class="button-group">
+                            @if (ViewBag.hasAuth)
+                            {
+                                    <a class="detailsBtn"
                     asp-conztroller="Subject" asp-action="DetailsSubject" asp-route-id="@subject.id"> See details..</a>
-                            <a class="updateBtn"
+                            }
+
+                                @if (ViewBag.isAdmin == true)
+                                {
+
+                                            <a class="updateBtn"
                             asp-conztroller="Subject" asp-action="UpdateSubject" asp-route-id="@subject.id"> Update</a>
-                            <a class="deleteBtn"
+                                        <a class="deleteBtn"
                     asp-conztroller="Subject" asp-action="DeleteSubject" asp-route-id="@subject.id"> Delete</a>
+                                }
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
 
         }
 

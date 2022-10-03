@@ -6,6 +6,8 @@
         <a asp-action="Subjects">Go Back </a>
     <h3 style="text-align:center">Edit Project</h3>
     <form asp-controller = "Subject" asp-action="UpdateSubject">
+            <input type="hidden" asp-for="CreatedBy" value="@ViewData["createdBy"]">
+            <input type="hidden" asp-for="CreatedDate" value="@ViewData["createdDate"]">
         <label for="fname">Dept Name</label>
         <input type="text" id="fname" asp-for="SubjectName" placeholder="Your name..">
             <span class="errorMessage" asp-validation-for="SubjectName"></span>
