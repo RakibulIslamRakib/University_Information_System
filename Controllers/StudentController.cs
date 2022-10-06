@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
+using NuGet.DependencyResolver;
 using System.Data;
 using University_Information_System.Models;
 using University_Information_System.Services.ServiceClasses;
@@ -70,8 +71,9 @@ namespace University_Information_System.Controllers
         #endregion Students
 
 
-        [Authorize(Roles = "Admin")]
+
         #region AddStudent
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> AddStudent(string userId, int deptId)
         {
             await studentService.AddStudent(userId, deptId);
@@ -81,9 +83,9 @@ namespace University_Information_System.Controllers
         #endregion AddStudent
 
 
-        [Authorize(Roles = "Admin")]
-        #region DeleteStudent
 
+        #region DeleteStudent
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteStudent(ApplicationUser student)
         {
             await studentService.DeleteStudent(student);
@@ -93,8 +95,9 @@ namespace University_Information_System.Controllers
 
         #endregion DeleteStudent
 
-        [Authorize(Roles = "Admin")]
+
         #region UpdateStudent
+        [Authorize(Roles = "Admin")]
         public async  Task<IActionResult> UpdateStudent(string id)
         {
             var student = await accountService.GetUserById(id);
@@ -116,18 +119,51 @@ namespace University_Information_System.Controllers
                 return View(user);
             }
 
-    #endregion UpdateStudent
+        #endregion UpdateStudent
 
-        [Authorize(Roles = "Admin,Teacher,Student")]
+
         #region DetailsStudent
-         public async Task<IActionResult> DetailsStudent(string id)
+        [Authorize(Roles = "Admin,Teacher,Student")]
+        public async Task<IActionResult> DetailsStudent(string id, string currentFilter,
+                    string searchString, int? pageSize, int? pageIndex)
     {
             var student = await studentService.GetStudentDetailsById(id);
+
+            if (searchString != null)
+            {
+                pageIndex = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
+
 
             var userRoles = await accountService.GetRoleOfCurrentUser();
             var currentUser = await accountService.GetCurrentUser();
             ViewBag.isStudent = userRoles.Contains("Student");                     
             ViewBag.CurrentUserId = currentUser.Id;
+
+            student.PageSize = pageSize ?? 5;
+            student.SearchString = searchString;
+            student.PageIndex = pageIndex ?? 1;
+            searchString = !String.IsNullOrEmpty(searchString) ? searchString.ToLower() : "";
+            var subjects = student.Subjects;
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                subjects = subjects.Where(sb => sb.SubjectName.ToLower().Contains(searchString)
+                || sb.Descryption.ToLower().Contains(searchString)).ToList();
+            }
+
+            student.TotalPages = (int)Math.Ceiling(subjects.Count / (double)student.PageSize);
+            var items = subjects.Skip((student.PageIndex - 1) *
+                student.PageSize).Take(student.PageSize).ToList();
+            student.Subjects = items;
+            student.Pages = student.GetPages(subjects.Count, student.PageSize);
+            student.Students = new List<ApplicationUser>();
+            student.Depertments = new List<Depertment>();
+
 
             return View(student);
     }
@@ -135,8 +171,9 @@ namespace University_Information_System.Controllers
         #endregion DetailsStudent
 
 
-        [Authorize(Roles = "Student")]
+
         #region EnroleSubject
+        [Authorize(Roles = "Student")]
         public async Task<IActionResult> EnroleSubject(string id)
         {
             TempData["StudentId"] = id;
@@ -165,8 +202,9 @@ namespace University_Information_System.Controllers
         }
         #endregion EnroleSubject
 
-        [Authorize(Roles = "Student")]
+
         #region DeleteEnrolment
+        [Authorize(Roles = "Student")]
         public async Task<IActionResult> DeleteEnrolment(int subjectId, string studentId)
         {
             await studentService.DeleteEnrolmentFromSubjectStudentMapped(subjectId, studentId);

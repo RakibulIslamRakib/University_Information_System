@@ -32,6 +32,7 @@ namespace University_Information_System.Services.ServiceClasses
                 UserName = userModel.Email,
                 FirstName = userModel.FirstName,
                 LastName = userModel.LastName,
+                PicturePath = userModel.PicturePath,
                 //DateOfBirth = userModel.DateOfBirth,
                 //About = userModel.About
             };
@@ -78,7 +79,7 @@ namespace University_Information_System.Services.ServiceClasses
             var userVar = await _userManager.FindByIdAsync(user.Id);
             userVar.FirstName = user.FirstName;
             userVar.LastName = user.LastName;
-
+            userVar.PicturePath = user.PicturePath;
             var result = await _userManager.UpdateAsync(userVar);
             return result;
         }

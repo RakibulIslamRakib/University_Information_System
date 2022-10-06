@@ -3,11 +3,12 @@
 
  @if(_signInManager.IsSignedIn(User)){
     <li class="dropdown">
-        <a onclick="navAction('signup')" href="#">@User.FindFirst("UserFirstName").Value</a>
+        <a  href="">@User.FindFirst("UserFirstName").Value</a>
         <ul class="dropdown-content" >
-            <li id="signup"> <a onclick="navAction('signup')" href="#">@User.FindFirst("UserFirstName").Value</a></li>
-            <li id="Login"> <a onclick="navAction('teachers')" asp-controller="Account" asp-action="Logout">Logout</a></li>
-            <li id="Login"> <a onclick="navAction('teachers')" asp-controller="Account" asp-action="ChangePassword">Change Password</a></li>
+            <li> <a asp-controller="User" asp-action="Profile" 
+                asp-route-userId="@User.FindFirst("UserId").Value">@User.FindFirst("UserFirstName").Value</a></li>
+            <li > <a  asp-controller="Account" asp-action="Logout">Logout</a></li>
+            <li > <a  asp-controller="Account" asp-action="ChangePassword">Change Password</a></li>
         </ul>
     </li>
  }  

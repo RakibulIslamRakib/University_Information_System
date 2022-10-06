@@ -18,6 +18,7 @@ namespace University_Information_System.Helper
             var identity = await base.GenerateClaimsAsync(user);
             identity.AddClaim(new Claim("UserFirstName", user.FirstName ?? ""));
             identity.AddClaim(new Claim("UserLastName", user.LastName ?? ""));
+            identity.AddClaim(new Claim("UserId", user.Id ?? ""));
             return identity;
     }
     }

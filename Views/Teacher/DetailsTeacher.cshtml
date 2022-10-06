@@ -5,13 +5,24 @@
 
 @{
     <div class="container">
-            <a asp-action="Teachers">Go Back </a>
+        <a asp-action="Teachers">Go Back </a>
+        <div class="userinfo">
+            <div class="left">
+                <img  class="img" src="~/images/user/@(Model.PicturePath)" />
 
-        <h2 style="text-align:center"> Details About : @(Model.FirstName) @(Model.LastName)</h2>
+            </div>
+
+            <div class="right" >
+                <h3 >Name : @(Model.FirstName) @(Model.LastName)</h3>
+                <p>Email : @(Model.Email)</p>
+            </div> 
+
+        </div>
+            
 
 
             <ul class="detailsMenu">
-            <li id="student">
+            <li>
                 <a asp-action="DetailsTeacher" asp-route-atributeType="Subjects"
                asp-route-pageIndex="@(Model.PageIndex)"
                asp-route-pageSize="@(Model.PageSize)"
@@ -19,7 +30,7 @@
                onclick="clickAction('student')">Subjects</a>
                 </li>
 
-                <li id="depertment">
+                <li >
                     <a asp-action="DetailsTeacher" asp-route-atributeType="Depertments"
                asp-route-pageIndex="@(Model.PageIndex)"
                asp-route-pageSize="@(Model.PageSize)"
@@ -27,7 +38,7 @@
                onclick="clickAction('subject')">Departments</a>
                 </li>
                 
-                <li id="teacher">
+                <li >
                 <a asp-action="DetailsTeacher" asp-route-atributeType="Students"
                asp-route-pageIndex="@(Model.PageIndex)"
                asp-route-pageSize="@(Model.PageSize)"
@@ -44,8 +55,8 @@
 
 
             <div class="detailsUl">
-            <h3 style="margin-top:10px;">@(ViewData["atributeType"]) of @(Model.FirstName)
-            @(Model.LastName) Teacher:</h3>
+            <h4 style="margin-top:10px;">@(ViewData["atributeType"]) of @(Model.FirstName)
+            @(Model.LastName) Teacher:</h4>
                 <div class="gridRow">
 
 

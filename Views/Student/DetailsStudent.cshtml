@@ -7,10 +7,21 @@
 
     <div class="container">
         <a asp-action="Students">Go Back </a>
-                <div class="detailsUl" id="subjectDiv">
-                    <h2 style="text-align:center;">Name : @(Model.FirstName) @(Model.LastName)</h2>
+        <div class="userinfo">
+            <div class="left">
+                <img class="img" src="~/images/user/@(Model.PicturePath)" />
 
-                        
+            </div>
+
+            <div class="right">
+                <h3>Name : @(Model.FirstName) @(Model.LastName)</h3>
+                <p>Email : @(Model.Email)</p>
+            </div>
+
+        </div>
+
+                <div class="detailsUl" id="subjectDiv">
+                                          
                 @foreach (var dept in Model.Depertments)
                 {
                 <h3>
@@ -23,13 +34,44 @@
                 }
 
 
-                    <h3 style="margin-top:40px;">Enrolled Subjects by @(Model.FirstName) @(Model.LastName):</h3>
+                    <h4 style="margin-top:40px;">Enrolled Subjects by @(Model.FirstName) @(Model.LastName):</h4>
+            <div class="gridRow">
+
+
+                <form asp-action="DetailsStudent"  method="get">
+                    <div class="form-actions no-color">
+                        <label for="itemsPerPage">Items Per Page : </label>
+                        <input name="pageSize" class="searchBar" style="width:40px" type"number"
+                               value="@(Model.PageSize)" />
+                        <input type="submit" value="Show" class="btn" />
                         @if (ViewBag.isStudent == true &&
-                                ViewBag.CurrentUserId == Model.Id )
-                {
-                    <a asp-controller="Student" asp-action="EnroleSubject"
-           asp-route-id=@Model.Id> Enrole Subject </a>
-            }
+                    ViewBag.CurrentUserId == Model.Id)
+                        {
+                            <a asp-controller="Student" asp-action="EnroleSubject"
+                       asp-route-id=@Model.Id> Enrole Subject </a>
+                        }
+
+
+                    </div>
+                </form>
+                <form asp-action="DetailsStudent" method="get" class="grid-container">
+                    <div class="form-actions no-color">
+
+                        <input type="text" name="searchString" placeholder="search enrolments..."
+                               class="searchBar" value="@(Model.SearchString)" />
+
+                        <input type="submit" value="Search" class="btn" />
+
+
+
+                    </div>
+                </form>
+
+            </div>
+
+
+
+
                     <hr>
 
 
@@ -55,6 +97,77 @@
             }
 
                 </div>
+
+        @{
+            var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+            var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+        }
+
+        <div class="paginationDiv">
+            <div class="gridRow">
+                <h4>Page No @(Model.PageIndex) of @(Model.TotalPages)</h4>
+
+                <form asp-action="DetailsTeacher" method="get" class="grid-container">
+                    <div class="form-actions no-color">
+                        <input type="hidden" name="pageSize" value="@(Model.PageSize)" />
+                        <input type="hidden" name="searchString" value="@(Model.SearchString)" />
+                        <label for="PageIndex"> Goto Page</label>
+                        <select name="PageIndex" class="searchBar" style="width:100px">
+                            <option class="selectItem" value=@(Model.PageIndex)>--select--</option>
+                            @foreach (int index in Enumerable.Range(1, Model.TotalPages))
+                            {
+                                <option class="selectItem" value=@(index)>Page : @(index)</option>
+                            }
+                        </select>
+                        <input type="submit" value="Go" class="btn" />
+                    </div>
+                </form>
+            </div>
+
+            <a asp-action="DetailsStudent"
+           asp-route-pageIndex="@(Model.PageIndex - 1)"
+           asp-route-pageSize="@(Model.PageSize)"
+           asp-route-currentFilter="@(Model.SearchString)"
+           class="btn @prevDisabled">
+                Previous
+            </a>
+            @foreach (int page in Model.Pages)
+            {
+                if (page == Model.PageIndex)
+                {
+                    <a class="selected"
+           asp-action="DetailsStudent"
+           asp-route-pageIndex="@(page)"
+           asp-route-pageSize="@(Model.PageSize)"
+           asp-route-currentFilter="@(Model.SearchString)"
+           class="btn">
+                        @(page)
+                    </a>
+                }
+                else
+                {
+                    <a class="btn"
+           asp-action="DetailsStudent"
+           asp-route-pageIndex="@(page)"
+           asp-route-pageSize="@(Model.PageSize)"
+           asp-route-currentFilter="@(Model.SearchString)"
+           class="btn">
+                        @(page)
+                    </a>
+                }
+            }
+
+            <a asp-action="DetailsStudent"
+           asp-route-pageIndex="@(Model.PageIndex + 1)"
+           asp-route-pageSize="@(Model.PageSize)"
+           asp-route-currentFilter="@(Model.SearchString)"
+           class="btn @nextDisabled">
+                Next
+            </a>
+
+        </div>
+
+
     </div>
   
 

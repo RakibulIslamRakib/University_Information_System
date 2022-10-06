@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.Build.Framework;
 using NuGet.DependencyResolver;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -6,8 +7,17 @@ namespace University_Information_System.Models
 {
     public class ApplicationUser:IdentityUser
     {
+        [Required]
         public string FirstName { get; set; }
+        [Required]
         public string LastName { get; set; }
+        [Required]
+        public string PicturePath { get; set; }
+
+        [NotMapped]
+        public IFormFile? Picture { get; set; }
+
+
         [NotMapped]
         public List<ApplicationUser>? Students { get; set; }
         public List<ApplicationUser>? Teachers { get; set; }
@@ -16,6 +26,7 @@ namespace University_Information_System.Models
         [NotMapped]
         public List<Depertment>? Depertments { get; set; }
 
+        
 
 
         [NotMapped]

@@ -13,16 +13,16 @@
 @{
     if (TempData["success"] != null)
     {
-                        <h3 class="headline"
-                        style="align-content:center;
-                                    background-color: #04AA6D;
-                                    color: white;
-                                    padding: 12px 20px;
-                                    border: none;
-                                    border-radius: 4px;
-                                    text-align:center; height:30px;">
-                            Message :   @TempData["success"]
-                        </h3>
+                                <h3 class="headline"
+                                style="align-content:center;
+                                            background-color: #04AA6D;
+                                            color: white;
+                                            padding: 12px 20px;
+                                            border: none;
+                                            border-radius: 4px;
+                                            text-align:center; height:30px;">
+                                    Message :   @TempData["success"]
+                                </h3>
     }
 }
 
@@ -51,14 +51,45 @@
  </div>
     <div class="gridRow">
         <h3 style="text-align:center; padding-top:10px;">Notice Board : </h3>
-        <form asp-action="Index" method="get">
+        <div class="gridForm">
+            <div class="left">
+        <form asp-action="Index"  method="get">
             <div class="form-actions no-color">
+                <input type="hidden" name="currentFilter" value="@ViewData["CurrentFilter"]" class="btn" />
+                <input type="hidden" name="sort" value="@ViewData["sort"]" class="btn" />
+                <input type="hidden" name="orderBy" value="@ViewData["orderBy"]" class="btn" />
 
                 <label for="PageNumber"> Item per Page: </label>
-                <input name="itemsPerPage" class="searchBar" style="width:40px" type"number" value="@ViewData["ItemsPerPage"]" />
+                <input style="width:40px" name="itemsPerPage" class="searchBar" style="width:40px" 
+                type="number" value="@ViewData["ItemsPerPage"]" />
                 <input type="submit" value="Show" class="btn" />
             </div>
         </form>
+            </div>
+        <div class="right">
+        <form asp-action="Index"  method="get">
+            <div class="form-actions no-color">
+                <input type="hidden" name="currentFilter" value="@ViewData["CurrentFilter"]" class="btn" />
+                <input name="itemsPerPage" class="searchBar" 
+                       type="hidden" value="@ViewData["ItemsPerPage"]" />
+
+                <label> OrderBy : </label>
+                <select value="@ViewData["orderBy"]" style="height:40px; border-radius:3px; padding:3px" name="orderBy">
+                    <option  class="selectItem" value="CreatedDate">Published Date</option>
+                    <option class="selectItem" value="NoticeTitle">Notice Title</option>
+                </select>
+                
+                <label> Sort In : </label>
+                <select value="@ViewData["sort"]" style="height:40px; border-radius:3px; padding:3px" name="sort" value="@ViewData["sort"]">
+                    <option class="selectItem"  value="asc">Ascending</option>
+                    <option class="selectItem" value="dec">Decending</option>
+                </select>
+
+                <input type="submit" value="Submit" class="btn" />
+            </div>
+        </form>
+            </div>
+        </div>
 
     </div>
 
@@ -73,7 +104,7 @@
         foreach (var notice in Model)
         {
 
-                <div class="card">
+                <div class="card card-without-image">
                         <div class="card__header">
                             <h4 class="card__title">@(notice.NoticeTitle) </h4>
 
@@ -96,9 +127,9 @@
                  @{
             if (ViewBag.isAdmin == true)
             {      
-                           <a class="updateBtn"
+                                   <a class="updateBtn"
                asp-conztroller="Home" asp-action="UpdateNotice" asp-route-id="@notice.id"> Update</a>
-                                <a class="deleteBtn"
+                                        <a class="deleteBtn"
                asp-conztroller="Home" asp-action="DeleteNotice" asp-route-id="@notice.id"> Delete</a>
             }
             }
@@ -137,8 +168,10 @@
         </div>
 
         <a asp-action="Index" asp-route-itemsPerPage="@ViewData["ItemsPerPage"]"
-           asp-route-pageNumber="@(Model.PageIndex - 1)"
            asp-route-currentFilter="@ViewData["CurrentFilter"]"
+           asp-route-pageNumber="@(Model.PageIndex - 1)"        
+           asp-route-orderBy="@ViewData["orderBy"]"
+           asp-route-sort="@ViewData["sort"]"
            class="btn @prevDisabled">
             Previous
         </a>
@@ -150,7 +183,9 @@
             {
                 <a asp-action="Index" class="selected"
            asp-route-pageNumber="@(page)" asp-route-itemsPerPage="@ViewData["ItemsPerPage"]"
-           asp-route-currentFilter="@ViewData["CurrentFilter"]">
+           asp-route-currentFilter="@ViewData["CurrentFilter"]"
+           asp-route-orderBy="@ViewData["orderBy"]"
+           asp-route-sort="@ViewData["sort"]">
                     @(page)
                 </a>
             }
@@ -159,6 +194,8 @@
                 <a asp-action="Index" class="btn"
            asp-route-pageNumber="@(page)" asp-route-itemsPerPage="@ViewData["ItemsPerPage"]"
            asp-route-currentFilter="@ViewData["CurrentFilter"]"
+           asp-route-orderBy="@ViewData["orderBy"]"
+           asp-route-sort="@ViewData["sort"]"
            class="btn">
                     @(page)
                 </a>
@@ -169,6 +206,8 @@
            asp-route-pageNumber="@(Model.PageIndex + 1)"
            asp-route-itemsPerPage="@ViewData["ItemsPerPage"]"
            asp-route-currentFilter="@ViewData["CurrentFilter"]"
+           asp-route-orderBy="@ViewData["orderBy"]"
+           asp-route-sort="@ViewData["sort"]"
            class="btn @nextDisabled">
             Next
         </a>
