@@ -37,7 +37,8 @@ namespace University_Information_System.Controllers
 
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Users(string currentFilter,
-                    string searchString, int? pageNumber, int? itemsPerPage, int? deptId, bool? fromTeacher)
+                    string searchString, int? pageNumber, int? itemsPerPage, 
+                    int? deptId, bool? fromTeacher,bool? fromAdmin)
         {
             var users = await accountService.GetAllDefaultUsers();
 
@@ -54,6 +55,7 @@ namespace University_Information_System.Controllers
             ViewData["CurrentFilter"] = searchString;
             ViewBag.deptId = deptId ?? 0;
             ViewBag.fromTeacher = fromTeacher ?? false;
+            ViewBag.fromAdmin = fromAdmin ?? false;
 
             searchString = !String.IsNullOrEmpty(searchString) ? searchString.ToLower() : "";
             if (!String.IsNullOrEmpty(searchString))
@@ -65,7 +67,7 @@ namespace University_Information_System.Controllers
             return View(PaginatedList<ApplicationUser>.Create(users, pageNumber ?? 1, pageSize));
 
         }
-        #endregion Teachers
+        #endregion Users
 
 
         #region Profile

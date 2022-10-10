@@ -11,6 +11,7 @@
     @if (User.IsInRole("Admin"))
     {
         <li id="teachers"> <a onclick="navAction('teachers')" href="/User/Users">Users</a></li>
+        <li > <a  asp-controller="Admins" asp-action="Index">Admins</a></li>
     }
          <partial name = "_logInfo"/>
 
