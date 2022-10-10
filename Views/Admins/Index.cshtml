@@ -6,14 +6,16 @@
 
 
     <div class="grid-container">
-    <form asp-action="Users" method="get" class="grid-container">
+    <form asp-action="Index" asp-controller="Admins" method="get" class="grid-container">
     <div class="form-actions no-color">
         <p>
                 <input type="text" placeholder="search subject..." class="searchBar" 
                 name="SearchString" value="@ViewData["CurrentFilter"]" />
-            <input type="submit" value="Search" class="btn btn-default" /> 
-               
-        </p>
+            <input type="submit" value="Search" class="btn btn-default" />
+                    <input type="button" class="btn"
+                           value="Add Admin"
+                           onclick="location.href='@Url.Action("Users", "User", new{fromAdmin = true})'" />
+                </p>
     </div>
 </form>
 
@@ -22,7 +24,7 @@
 
     <div class="gridRow">
         <h3 style="text-align:center; padding-top:10px;">User's List' : </h3>
-        <form asp-action="Users" method="get">
+        <form asp-action="Index" method="get">
             <div class="form-actions no-color">
 
                 <label for="PageNumber"> Item per Page: </label>
@@ -57,28 +59,15 @@
 
                                 </p>
 
-                                @{
-                        if(ViewBag.deptId!=0){
-                                            <a class="updateBtn"
-                             asp-controller="Student" asp-action="AddStudent"asp-route-userId="@user.Id" 
-                             asp-route-deptId="@ViewBag.deptId"> Add </a>                        
-                    }
 
-                        else if(ViewBag.fromTeacher){
-                   
-                                                                <a class ="updateBtn"
-                            asp-controller="Teacher" asp-action="AddTeacher" asp-route-id="@user.Id"> Add </a>
-                                             
-                        }
-                            else if (ViewBag.fromAdmin){
-                                <a class="updateBtn"
-               asp-controller="Admins" asp-action="AddAdmin" asp-route-id="@user.Id"> Add </a>
-                            }
 
-                        else{
-                                <a class="deleteBtn" style="color:red" asp-controller="User" asp-action="DeleteUser" asp-route-id="@user.Id"> Delete</a>
+                        @if (ViewData["currentUserEmail"].ToString() != user.Email)
+                        {
+                                <a class="deleteBtn" style="color:red" 
+                                asp-controller="Admins" asp-action="DeleteAdmin"
+                                asp-route-id="@user.Id"> Delete</a>
                         }
-                                }
+                                
                                     </div>
                 
         }
@@ -111,7 +100,7 @@
             </form>
         </div>
 
-        <a asp-action="Teachers" asp-route-itemsPerPage="@ViewData["ItemsPerPage"]"
+        <a asp-action="Index" asp-route-itemsPerPage="@ViewData["ItemsPerPage"]"
            asp-route-pageNumber="@(Model.PageIndex - 1)"
            asp-route-currentFilter="@ViewData["CurrentFilter"]"
            class="btn @prevDisabled">
@@ -123,7 +112,7 @@
         {
             if (page == Model.PageIndex)
             {
-                <a asp-action="Teachers" class="selected"
+                <a asp-action="Index" class="selected"
            asp-route-pageNumber="@(page)" asp-route-itemsPerPage="@ViewData["ItemsPerPage"]"
            asp-route-currentFilter="@ViewData["CurrentFilter"]">
                     @(page)
@@ -131,7 +120,7 @@
             }
             else
             {
-                <a asp-action="Teachers" class="btn"
+                <a asp-action="Index" class="btn"
            asp-route-pageNumber="@(page)" asp-route-itemsPerPage="@ViewData["ItemsPerPage"]"
            asp-route-currentFilter="@ViewData["CurrentFilter"]"
            class="btn">
@@ -140,7 +129,7 @@
             }
         }
 
-        <a asp-action="Teachers"
+        <a asp-action="Index"
            asp-route-pageNumber="@(Model.PageIndex + 1)"
            asp-route-itemsPerPage="@ViewData["ItemsPerPage"]"
            asp-route-currentFilter="@ViewData["CurrentFilter"]"
