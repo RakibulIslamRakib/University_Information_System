@@ -10,7 +10,7 @@
 
 
 <div class="container account">
-    <h3 style="text-align:center">Sign Up</h3>
+    <h3 style="text-align:center">Edit Profile</h3>
     <form asp-controller="User" enctype="multipart/form-data" asp-action="UpdateProfile">
         <div asp-validation-summary="ModelOnly" class="errorMessage"></div>
 
@@ -36,12 +36,12 @@
                 <label asp-for="Picture" ></label><br />
                 <img style="height:40px; width:50px;margin:5px;" src = "~/images/user/@(Model.PicturePath)"/>
                 <br />
-                <input type="file" asp-for="Picture" required  placeholder="select an image.." />
+                <input type="file" asp-for="Picture"  placeholder="select an image.." />
                 <span asp-validation-for="Picture" class="errorMessage"></span>
             </div>
   
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="Update" class="btn btn-primary" />
             </div>
         </form>
 </div>

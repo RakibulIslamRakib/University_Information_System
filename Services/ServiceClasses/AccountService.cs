@@ -84,6 +84,13 @@ namespace University_Information_System.Services.ServiceClasses
             return result;
         }
 
+        public async Task<IdentityResult>DeleteUser(ApplicationUser user)
+        {
+
+            var result = await _userManager.DeleteAsync(user);
+            return result;
+        }
+
 
         public async Task<ApplicationUser> GetUserById(string userId)
         {

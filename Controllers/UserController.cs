@@ -22,7 +22,8 @@ namespace University_Information_System.Controllers
 
 
         #region ctor
-        public UserController(IAccountService accountService, IWebHostEnvironment iweb)
+        public UserController(IAccountService accountService, 
+            IWebHostEnvironment iweb)
         {
             this.accountService = accountService;
             _iweb = iweb;
@@ -70,24 +71,21 @@ namespace University_Information_System.Controllers
         #region Profile
         public async Task<IActionResult> Profile(string userId)
         {
-            var user = await accountService.GetUserById(userId);
-
+            var user = await accountService.GetUserById(userId);           
             return View(user);
         }
         #endregion Profile
 
-        #region Profile
+        #region UpdateProfile
         public async Task<IActionResult> UpdateProfile(string userId)
         {
             var user = await accountService.GetUserById(userId);
-
             return View(user);
         }
 
         [HttpPost]
         public async Task<IActionResult> UpdateProfile(ApplicationUser userModel)
-        {
-            
+        {         
             var user = await accountService.GetCurrentUser();
 
             if (userModel.Picture != null)
@@ -102,7 +100,7 @@ namespace University_Information_System.Controllers
                     //delete previous picture from folder
                     string path = Path.Combine(_iweb.WebRootPath, folder, user.PicturePath);
                     var file = new FileInfo(path);
-                    if (file.Exists) 
+                    if (file.Exists)
                     {
                         file.Delete();
                     }
@@ -118,32 +116,55 @@ namespace University_Information_System.Controllers
                     stream.Close();
 
                     userModel.PicturePath = picturePath;
-                    userModel.Id = user.Id;
+                }
+            }
+            else
+            {
+                userModel.PicturePath = user.PicturePath;
+            }
 
-                    var result = await accountService.UpdateUser(userModel);
 
-                    if (!result.Succeeded)
-                    {
-                        foreach (var err in result.Errors)
-                        {
-                            ModelState.AddModelError("", err.Description);
-                        }
+            userModel.Id = user.Id;
 
-                        return View(userModel);
-                    }
+            var result = await accountService.UpdateUser(userModel);
 
-                    if (result.Succeeded)
-                    {
-
-                        return RedirectToAction("Profile", "User",new {@userId = user.Id });
-
-                    }
+            if (!result.Succeeded)
+            {
+                foreach (var err in result.Errors)
+                {
+                    ModelState.AddModelError("", err.Description);
                 }
 
+                return View(userModel);
             }
+
+            if (result.Succeeded)
+            {
+
+                return RedirectToAction("Profile", "User",new {@userId = user.Id });
+
+            }
+          
             return View(userModel);
         }
+        #endregion UpdateProfile
+
+
+        #region DeleteUser
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> DeleteUser(string id)
+        {
+            var user = await accountService.GetUserById(id);
+            var result = await accountService.DeleteUser(user);
+            if (result.Succeeded)
+            {
+                return RedirectToAction(actionName: "Users", controllerName: "User");
+            }
+            return View();
+        }
+        #endregion DeleteTeacher
 
     }
-    #endregion Profile
+
+
 }
