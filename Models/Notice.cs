@@ -31,6 +31,9 @@ namespace University_Information_System.Models
         [Required]
         public string CreatedBy { get; set; }
 
+        [NotMapped]
+        public string? Author { get; set; }
+
         public string? UpdatedBy { get; set; }
 
 

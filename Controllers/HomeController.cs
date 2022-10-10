@@ -183,8 +183,9 @@ namespace University_Information_System.Controllers
         public async Task<IActionResult> DetailsNotice(int id)
         {
             var notice = await noticeService.GetNoticeDetailsById(id);
-            if (notice == null) return View("Error");
-
+            var user =await accountService.GetUserById(notice.CreatedBy);
+            notice.Author = user.FirstName + " " + user.LastName;
+  
             return View(notice);
         }
 

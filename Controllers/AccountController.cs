@@ -22,6 +22,7 @@ namespace University_Information_System.Controllers
 
         #endregion ctor
 
+        #region signUp
         [Route("signup")]
         public IActionResult SignUp()
         {
@@ -97,7 +98,7 @@ namespace University_Information_System.Controllers
 
             return View(userModel);
         }
-
+        #endregion signUp
 
         #region Login
         [Route("login")]
@@ -116,7 +117,7 @@ namespace University_Information_System.Controllers
                 var result = await _accountService.PasswordSignInAsync(signINModel);
                 if (result.Succeeded)
                 {
-                    if(!string.IsNullOrEmpty(returnUrl))return LocalRedirect(returnUrl);
+                    if(!string.IsNullOrEmpty(returnUrl) && returnUrl!= "/signup") return LocalRedirect(returnUrl);
                     return RedirectToAction("Index", "Home");                   
                     
                 }
