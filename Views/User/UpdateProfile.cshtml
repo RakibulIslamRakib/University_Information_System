@@ -1,4 +1,4 @@
-﻿@model University_Information_System.Models.SignUpModel
+﻿@model University_Information_System.Models.ApplicationUser
 
 <link rel="stylesheet" href="~/css/addItems.css" />
 
@@ -10,42 +10,38 @@
 
 
 <div class="container account">
-    <h3 style="text-align:center">Sign Up</h3>
-    <form asp-controller="Account" enctype="multipart/form-data" asp-action="SignUp">
+    <h3 style="text-align:center">Edit Profile</h3>
+    <form asp-controller="User" enctype="multipart/form-data" asp-action="UpdateProfile">
         <div asp-validation-summary="ModelOnly" class="errorMessage"></div>
+
             <div class="form-group">
                 <label asp-for="Email"  ></label>
             <input asp-for="Email"  placeholder="email.." />
             <span asp-validation-for="Email" class="errorMessage"></span>
             </div>
+
             <div class="form-group">
                 <label asp-for="FirstName"  ></label>
             <input asp-for="FirstName"   placeholder="first name.." />
             <span asp-validation-for="FirstName" class="errorMessage"></span>
             </div>
+
             <div class="form-group">
                 <label asp-for="LastName"  ></label>
             <input asp-for="LastName"   placeholder="last name.." />
             <span asp-validation-for="LastName" class="errorMessage"></span>
             </div>
+
             <div class="form-group">
-                <label asp-for="Picture" ></label>
-                <input type="file" asp-for="Picture" required  placeholder="select an image.." />
+                <label asp-for="Picture" ></label><br />
+                <img style="height:40px; width:50px;margin:5px;" src = "~/images/user/@(Model.PicturePath)"/>
+                <br />
+                <input type="file" asp-for="Picture"  placeholder="select an image.." />
                 <span asp-validation-for="Picture" class="errorMessage"></span>
             </div>
-   
+  
             <div class="form-group">
-                <label asp-for="Password" ></label>
-            <input asp-for="Password"  placeholder="password.." />
-            <span asp-validation-for="Password" class="errorMessage"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ConfirmPassword"></label>
-            <input asp-for="ConfirmPassword"  placeholder="confirm password." />
-            <span asp-validation-for="ConfirmPassword" class="errorMessage"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="Update" class="btn btn-primary" />
             </div>
         </form>
 </div>

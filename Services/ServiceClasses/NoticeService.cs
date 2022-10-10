@@ -22,7 +22,7 @@ namespace University_Information_System.Services.ServiceClasses
             await db.SaveChangesAsync();
         }
 
-        public async Task<List<Notice>> getAllNotice()
+        public async Task<List<Notice>> GetAllNotice()
         {
             return await db.Notice.ToListAsync(); 
         }

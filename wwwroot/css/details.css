@@ -7,7 +7,9 @@
 
 }
 
-
+.active{
+    background-color:red;
+}
 
 
 .container {
@@ -19,6 +21,7 @@
     margin-right: 15%;
 }
 
+
 @media (max-width: 700px) {
     .container {
         margin-top: 120px;
@@ -26,6 +29,20 @@
         margin-left: 5%;
         margin-right: 5%;
     }
+
+    .left {
+        width: 30%;
+    }
+
+    .right {
+        width: 70%;
+        text-align:right;
+    }
+
+    .img {
+        width: 100%;
+    }
+
 }
 
 .grid-containerList {
@@ -85,3 +102,26 @@
     .detailsMenu > li a:hover {
         background-color: #111;
     }
+
+.userinfo {
+    width: 100%;
+    display:flex;
+    padding-top:10px;
+}
+
+.left {
+    float: left;
+    width: 35%;
+    text-align:center;
+}
+
+.right {
+    float:left;
+    width: 65%;
+}
+
+.img {
+    height: 180px;
+    width: 200px;
+    border-radius: 5px;
+}

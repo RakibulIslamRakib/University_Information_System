@@ -1,13 +1,14 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Data;
+using System.Drawing;
 using University_Information_System.Models;
 using University_Information_System.Services.ServiceClasses;
 using University_Information_System.Services.ServiceInterfaces;
 
 namespace University_Information_System.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    
     public class UserController : Controller
     {
 
@@ -15,14 +16,17 @@ namespace University_Information_System.Controllers
         #region Fields
 
         private readonly IAccountService accountService;
+        private readonly IWebHostEnvironment _iweb;
 
         #endregion Fields
 
 
         #region ctor
-        public UserController(IAccountService accountService)
+        public UserController(IAccountService accountService, 
+            IWebHostEnvironment iweb)
         {
             this.accountService = accountService;
+            _iweb = iweb;
         }
         #endregion ctor
 
@@ -31,7 +35,7 @@ namespace University_Information_System.Controllers
 
         #region Users
 
-
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Users(string currentFilter,
                     string searchString, int? pageNumber, int? itemsPerPage, int? deptId, bool? fromTeacher)
         {
@@ -64,21 +68,103 @@ namespace University_Information_System.Controllers
         #endregion Teachers
 
 
+        #region Profile
+        public async Task<IActionResult> Profile(string userId)
+        {
+            var user = await accountService.GetUserById(userId);           
+            return View(user);
+        }
+        #endregion Profile
 
-        public async Task<IActionResult> AddRole(string userId,string roleName)
+        #region UpdateProfile
+        public async Task<IActionResult> UpdateProfile(string userId)
         {
             var user = await accountService.GetUserById(userId);
-            
-            var result = await accountService.AddRole(user, roleName);
+            return View(user);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateProfile(ApplicationUser userModel)
+        {         
+            var user = await accountService.GetCurrentUser();
+
+            if (userModel.Picture != null)
+            {
+                string ext = Path.GetExtension(userModel.Picture.FileName);
+                if (ext == ".jpg" || ext == ".gif")
+                {
+
+                    string folder = "images/user/";
+                    var picturePath = Guid.NewGuid().ToString() + "_" + userModel.Picture.FileName;
+
+                    //delete previous picture from folder
+                    string path = Path.Combine(_iweb.WebRootPath, folder, user.PicturePath);
+                    var file = new FileInfo(path);
+                    if (file.Exists)
+                    {
+                        file.Delete();
+                    }
+
+
+                    //copy new file into folder
+
+                    folder += picturePath;
+                    var savePath = Path.Combine(_iweb.WebRootPath, folder);
+
+                    var stream = new FileStream(savePath, FileMode.Create);
+                    await userModel.Picture.CopyToAsync(stream);
+                    stream.Close();
+
+                    userModel.PicturePath = picturePath;
+                }
+            }
+            else
+            {
+                userModel.PicturePath = user.PicturePath;
+            }
+
+
+            userModel.Id = user.Id;
+
+            var result = await accountService.UpdateUser(userModel);
+
+            if (!result.Succeeded)
+            {
+                foreach (var err in result.Errors)
+                {
+                    ModelState.AddModelError("", err.Description);
+                }
+
+                return View(userModel);
+            }
 
             if (result.Succeeded)
             {
-                return  RedirectToAction(actionName: "Teachers", controllerName: "Teacher");
+
+                return RedirectToAction("Profile", "User",new {@userId = user.Id });
+
             }
-
-            return View(result.Errors);
+          
+            return View(userModel);
         }
+        #endregion UpdateProfile
 
+
+        #region DeleteUser
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> DeleteUser(string id)
+        {
+            var user = await accountService.GetUserById(id);
+            var result = await accountService.DeleteUser(user);
+            if (result.Succeeded)
+            {
+                return RedirectToAction(actionName: "Users", controllerName: "User");
+            }
+            return View();
+        }
+        #endregion DeleteTeacher
 
     }
+
+
 }

@@ -51,8 +51,9 @@
 
                                     <div class="grid-containerList">
                                 <p>
-                                    Name :  
-                                         @(user.FirstName) @(user.LastName)
+                                    Name :
+                            <a asp-controller="User" asp-action="Profile"
+                   asp-route-userId="@user.Id"> @(user.FirstName) @(user.LastName)</a>
 
                                 </p>
 
@@ -71,7 +72,7 @@
                         }
 
                         else{
-                                    <a href="#"> Delete</a>
+                                <a class="deleteBtn" style="color:red" asp-controller="User" asp-action="DeleteUser" asp-route-id="@user.Id"> Delete</a>
                         }
                                 }
                                     </div>

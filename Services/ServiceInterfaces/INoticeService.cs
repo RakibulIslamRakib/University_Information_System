@@ -5,7 +5,7 @@ namespace University_Information_System.Services.ServiceInterfaces
 {
     public interface INoticeService
     {
-        public Task<List<Notice>> getAllNotice();
+        public Task<List<Notice>> GetAllNotice();
         public Task AddNotice(Notice notice);
  
         public Task UpdateNotice(Notice notice);

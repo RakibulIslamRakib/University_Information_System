@@ -57,11 +57,12 @@
 
             <div class="card">
                     <div class="card__header">
-                        <h4 class="card__title">Name : @(student.FirstName) @(student.LastName)</h4>
+                        <img class="img" src="~/images/user/@(student.PicturePath)"/>
                                     
                     </div>
                          
                     <div class="card__body">
+                        <h5 class="card__title">Name : @(student.FirstName) @(student.LastName)</h5>
                         <p class="tag">Email: @(student.Email)</p>
      
                     </div>

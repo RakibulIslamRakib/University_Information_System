@@ -1,0 +1,28 @@
+﻿@model ApplicationUser
+@inject Microsoft.AspNetCore.Identity.SignInManager<ApplicationUser> _signInManager
+
+<link rel="stylesheet" href="~/css/profile.css" />
+
+@{
+
+    <div class="container">
+        <div class="left">
+            <img src="~/images/user/@(Model.PicturePath)" />
+
+        </div>
+
+        <div class="right" >
+            @if (User.FindFirst("UserId").Value == Model.Id){
+            <a asp-action="UpdateProfile" asp-controler="User" 
+           asp-route-userId=@Model.Id>Edit Profile</a>
+            }
+           <br>
+            <h3 >Name : @(Model.FirstName) @(Model.LastName)</h3>
+            <p>Email : @(Model.Email)</p>
+        </div>       
+              
+               
+    </div>
+  
+
+}

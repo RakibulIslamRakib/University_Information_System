@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
+using System.Linq;
 using University_Information_System.Models;
 using University_Information_System.Services.ServiceClasses;
 using University_Information_System.Services.ServiceInterfaces;
@@ -34,9 +35,37 @@ namespace University_Information_System.Controllers
 
         #region Index
         public async Task<IActionResult> Index(string currentFilter,
-                    string searchString, int? pageNumber, int? itemsPerPage)
+                    string searchString, string orderBy,string sort, int? pageNumber, int? itemsPerPage)
         {
-            var notice= await noticeService.getAllNotice();
+            var notice= await noticeService.GetAllNotice();
+
+            switch (sort)
+            {
+                case "asc":
+                    if(orderBy == "CreatedDate")
+                    {
+                       notice = notice.OrderBy(n => n.CreatedDate).ToList();
+                    }
+                    else
+                    {
+                        notice = notice.OrderBy(not => not.NoticeTitle).ToList();
+
+                    }
+                    break;
+
+                case "dec":
+                    if (orderBy == "CreatedDate")
+                    {
+                        notice = notice.OrderByDescending(not => not.CreatedDate).ToList();
+                    }
+                    else
+                    {
+                        notice = notice.OrderByDescending(not => not.NoticeTitle).ToList();
+
+                    }
+                    break;
+
+            }
 
             if (searchString != null)
             {
@@ -57,6 +86,8 @@ namespace University_Information_System.Controllers
             int pageSize = itemsPerPage ?? 5;
             ViewData["ItemsPerPage"] = pageSize;
             ViewData["CurrentFilter"] = searchString;
+            ViewData["orderBy"] = orderBy;
+            ViewData["sort"] = sort;
 
             searchString = !String.IsNullOrEmpty(searchString) ? searchString.ToLower() : "";
 

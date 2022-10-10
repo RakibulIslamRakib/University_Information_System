@@ -35,7 +35,6 @@ namespace University_Information_System.Controllers
 
         #region Teachers
 
-
         public async Task<IActionResult> Teachers(string currentFilter,
                     string searchString, int? pageNumber, int? itemsPerPage)
         {
@@ -73,8 +72,9 @@ namespace University_Information_System.Controllers
         #endregion Teachers
 
 
-        [Authorize(Roles = "Admin")]
+
         #region AddTeacher
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> AddTeacher(string id)
         {
             var user = await accountService.GetUserById(id);
@@ -84,9 +84,9 @@ namespace University_Information_System.Controllers
         #endregion AddTeacher
 
 
-        [Authorize(Roles = "Admin")]
-        #region DeleteTeacher
 
+        #region DeleteTeacher
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteTeacher(ApplicationUser teacher)
         {
             await teacherService.DeleteTeacher(teacher);
@@ -96,8 +96,9 @@ namespace University_Information_System.Controllers
         #endregion DeleteTeacher
 
 
-        [Authorize(Roles = "Admin,Teacher")]
+
         #region  UpdateTeacher
+        [Authorize(Roles = "Admin,Teacher")]
         public async Task<IActionResult> UpdateTeacher(string id)
         {
 
@@ -121,9 +122,8 @@ namespace University_Information_System.Controllers
         }
         #endregion  UpdateTeacher
 
-
-        [Authorize(Roles = "Admin,Teacher,Student")]
         #region  DetailsTeacher
+        [Authorize(Roles = "Admin,Teacher,Student")]
         public async Task<IActionResult> DetailsTeacher(string id, string currentFilter,
                     string searchString, int? pageSize, int? pageIndex, string atributeType = "Subjects")
 
@@ -219,8 +219,9 @@ namespace University_Information_System.Controllers
         #endregion  DetailsTeacher
 
 
-        [Authorize(Roles = "Admin,Teacher")]
+
         #region  AddSubjectToTheTeacher
+        [Authorize(Roles = "Admin,Teacher")]
         public async Task<IActionResult> AddSubjectToTheTeacher(string id)
         {
 
@@ -251,8 +252,9 @@ namespace University_Information_System.Controllers
         }
         #endregion  AddSubjectToTheTeacher
 
-        [Authorize(Roles = "Admin,Teacher")]
+
         #region  DeleteSubjectFromTeacher
+        [Authorize(Roles = "Admin,Teacher")]
         public async Task<IActionResult> DeleteSubjectFromTeacher(int subjectId, string TeacherId)
         {
             await teacherService.DeleteSubTeacherMapped(subjectId, TeacherId);

@@ -21,7 +21,12 @@ namespace University_Information_System.Models
         [Required(ErrorMessage = "Last Name is required.")]
         public string LastName { get; set; }
 
+        [Display(Name = "Profile Picture")]
+        [Required(ErrorMessage = "Profile Picture is required.")]
+        public IFormFile Picture { get; set; }
 
+
+        public string? PicturePath { get; set; }
 
         [Display(Name = "Password")]
         [Compare("ConfirmPassword", ErrorMessage ="Password does not match")]

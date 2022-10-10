@@ -18,5 +18,6 @@ namespace University_Information_System.Services.ServiceInterfaces
         Task<ApplicationUser> GetCurrentUser();
         Task<List<ApplicationUser>> GetAllDefaultUsers();
         Task<IdentityResult> RemoveRole(ApplicationUser user, string roleName);
+        public Task<IdentityResult> DeleteUser(ApplicationUser user);
     }
 }
